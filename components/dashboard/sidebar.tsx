@@ -33,11 +33,6 @@ const navigation = [
     href: "/dashboard/profile",
     icon: Building2,
   },
-  {
-    name: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
 ];
 
 export function Sidebar() {
@@ -46,7 +41,10 @@ export function Sidebar() {
   return (
     <div className="flex h-full flex-col border-r bg-card">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 font-semibold"
+        >
           <FileText className="h-6 w-6" />
           <span className="text-xl">Faktur</span>
         </Link>
@@ -54,7 +52,9 @@ export function Sidebar() {
       <Separator />
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname?.startsWith(item.href + "/");
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/dashboard" && pathname?.startsWith(item.href + "/"));
           return (
             <Link
               key={item.name}

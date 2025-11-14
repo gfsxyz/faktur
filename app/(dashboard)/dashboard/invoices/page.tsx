@@ -28,7 +28,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FileText, Plus, MoreHorizontal, Eye, Pencil, Trash } from "lucide-react";
+import {
+  FileText,
+  Plus,
+  MoreHorizontal,
+  Eye,
+  Pencil,
+  Trash,
+} from "lucide-react";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 
 export default function InvoicesPage() {
@@ -136,9 +143,14 @@ export default function InvoicesPage() {
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell className="font-medium">
-                    {invoice.invoiceNumber}
+                <TableRow key={invoice.id} className="group">
+                  <TableCell className="font-bold">
+                    <Link
+                      href={`/dashboard/invoices/${invoice.id}`}
+                      className="cursor-pointer group-hover:underline underline-offset-4"
+                    >
+                      {invoice.invoiceNumber}
+                    </Link>
                   </TableCell>
                   <TableCell>
                     <div>

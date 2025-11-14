@@ -88,12 +88,10 @@ export function RevenueChart() {
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis
               dataKey="month"
-              className="text-xs"
-              tick={{ fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "var(--secondary-foreground)" }}
             />
             <YAxis
-              className="text-xs"
-              tick={{ fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fill: "var(--secondary-foreground)" }}
               tickFormatter={formatCurrency}
             />
             <Tooltip
