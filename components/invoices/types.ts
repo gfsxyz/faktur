@@ -48,7 +48,7 @@ export const TEMPLATE_OPTIONS: TemplateOption[] = [
   { value: "classic", label: "Classic", description: "Traditional professional design" },
   { value: "newyork", label: "New York", description: "Elegant with bold typography" },
   { value: "minimalist", label: "Minimalist", description: "Clean and minimal" },
-  { value: "creative", label: "Creative", description: "Colorful and modern" },
+  { value: "creative", label: "Creative", description: "Bold & colorful with geometric accents" },
   { value: "sakura", label: "Sakura", description: "Japanese-inspired, soft colors" },
   { value: "corporate", label: "Corporate", description: "Professional and structured" },
 ];
