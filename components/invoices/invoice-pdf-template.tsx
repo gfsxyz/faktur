@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   Font,
+  Image,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 
@@ -18,6 +19,33 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerRight: {
+    alignItems: "flex-end",
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    marginBottom: 10,
+  },
+  companyInfo: {
+    marginBottom: 20,
+  },
+  companyName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  companyDetails: {
+    fontSize: 9,
+    color: "#666",
+    lineHeight: 1.4,
   },
   title: {
     fontSize: 24,
@@ -194,6 +222,18 @@ interface InvoiceData {
     rate: number;
     amount: number;
   }>;
+  businessProfile?: {
+    companyName: string;
+    email: string;
+    phone?: string | null;
+    address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    country?: string | null;
+    postalCode?: string | null;
+    taxId?: string | null;
+    logo?: string | null;
+  } | null;
 }
 
 const getStatusColor = (status: string) => {
@@ -219,10 +259,50 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>INVOICE</Text>
-          <Text style={styles.invoiceNumber}>{invoice.invoiceNumber}</Text>
-          <View style={[styles.statusBadge, statusColors]}>
-            <Text style={styles.statusText}>{invoice.status}</Text>
+          <View style={styles.headerLeft}>
+            {invoice.businessProfile?.logo && (
+              <Image src={invoice.businessProfile.logo} style={styles.logo} />
+            )}
+            {invoice.businessProfile && (
+              <View style={styles.companyInfo}>
+                <Text style={styles.companyName}>
+                  {invoice.businessProfile.companyName}
+                </Text>
+                <Text style={styles.companyDetails}>
+                  {invoice.businessProfile.email}
+                </Text>
+                {invoice.businessProfile.phone && (
+                  <Text style={styles.companyDetails}>
+                    {invoice.businessProfile.phone}
+                  </Text>
+                )}
+                {invoice.businessProfile.address && (
+                  <Text style={styles.companyDetails}>
+                    {invoice.businessProfile.address}
+                    {invoice.businessProfile.city && `, ${invoice.businessProfile.city}`}
+                    {invoice.businessProfile.state && `, ${invoice.businessProfile.state}`}
+                    {invoice.businessProfile.postalCode && ` ${invoice.businessProfile.postalCode}`}
+                  </Text>
+                )}
+                {invoice.businessProfile.country && (
+                  <Text style={styles.companyDetails}>
+                    {invoice.businessProfile.country}
+                  </Text>
+                )}
+                {invoice.businessProfile.taxId && (
+                  <Text style={styles.companyDetails}>
+                    Tax ID: {invoice.businessProfile.taxId}
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
+          <View style={styles.headerRight}>
+            <Text style={styles.title}>INVOICE</Text>
+            <Text style={styles.invoiceNumber}>{invoice.invoiceNumber}</Text>
+            <View style={[styles.statusBadge, statusColors]}>
+              <Text style={styles.statusText}>{invoice.status}</Text>
+            </View>
           </View>
         </View>
 

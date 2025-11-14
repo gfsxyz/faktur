@@ -26,6 +26,18 @@ interface InvoiceData {
     rate: number;
     amount: number;
   }>;
+  businessProfile?: {
+    companyName: string;
+    email: string;
+    phone?: string | null;
+    address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    country?: string | null;
+    postalCode?: string | null;
+    taxId?: string | null;
+    logo?: string | null;
+  } | null;
 }
 
 export async function generateInvoicePDF(invoice: InvoiceData) {

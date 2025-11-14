@@ -48,6 +48,7 @@ export default function InvoiceDetailPage({
 }) {
   const { id } = use(params);
   const { data: invoice, isLoading } = trpc.invoices.getById.useQuery({ id });
+  const { data: businessProfile } = trpc.businessProfile.get.useQuery();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownloadPDF = async () => {
@@ -82,6 +83,20 @@ export default function InvoiceDetailPage({
           rate: item.rate,
           amount: item.amount,
         })) || [],
+        businessProfile: businessProfile
+          ? {
+              companyName: businessProfile.companyName,
+              email: businessProfile.email,
+              phone: businessProfile.phone,
+              address: businessProfile.address,
+              city: businessProfile.city,
+              state: businessProfile.state,
+              country: businessProfile.country,
+              postalCode: businessProfile.postalCode,
+              taxId: businessProfile.taxId,
+              logo: businessProfile.logo,
+            }
+          : null,
       });
     } catch (error) {
       console.error("Failed to generate PDF:", error);
