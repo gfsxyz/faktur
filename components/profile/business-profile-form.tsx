@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,7 +75,7 @@ export function BusinessProfileForm() {
   });
 
   // Update form when profile loads
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       form.reset({
         companyName: profile.companyName || "",
@@ -99,7 +99,7 @@ export function BusinessProfileForm() {
         setLogoPreview(profile.logo);
       }
     }
-  });
+  }, [profile, form]);
 
   const onSubmit = async (data: BusinessProfileFormData) => {
     try {
