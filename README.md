@@ -59,23 +59,25 @@ A modern, full-stack invoice management application built with Next.js 16, featu
   - [x] Quick client selection (in invoice form)
   - [x] Client invoice history and statistics
 
-- [ ] **Business Profile**
-  - [ ] Company information management
-  - [ ] Logo upload (stored in codebase)
-  - [ ] Business address and tax ID
-  - [ ] Bank account details
+- [x] **Business Profile**
+  - [x] Company information management
+  - [x] Logo upload (stored as base64)
+  - [x] Business address and tax ID
+  - [x] Bank account details
+  - [x] Integration with invoice PDFs
 
 ### Phase 3: Enhanced Features (Week 5-6)
-- [ ] **Dashboard & Analytics**
-  - [ ] Revenue overview (monthly, yearly)
-  - [ ] Outstanding invoices tracking
-  - [ ] Paid vs unpaid visualizations
-  - [ ] Recent activity feed
-  - [ ] Charts and trends (using recharts)
+- [x] **Dashboard & Analytics**
+  - [x] Revenue overview (monthly, yearly)
+  - [x] Outstanding invoices tracking
+  - [x] Paid vs unpaid visualizations
+  - [x] Recent activity feed
+  - [x] Charts and trends (using recharts)
 
-- [ ] **PDF Generation**
-  - [ ] Professional invoice templates
-  - [ ] Download invoices as PDF
+- [x] **PDF Generation**
+  - [x] Professional invoice templates
+  - [x] Download invoices as PDF
+  - [x] Business profile integration in PDFs
   - [ ] Multiple template designs
 
 - [ ] **Payment Tracking**
@@ -251,20 +253,28 @@ Follow these steps for consistent development:
    - Add invoice detail view
    - Build invoice status management
 
-4. **Week 4: Client Management**
+4. **Week 4: Client Management** ✅
    - Client CRUD operations
    - Client selection components
    - Client history view
 
-5. **Week 5: Dashboard & Analytics**
-   - Revenue dashboard
-   - Charts and visualizations
-   - Activity feed
-   - Statistics cards
+5. **Week 5: Dashboard & Analytics** ✅
+   - Revenue dashboard with real-time data
+   - Charts and visualizations (recharts)
+   - Activity feed showing recent invoices
+   - Statistics cards (revenue, outstanding, paid, overdue)
+   - Monthly/yearly revenue trends
+   - Invoice status distribution
 
-6. **Week 6: PDF & Polish**
-   - PDF template design
-   - PDF generation
+6. **Week 6: Business Profile & PDF** ✅
+   - Business profile management
+   - Company logo upload
+   - Professional PDF invoice templates
+   - PDF generation with @react-pdf/renderer
+   - Business info integration in PDFs
+
+7. **Future: Payment Tracking & Polish**
+   - Payment recording system
    - Email templates (future)
    - UI polish and testing
 
