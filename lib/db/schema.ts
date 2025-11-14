@@ -165,7 +165,6 @@ export const invoices = sqliteTable("invoice", {
     .default("draft"),
   issueDate: integer("issueDate", { mode: "timestamp" }).notNull(),
   dueDate: integer("dueDate", { mode: "timestamp" }).notNull(),
-  currency: text("currency").notNull().default("USD"),
   subtotal: real("subtotal").notNull().default(0),
   taxRate: real("taxRate").notNull().default(0),
   taxAmount: real("taxAmount").notNull().default(0),

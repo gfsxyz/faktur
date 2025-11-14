@@ -54,7 +54,6 @@ type PaymentFormData = z.infer<typeof paymentSchema>;
 interface RecordPaymentDialogProps {
   invoiceId: string;
   remainingBalance: number;
-  currency: string;
   onSuccess?: () => void;
 }
 
@@ -71,7 +70,6 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 export function RecordPaymentDialog({
   invoiceId,
   remainingBalance,
-  currency,
   onSuccess,
 }: RecordPaymentDialogProps) {
   const [open, setOpen] = useState(false);
@@ -130,7 +128,7 @@ export function RecordPaymentDialog({
         <DialogHeader>
           <DialogTitle>Record Payment</DialogTitle>
           <DialogDescription>
-            Record a payment received for this invoice. Remaining balance: {currency}{" "}
+            Record a payment received for this invoice. Remaining balance: USD{" "}
             {remainingBalance.toFixed(2)}
           </DialogDescription>
         </DialogHeader>
@@ -145,7 +143,7 @@ export function RecordPaymentDialog({
                   <FormControl>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                        {currency}
+                        USD
                       </span>
                       <Input
                         {...field}

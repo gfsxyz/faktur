@@ -18,7 +18,6 @@ import { useState } from "react";
 
 interface PaymentHistoryProps {
   invoiceId: string;
-  currency: string;
 }
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -31,7 +30,7 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   other: "Other",
 };
 
-export function PaymentHistory({ invoiceId, currency }: PaymentHistoryProps) {
+export function PaymentHistory({ invoiceId }: PaymentHistoryProps) {
   const { data: payments, isLoading } = trpc.payments.getByInvoiceId.useQuery({
     invoiceId,
   });
@@ -98,7 +97,7 @@ export function PaymentHistory({ invoiceId, currency }: PaymentHistoryProps) {
           <div className="text-sm">
             <span className="text-muted-foreground">Total Paid: </span>
             <span className="font-semibold">
-              {currency} {totalPaid.toFixed(2)}
+              USD {totalPaid.toFixed(2)}
             </span>
           </div>
         </div>
@@ -122,7 +121,7 @@ export function PaymentHistory({ invoiceId, currency }: PaymentHistoryProps) {
                   {format(new Date(payment.paymentDate), "MMM dd, yyyy")}
                 </TableCell>
                 <TableCell className="font-medium">
-                  {currency} {payment.amount.toFixed(2)}
+                  USD {payment.amount.toFixed(2)}
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline">

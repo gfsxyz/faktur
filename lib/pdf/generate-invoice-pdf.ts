@@ -6,7 +6,6 @@ interface InvoiceData {
   status: string;
   issueDate: Date | string;
   dueDate: Date | string;
-  currency: string;
   subtotal: number;
   taxRate: number;
   taxAmount: number;

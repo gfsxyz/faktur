@@ -167,7 +167,7 @@ export default function InvoicesPage() {
                     {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
                   </TableCell>
                   <TableCell>
-                    {invoice.currency}{" "}
+                    USD{" "}
                     {invoice.total.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,

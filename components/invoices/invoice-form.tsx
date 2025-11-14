@@ -46,7 +46,6 @@ const invoiceFormSchema = z.object({
   issueDate: z.string(),
   dueDate: z.string(),
   status: z.enum(["draft", "sent", "paid", "overdue", "cancelled"]),
-  currency: z.string(),
   taxRate: z.number().min(0).max(100),
   discountType: z.enum(["percentage", "fixed", "none"]).optional(),
   discountValue: z.number().min(0),
@@ -96,7 +95,6 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
         .toISOString()
         .split("T")[0],
       status: "draft",
-      currency: "USD",
       taxRate: 0,
       discountType: "none",
       discountValue: 0,
@@ -235,7 +233,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
               />
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="issueDate"
@@ -258,20 +256,6 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     <FormLabel>Due Date</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="currency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Currency</FormLabel>
-                    <FormControl>
-                      <Input placeholder="USD" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -493,14 +477,14 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal:</span>
                 <span className="font-medium">
-                  {form.watch("currency")} {subtotal.toFixed(2)}
+                  USD {subtotal.toFixed(2)}
                 </span>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Discount:</span>
                   <span className="font-medium text-green-600">
-                    -{form.watch("currency")} {discountAmount.toFixed(2)}
+                    -USD {discountAmount.toFixed(2)}
                   </span>
                 </div>
               )}
@@ -509,14 +493,14 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   Tax ({form.watch("taxRate")}%):
                 </span>
                 <span className="font-medium">
-                  {form.watch("currency")} {taxAmount.toFixed(2)}
+                  USD {taxAmount.toFixed(2)}
                 </span>
               </div>
               <Separator />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total:</span>
                 <span>
-                  {form.watch("currency")} {total.toFixed(2)}
+                  USD {total.toFixed(2)}
                 </span>
               </div>
             </div>

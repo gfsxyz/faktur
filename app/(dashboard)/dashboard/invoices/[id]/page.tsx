@@ -48,7 +48,6 @@ export default function InvoiceDetailPage({
         status: invoice.status,
         issueDate: invoice.issueDate,
         dueDate: invoice.dueDate,
-        currency: invoice.currency,
         subtotal: invoice.subtotal,
         taxRate: invoice.taxRate,
         taxAmount: invoice.taxAmount,
@@ -135,7 +134,6 @@ export default function InvoiceDetailPage({
             <RecordPaymentDialog
               invoiceId={id}
               remainingBalance={invoice.total - invoice.amountPaid}
-              currency={invoice.currency}
             />
           )}
           <Button
@@ -238,20 +236,20 @@ export default function InvoiceDetailPage({
             <div className="flex justify-between">
               <span className="text-sm">Total Amount:</span>
               <span className="text-sm font-medium">
-                {invoice.currency} {invoice.total.toFixed(2)}
+                USD {invoice.total.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Amount Paid:</span>
               <span className="text-sm font-medium">
-                {invoice.currency} {invoice.amountPaid.toFixed(2)}
+                USD {invoice.amountPaid.toFixed(2)}
               </span>
             </div>
             <Separator />
             <div className="flex justify-between">
               <span className="font-medium">Balance Due:</span>
               <span className="font-bold">
-                {invoice.currency} {(invoice.total - invoice.amountPaid).toFixed(2)}
+                USD {(invoice.total - invoice.amountPaid).toFixed(2)}
               </span>
             </div>
           </CardContent>
@@ -278,10 +276,10 @@ export default function InvoiceDetailPage({
                   <TableCell>{item.description}</TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
                   <TableCell className="text-right">
-                    {invoice.currency} {item.rate.toFixed(2)}
+                    USD {item.rate.toFixed(2)}
                   </TableCell>
                   <TableCell className="text-right">
-                    {invoice.currency} {item.amount.toFixed(2)}
+                    USD {item.amount.toFixed(2)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -292,14 +290,14 @@ export default function InvoiceDetailPage({
             <div className="flex justify-end gap-32">
               <span className="text-sm text-muted-foreground">Subtotal:</span>
               <span className="text-sm font-medium">
-                {invoice.currency} {invoice.subtotal.toFixed(2)}
+                USD {invoice.subtotal.toFixed(2)}
               </span>
             </div>
             {invoice.discountAmount && invoice.discountAmount > 0 && (
               <div className="flex justify-end gap-32">
                 <span className="text-sm text-muted-foreground">Discount:</span>
                 <span className="text-sm font-medium text-green-600">
-                  -{invoice.currency} {invoice.discountAmount.toFixed(2)}
+                  -USD {invoice.discountAmount.toFixed(2)}
                 </span>
               </div>
             )}
@@ -308,14 +306,14 @@ export default function InvoiceDetailPage({
                 Tax ({invoice.taxRate}%):
               </span>
               <span className="text-sm font-medium">
-                {invoice.currency} {invoice.taxAmount.toFixed(2)}
+                USD {invoice.taxAmount.toFixed(2)}
               </span>
             </div>
             <Separator />
             <div className="flex justify-end gap-32">
               <span className="text-lg font-bold">Total:</span>
               <span className="text-lg font-bold">
-                {invoice.currency} {invoice.total.toFixed(2)}
+                USD {invoice.total.toFixed(2)}
               </span>
             </div>
           </div>
@@ -353,7 +351,7 @@ export default function InvoiceDetailPage({
       )}
 
       {/* Payment History */}
-      <PaymentHistory invoiceId={id} currency={invoice.currency} />
+      <PaymentHistory invoiceId={id} />
     </div>
   );
 }

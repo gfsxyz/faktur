@@ -202,7 +202,6 @@ interface InvoiceData {
   status: string;
   issueDate: Date | string;
   dueDate: Date | string;
-  currency: string;
   subtotal: number;
   taxRate: number;
   taxAmount: number;
@@ -380,10 +379,10 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
                 {item.quantity}
               </Text>
               <Text style={[styles.tableText, styles.tableColRate]}>
-                {invoice.currency} {item.rate.toFixed(2)}
+                USD {item.rate.toFixed(2)}
               </Text>
               <Text style={[styles.tableText, styles.tableColAmount]}>
-                {invoice.currency} {item.amount.toFixed(2)}
+                USD {item.amount.toFixed(2)}
               </Text>
             </View>
           ))}
@@ -394,7 +393,7 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Subtotal</Text>
             <Text style={styles.totalValue}>
-              {invoice.currency} {invoice.subtotal.toFixed(2)}
+              USD {invoice.subtotal.toFixed(2)}
             </Text>
           </View>
 
@@ -402,7 +401,7 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Discount</Text>
               <Text style={[styles.totalValue, { color: "#22c55e" }]}>
-                -{invoice.currency} {invoice.discountAmount.toFixed(2)}
+                -USD {invoice.discountAmount.toFixed(2)}
               </Text>
             </View>
           )}
@@ -412,14 +411,14 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
               Tax ({invoice.taxRate}%)
             </Text>
             <Text style={styles.totalValue}>
-              {invoice.currency} {invoice.taxAmount.toFixed(2)}
+              USD {invoice.taxAmount.toFixed(2)}
             </Text>
           </View>
 
           <View style={[styles.totalRow, styles.grandTotal]}>
             <Text style={styles.grandTotalLabel}>Total</Text>
             <Text style={styles.grandTotalValue}>
-              {invoice.currency} {invoice.total.toFixed(2)}
+              USD {invoice.total.toFixed(2)}
             </Text>
           </View>
         </View>
