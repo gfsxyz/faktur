@@ -97,7 +97,18 @@ export const businessProfileRouter = createTRPCRouter({
 
         return updated;
       } else {
-        throw new Error("Business profile not found. Please create a profile first.");
+        // Create a new profile with minimal required fields and logo
+        const [created] = await db
+          .insert(businessProfiles)
+          .values({
+            userId: ctx.userId,
+            companyName: "My Company",
+            email: ctx.user?.email || "info@company.com",
+            logo: input.logo,
+          })
+          .returning();
+
+        return created;
       }
     }),
 
