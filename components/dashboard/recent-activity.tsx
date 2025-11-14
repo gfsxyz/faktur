@@ -12,8 +12,8 @@ const STATUS_VARIANTS: Record<
   "default" | "secondary" | "destructive" | "outline"
 > = {
   draft: "secondary",
-  sent: "default",
-  paid: "outline",
+  sent: "outline",
+  paid: "default",
   overdue: "destructive",
   cancelled: "secondary",
 };

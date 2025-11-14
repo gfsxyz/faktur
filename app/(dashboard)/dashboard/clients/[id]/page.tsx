@@ -45,8 +45,10 @@ export default function ClientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const { data: client, isLoading: clientLoading } = trpc.clients.getById.useQuery({ id });
-  const { data: invoices, isLoading: invoicesLoading } = trpc.invoices.list.useQuery();
+  const { data: client, isLoading: clientLoading } =
+    trpc.clients.getById.useQuery({ id });
+  const { data: invoices, isLoading: invoicesLoading } =
+    trpc.invoices.list.useQuery();
 
   // Filter invoices for this client
   const clientInvoices = invoices?.filter((inv) => inv.clientId === id) || [];
@@ -74,10 +76,9 @@ export default function ClientDetailPage({
   }
 
   const totalInvoiced = clientInvoices.reduce((sum, inv) => sum + inv.total, 0);
-  const totalPaid = clientInvoices.filter((inv) => inv.status === "paid").reduce(
-    (sum, inv) => sum + inv.total,
-    0
-  );
+  const totalPaid = clientInvoices
+    .filter((inv) => inv.status === "paid")
+    .reduce((sum, inv) => sum + inv.total, 0);
   const outstanding = totalInvoiced - totalPaid;
 
   return (
@@ -105,11 +106,14 @@ export default function ClientDetailPage({
       <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium">Total Invoiced</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Invoiced
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
-              ${totalInvoiced.toLocaleString("en-US", {
+              $
+              {totalInvoiced.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -123,7 +127,8 @@ export default function ClientDetailPage({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-green-600">
-              ${totalPaid.toLocaleString("en-US", {
+              $
+              {totalPaid.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -137,7 +142,8 @@ export default function ClientDetailPage({
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-orange-600">
-              ${outstanding.toLocaleString("en-US", {
+              $
+              {outstanding.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -164,14 +170,18 @@ export default function ClientDetailPage({
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Phone</p>
-                  <p className="text-sm text-muted-foreground">{client.phone}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {client.phone}
+                  </p>
                 </div>
               </div>
             )}
             {client.company && (
               <div>
                 <p className="text-sm font-medium">Company</p>
-                <p className="text-sm text-muted-foreground">{client.company}</p>
+                <p className="text-sm text-muted-foreground">
+                  {client.company}
+                </p>
               </div>
             )}
             {client.taxId && (
@@ -204,7 +214,9 @@ export default function ClientDetailPage({
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No address provided</p>
+              <p className="text-sm text-muted-foreground">
+                No address provided
+              </p>
             )}
           </CardContent>
         </Card>
@@ -227,7 +239,8 @@ export default function ClientDetailPage({
         <CardHeader>
           <CardTitle>Invoice History</CardTitle>
           <CardDescription>
-            {clientInvoices.length} invoice{clientInvoices.length !== 1 ? "s" : ""}
+            {clientInvoices.length} invoice
+            {clientInvoices.length !== 1 ? "s" : ""}
           </CardDescription>
         </CardHeader>
         <CardContent>
