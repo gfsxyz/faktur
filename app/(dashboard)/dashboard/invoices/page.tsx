@@ -28,23 +28,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FileText, Plus, MoreHorizontal, Eye, Pencil, Trash } from "lucide-react";
-
-const statusColors = {
-  draft: "secondary",
-  sent: "default",
-  paid: "default",
-  overdue: "destructive",
-  cancelled: "secondary",
-} as const;
-
-const statusLabels = {
-  draft: "Draft",
-  sent: "Sent",
-  paid: "Paid",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
-};
+import {
+  FileText,
+  Plus,
+  MoreHorizontal,
+  Eye,
+  Pencil,
+  Trash,
+} from "lucide-react";
+import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 
 export default function InvoicesPage() {
   const { data: invoices, isLoading } = trpc.invoices.list.useQuery();
@@ -151,9 +143,14 @@ export default function InvoicesPage() {
             </TableHeader>
             <TableBody>
               {invoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell className="font-medium">
-                    {invoice.invoiceNumber}
+                <TableRow key={invoice.id} className="group">
+                  <TableCell className="font-bold">
+                    <Link
+                      href={`/dashboard/invoices/${invoice.id}`}
+                      className="cursor-pointer group-hover:underline underline-offset-4"
+                    >
+                      {invoice.invoiceNumber}
+                    </Link>
                   </TableCell>
                   <TableCell>
                     <div>
@@ -177,8 +174,14 @@ export default function InvoicesPage() {
                     })}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusColors[invoice.status]}>
-                      {statusLabels[invoice.status]}
+                    <Badge
+                      style={{
+                        backgroundColor: STATUS_COLORS[invoice.status],
+                        color: "white",
+                        border: "none",
+                      }}
+                    >
+                      {STATUS_LABELS[invoice.status]}
                     </Badge>
                   </TableCell>
                   <TableCell>

@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
@@ -22,23 +22,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Pencil, Download } from "lucide-react";
-
-const statusColors = {
-  draft: "secondary",
-  sent: "default",
-  paid: "default",
-  overdue: "destructive",
-  cancelled: "secondary",
-} as const;
-
-const statusLabels = {
-  draft: "Draft",
-  sent: "Sent",
-  paid: "Paid",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
-};
+import { ArrowLeft, Pencil, Download, Loader2 } from "lucide-react";
+import { generateInvoicePDF } from "@/lib/pdf/generate-invoice-pdf";
+import { RecordPaymentDialog } from "@/components/payments/record-payment-dialog";
+import { PaymentHistory } from "@/components/payments/payment-history";
+import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 
 export default function InvoiceDetailPage({
   params,
@@ -47,6 +35,62 @@ export default function InvoiceDetailPage({
 }) {
   const { id } = use(params);
   const { data: invoice, isLoading } = trpc.invoices.getById.useQuery({ id });
+  const { data: businessProfile } = trpc.businessProfile.get.useQuery();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    if (!invoice) return;
+
+    setIsDownloading(true);
+    try {
+      await generateInvoicePDF({
+        invoiceNumber: invoice.invoiceNumber,
+        status: invoice.status,
+        issueDate: invoice.issueDate,
+        dueDate: invoice.dueDate,
+        currency: invoice.currency,
+        subtotal: invoice.subtotal,
+        taxRate: invoice.taxRate,
+        taxAmount: invoice.taxAmount,
+        discountAmount: invoice.discountAmount || 0,
+        total: invoice.total,
+        notes: invoice.notes,
+        terms: invoice.terms,
+        client: invoice.client
+          ? {
+              name: invoice.client.name,
+              email: invoice.client.email,
+              phone: invoice.client.phone,
+              company: invoice.client.company,
+            }
+          : null,
+        items: invoice.items?.map((item) => ({
+          description: item.description,
+          quantity: item.quantity,
+          rate: item.rate,
+          amount: item.amount,
+        })) || [],
+        businessProfile: businessProfile
+          ? {
+              companyName: businessProfile.companyName,
+              email: businessProfile.email,
+              phone: businessProfile.phone,
+              address: businessProfile.address,
+              city: businessProfile.city,
+              state: businessProfile.state,
+              country: businessProfile.country,
+              postalCode: businessProfile.postalCode,
+              taxId: businessProfile.taxId,
+              logo: businessProfile.logo,
+            }
+          : null,
+      });
+    } catch (error) {
+      console.error("Failed to generate PDF:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -87,9 +131,25 @@ export default function InvoiceDetailPage({
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Download PDF
+          {invoice.status !== "paid" && invoice.status !== "cancelled" && (
+            <RecordPaymentDialog
+              invoiceId={id}
+              remainingBalance={invoice.total - invoice.amountPaid}
+              currency={invoice.currency}
+            />
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            {isDownloading ? "Generating..." : "Download PDF"}
           </Button>
           <Button size="sm" asChild>
             <Link href={`/dashboard/invoices/${id}/edit`}>
@@ -106,8 +166,14 @@ export default function InvoiceDetailPage({
             <CardTitle className="text-sm font-medium">Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <Badge variant={statusColors[invoice.status]}>
-              {statusLabels[invoice.status]}
+            <Badge
+              style={{
+                backgroundColor: STATUS_COLORS[invoice.status],
+                color: "white",
+                border: "none",
+              }}
+            >
+              {STATUS_LABELS[invoice.status]}
             </Badge>
           </CardContent>
         </Card>
@@ -285,6 +351,9 @@ export default function InvoiceDetailPage({
           )}
         </div>
       )}
+
+      {/* Payment History */}
+      <PaymentHistory invoiceId={id} currency={invoice.currency} />
     </div>
   );
 }
