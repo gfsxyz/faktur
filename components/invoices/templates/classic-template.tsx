@@ -1,30 +1,15 @@
-// This file is kept for backward compatibility
-// All templates have been moved to the templates directory
-export { ClassicTemplate as InvoicePDFTemplate } from "./templates/classic-template";
-export type { InvoiceData } from "./types";
-
-// Re-export all templates for convenience
-export { ClassicTemplate } from "./templates/classic-template";
-export { NewYorkTemplate } from "./templates/newyork-template";
-export { MinimalistTemplate } from "./templates/minimalist-template";
-export { ElegantTemplate } from "./templates/elegant-template";
-export { SakuraTemplate } from "./templates/sakura-template";
-export { CorporateTemplate } from "./templates/corporate-template";
-
-// Legacy code below - kept for reference but not used
-/*
 import {
   Document,
   Page,
   Text,
   View,
   StyleSheet,
-  Font,
   Image,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
+import { InvoiceData } from "../types";
 
-// Define styles for the PDF
+// Classic Template - Traditional professional design
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -212,44 +197,6 @@ const styles = StyleSheet.create({
   },
 });
 
-interface InvoiceData {
-  invoiceNumber: string;
-  status: string;
-  issueDate: Date | string;
-  dueDate: Date | string;
-  subtotal: number;
-  taxRate: number;
-  taxAmount: number;
-  discountAmount: number;
-  total: number;
-  notes?: string | null;
-  terms?: string | null;
-  client: {
-    name: string;
-    email: string;
-    phone?: string | null;
-    company?: string | null;
-  } | null;
-  items: Array<{
-    description: string;
-    quantity: number;
-    rate: number;
-    amount: number;
-  }>;
-  businessProfile?: {
-    companyName: string;
-    email: string;
-    phone?: string | null;
-    address?: string | null;
-    city?: string | null;
-    state?: string | null;
-    country?: string | null;
-    postalCode?: string | null;
-    taxId?: string | null;
-    logo?: string | null;
-  } | null;
-}
-
 const getStatusColor = (status: string) => {
   switch (status) {
     case "paid":
@@ -265,7 +212,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
+export function ClassicTemplate({ invoice }: { invoice: InvoiceData }) {
   const statusColors = getStatusColor(invoice.status);
 
   return (
@@ -461,4 +408,3 @@ export function InvoicePDFTemplate({ invoice }: { invoice: InvoiceData }) {
     </Document>
   );
 }
-*/

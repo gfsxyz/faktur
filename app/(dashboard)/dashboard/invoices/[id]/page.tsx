@@ -22,11 +22,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Pencil, Download, Loader2 } from "lucide-react";
+import { ArrowLeft, Pencil, Download, Loader2, ChevronDown } from "lucide-react";
 import { generateInvoicePDF } from "@/lib/pdf/generate-invoice-pdf";
 import { RecordPaymentDialog } from "@/components/payments/record-payment-dialog";
 import { PaymentHistory } from "@/components/payments/payment-history";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
+import { TEMPLATE_OPTIONS, TemplateType } from "@/components/invoices/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function InvoiceDetailPage({
   params,
@@ -38,7 +45,7 @@ export default function InvoiceDetailPage({
   const { data: businessProfile } = trpc.businessProfile.get.useQuery();
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = async (template: TemplateType) => {
     if (!invoice) return;
 
     setIsDownloading(true);
@@ -83,7 +90,7 @@ export default function InvoiceDetailPage({
               logo: businessProfile.logo,
             }
           : null,
-      });
+      }, template);
     } catch (error) {
       console.error("Failed to generate PDF:", error);
     } finally {
@@ -136,19 +143,39 @@ export default function InvoiceDetailPage({
               remainingBalance={invoice.total - invoice.amountPaid}
             />
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadPDF}
-            disabled={isDownloading}
-          >
-            {isDownloading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
-            {isDownloading ? "Generating..." : "Download PDF"}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isDownloading}
+              >
+                {isDownloading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                {isDownloading ? "Generating..." : "Download PDF"}
+                {!isDownloading && <ChevronDown className="ml-2 h-4 w-4" />}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {TEMPLATE_OPTIONS.map((template) => (
+                <DropdownMenuItem
+                  key={template.value}
+                  onClick={() => handleDownloadPDF(template.value)}
+                  className="cursor-pointer"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium">{template.label}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {template.description}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button size="sm" asChild>
             <Link href={`/dashboard/invoices/${id}/edit`}>
               <Pencil className="mr-2 h-4 w-4" />

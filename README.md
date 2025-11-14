@@ -88,7 +88,7 @@ A modern, full-stack invoice management application built with Next.js 16, featu
   - [x] Professional invoice templates
   - [x] Download invoices as PDF
   - [x] Business profile integration in PDFs
-  - [ ] Multiple template designs
+  - [x] Multiple template designs
 
 - [x] **Payment Tracking**
   - [x] Mark invoices as paid (full or partial)
