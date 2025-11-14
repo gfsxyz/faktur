@@ -38,20 +38,24 @@ A modern, full-stack invoice management application built with Next.js 16, featu
 - [x] Route structure for dashboard sections
 
 ### Phase 2: Core Features (Week 3-4)
-- [ ] **Invoice Management**
-  - [ ] Create, edit, delete invoices
-  - [ ] Auto-generated invoice numbers
-  - [ ] Line items with quantities, rates, and totals
-  - [ ] Tax calculations (VAT/GST/Sales Tax)
-  - [ ] Discounts (percentage or fixed amount)
-  - [ ] Invoice status tracking (Draft, Sent, Paid, Overdue, Cancelled)
-  - [ ] Issue date and due date management
+- [x] **Invoice Management**
+  - [x] Create, edit, delete invoices
+  - [x] Auto-generated invoice numbers
+  - [x] Line items with quantities, rates, and totals
+  - [x] Tax calculations (VAT/GST/Sales Tax)
+  - [x] Discounts (percentage or fixed amount)
+  - [x] Invoice status tracking (Draft, Sent, Paid, Overdue, Cancelled)
+  - [x] Issue date and due date management
+  - [x] Invoice list with filtering and actions
+  - [x] Invoice detail/view page
+  - [x] tRPC API integration
 
-- [ ] **Client Management**
-  - [ ] Client database with contact information
-  - [ ] Client billing addresses
-  - [ ] Quick client selection
-  - [ ] Client history tracking
+- [x] **Client Management (API Layer)**
+  - [x] Client CRUD tRPC routers
+  - [ ] Client UI pages
+  - [ ] Client billing addresses UI
+  - [ ] Quick client selection (completed in invoice form)
+  - [ ] Client history tracking UI
 
 - [ ] **Business Profile**
   - [ ] Company information management
