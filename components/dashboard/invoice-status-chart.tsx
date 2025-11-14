@@ -3,13 +3,15 @@
 import { trpc } from "@/lib/trpc/client";
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { useMemo } from "react";
 
-const STATUS_COLORS: Record<string, string> = {
-  draft: "hsl(var(--chart-3))",
-  sent: "hsl(var(--chart-2))",
-  paid: "hsl(var(--chart-1))",
-  overdue: "hsl(var(--destructive))",
-  cancelled: "hsl(var(--chart-5))",
+// Status color mapping to CSS variables
+const STATUS_COLOR_VARS: Record<string, string> = {
+  paid: "--chart-1",
+  sent: "--chart-2",
+  draft: "--chart-3",
+  overdue: "--destructive",
+  cancelled: "--chart-5",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -22,6 +24,22 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function InvoiceStatusChart() {
   const { data, isLoading } = trpc.dashboard.getStatusDistribution.useQuery();
+
+  // Compute colors from CSS variables
+  const statusColors = useMemo(() => {
+    const colors: Record<string, string> = {};
+    Object.entries(STATUS_COLOR_VARS).forEach(([status, varName]) => {
+      if (typeof window !== "undefined") {
+        const value = getComputedStyle(document.documentElement)
+          .getPropertyValue(varName)
+          .trim();
+        colors[status] = value ? `oklch(${value})` : "#94a3b8";
+      } else {
+        colors[status] = "#94a3b8";
+      }
+    });
+    return colors;
+  }, []);
 
   if (isLoading || !data) {
     return (
@@ -104,7 +122,7 @@ export function InvoiceStatusChart() {
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={STATUS_COLORS[entry.status] || "hsl(var(--chart-4))"}
+                  fill={statusColors[entry.status] || "oklch(0.6777 0.0624 64.7755)"}
                 />
               ))}
             </Pie>
