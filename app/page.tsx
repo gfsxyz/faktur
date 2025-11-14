@@ -1,9 +1,22 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
+import { useSession } from "@/lib/auth/client";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const { data, isLoading, error } = trpc.health.ping.useQuery();
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, router]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-24">
@@ -73,10 +86,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <p className="text-sm text-muted-foreground">
             Week 1 Foundation Complete ✨
           </p>
+          <div className="flex gap-4 justify-center">
+            <Button asChild>
+              <Link href="/login">Sign In</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/signup">Create Account</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

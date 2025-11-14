@@ -28,10 +28,11 @@ A modern, full-stack invoice management application built with Next.js 16, featu
 ### Phase 1: Foundation (Week 1-2)
 - [x] Project setup with Next.js 16 + Tailwind + shadcn/ui
 - [x] Global theming system with dark mode support
-- [ ] Database setup (SQLite + Drizzle ORM)
-- [ ] tRPC integration for type-safe API
-- [ ] Authentication system (Better Auth)
-- [ ] Install required shadcn/ui components
+- [x] Database setup (SQLite + Drizzle ORM)
+- [x] tRPC integration for type-safe API
+- [x] Authentication system (Better Auth)
+- [x] Install required shadcn/ui components
+- [x] Create authentication pages (login/signup)
 
 ### Phase 2: Core Features (Week 3-4)
 - [ ] **Invoice Management**
