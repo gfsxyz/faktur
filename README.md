@@ -1,36 +1,280 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Faktur - Modern Invoice Management System
 
-## Getting Started
+A modern, full-stack invoice management application built with Next.js 16, featuring a beautiful UI powered by shadcn/ui and Tailwind CSS.
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Frontend
+- **Framework:** Next.js 16.0.3 (App Router)
+- **UI Library:** React 19.2.0
+- **Styling:** Tailwind CSS v4
+- **Component Library:** shadcn/ui (New York style)
+- **Icons:** Lucide React
+- **Type Safety:** TypeScript (strict mode)
+
+### Backend & Database
+- **Database:** SQLite (file-based, ideal for small projects)
+- **ORM:** Drizzle ORM (lightweight and type-safe)
+- **API Layer:** tRPC (end-to-end type-safe APIs)
+- **Authentication:** Better Auth (modern auth for Next.js)
+
+### Development Tools
+- **Package Manager:** pnpm
+- **Code Quality:** TypeScript, ESLint
+- **Version Control:** Git
+
+## 📋 Features Roadmap
+
+### Phase 1: Foundation (Week 1-2)
+- [x] Project setup with Next.js 16 + Tailwind + shadcn/ui
+- [x] Global theming system with dark mode support
+- [ ] Database setup (SQLite + Drizzle ORM)
+- [ ] tRPC integration for type-safe API
+- [ ] Authentication system (Better Auth)
+- [ ] Install required shadcn/ui components
+
+### Phase 2: Core Features (Week 3-4)
+- [ ] **Invoice Management**
+  - [ ] Create, edit, delete invoices
+  - [ ] Auto-generated invoice numbers
+  - [ ] Line items with quantities, rates, and totals
+  - [ ] Tax calculations (VAT/GST/Sales Tax)
+  - [ ] Discounts (percentage or fixed amount)
+  - [ ] Invoice status tracking (Draft, Sent, Paid, Overdue, Cancelled)
+  - [ ] Issue date and due date management
+
+- [ ] **Client Management**
+  - [ ] Client database with contact information
+  - [ ] Client billing addresses
+  - [ ] Quick client selection
+  - [ ] Client history tracking
+
+- [ ] **Business Profile**
+  - [ ] Company information management
+  - [ ] Logo upload (stored in codebase)
+  - [ ] Business address and tax ID
+  - [ ] Bank account details
+
+### Phase 3: Enhanced Features (Week 5-6)
+- [ ] **Dashboard & Analytics**
+  - [ ] Revenue overview (monthly, yearly)
+  - [ ] Outstanding invoices tracking
+  - [ ] Paid vs unpaid visualizations
+  - [ ] Recent activity feed
+  - [ ] Charts and trends (using recharts)
+
+- [ ] **PDF Generation**
+  - [ ] Professional invoice templates
+  - [ ] Download invoices as PDF
+  - [ ] Multiple template designs
+
+- [ ] **Payment Tracking**
+  - [ ] Mark invoices as paid (full or partial)
+  - [ ] Payment date and method recording
+  - [ ] Overdue status tracking
+
+### Phase 4: Advanced Features (Future)
+- [ ] Recurring invoices (weekly, monthly, yearly)
+- [ ] Estimates/Quotes with conversion to invoices
+- [ ] Multi-currency support
+- [ ] Expense tracking
+- [ ] Payment gateway integration (Stripe, PayPal)
+- [ ] Email notifications (using Resend)
+- [ ] Client portal for invoice viewing
+- [ ] Multi-user/team support with roles
+- [ ] Advanced reporting (tax reports, P&L)
+- [ ] Localization (multiple languages)
+
+## 🏗️ Project Structure
+
+```
+faktur/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Authentication routes
+│   ├── (dashboard)/       # Protected dashboard routes
+│   ├── api/               # API routes (tRPC)
+│   ├── globals.css        # Global styles & theme
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── invoices/         # Invoice-related components
+│   ├── clients/          # Client management components
+│   └── dashboard/        # Dashboard components
+├── lib/                  # Utility functions
+│   ├── db/              # Database schema & client
+│   ├── trpc/            # tRPC setup
+│   └── utils.ts         # Helper functions
+├── server/              # Server-side code
+│   ├── routers/        # tRPC routers
+│   └── auth.ts         # Better Auth configuration
+├── public/             # Static assets
+└── drizzle/           # Database migrations
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
+- Node.js 18+ installed
+- pnpm package manager
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Installation
 
-## Learn More
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd faktur
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Run database migrations:
+```bash
+pnpm db:push
+```
 
-## Deploy on Vercel
+5. Start the development server:
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Key Dependencies
+
+```json
+{
+  "dependencies": {
+    "next": "16.0.3",
+    "react": "19.2.0",
+    "tailwindcss": "^4.0.0",
+    "drizzle-orm": "Database ORM",
+    "better-auth": "Authentication",
+    "@trpc/server": "tRPC server",
+    "@trpc/client": "tRPC client",
+    "@trpc/react-query": "tRPC React integration",
+    "@tanstack/react-query": "Data fetching",
+    "react-hook-form": "Form handling",
+    "zod": "Schema validation",
+    "@react-pdf/renderer": "PDF generation",
+    "recharts": "Charts & analytics",
+    "date-fns": "Date utilities",
+    "lucide-react": "Icons"
+  }
+}
+```
+
+## 🎨 Design System
+
+The application uses a comprehensive design system with:
+- **Color Scheme:** OKLCH color space for precise colors
+- **Dark Mode:** Full dark mode support
+- **Typography:** Geist Sans & Geist Mono fonts
+- **Components:** shadcn/ui component library
+- **Spacing:** Consistent spacing scale
+- **Shadows:** Professional shadow system (2xs to 2xl)
+
+## 📝 Development Workflow
+
+### Database Commands
+```bash
+pnpm db:push         # Push schema changes
+pnpm db:studio       # Open Drizzle Studio
+pnpm db:generate     # Generate migrations
+```
+
+### Development
+```bash
+pnpm dev             # Start dev server
+pnpm build           # Build for production
+pnpm start           # Start production server
+pnpm lint            # Run ESLint
+```
+
+## 🔐 Authentication
+
+This project uses **Better Auth** for authentication, providing:
+- Session management
+- Social auth providers
+- Email/password authentication
+- Secure token handling
+- Type-safe auth utilities
+
+## 🗄️ Database Schema
+
+### Core Models
+- **Users:** Authentication and user profiles
+- **Invoices:** Invoice records with status tracking
+- **InvoiceItems:** Line items for each invoice
+- **Clients:** Client/customer information
+- **BusinessProfile:** Company information and settings
+- **Payments:** Payment records linked to invoices
+
+## 🚦 Implementation Steps
+
+Follow these steps for consistent development:
+
+1. **Week 1: Database & Auth Setup**
+   - Install Drizzle ORM and SQLite
+   - Create database schema
+   - Set up tRPC with Next.js
+   - Configure Better Auth
+   - Create authentication pages
+
+2. **Week 2: Component Foundation**
+   - Install required shadcn/ui components
+   - Create layout components
+   - Build navigation and sidebar
+   - Set up form components
+
+3. **Week 3: Invoice CRUD**
+   - Create invoice form
+   - Implement invoice list with filtering
+   - Add invoice detail view
+   - Build invoice status management
+
+4. **Week 4: Client Management**
+   - Client CRUD operations
+   - Client selection components
+   - Client history view
+
+5. **Week 5: Dashboard & Analytics**
+   - Revenue dashboard
+   - Charts and visualizations
+   - Activity feed
+   - Statistics cards
+
+6. **Week 6: PDF & Polish**
+   - PDF template design
+   - PDF generation
+   - Email templates (future)
+   - UI polish and testing
+
+## 🤝 Contributing
+
+This is a personal project, but suggestions and feedback are welcome!
+
+## 📄 License
+
+MIT License - feel free to use this project for learning or as a template.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org) - The React framework
+- [shadcn/ui](https://ui.shadcn.com) - Beautiful component library
+- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS
+- [Drizzle ORM](https://orm.drizzle.team) - TypeScript ORM
+- [tRPC](https://trpc.io) - End-to-end type safety
+- [Better Auth](https://better-auth.com) - Modern authentication
+
+---
+
+**Built with ❤️ using Next.js 16 and modern web technologies**
