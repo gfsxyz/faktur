@@ -13,6 +13,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+// Chart color - hardcoded from globals.css
+const CHART_COLOR = "oklch(0.6886 0.1136 122.0697)"; // --chart-1 (green)
+
 export function RevenueChart() {
   const [months, setMonths] = useState(6);
   const { data, isLoading } = trpc.dashboard.getRevenueOverTime.useQuery({
@@ -78,8 +81,8 @@ export function RevenueChart() {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0} />
+                <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -104,7 +107,7 @@ export function RevenueChart() {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="hsl(var(--chart-1))"
+              stroke={CHART_COLOR}
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorRevenue)"

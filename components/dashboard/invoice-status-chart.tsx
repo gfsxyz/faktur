@@ -3,15 +3,14 @@
 import { trpc } from "@/lib/trpc/client";
 import { Card } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { useMemo } from "react";
 
-// Status color mapping to CSS variables
-const STATUS_COLOR_VARS: Record<string, string> = {
-  paid: "--chart-1",
-  sent: "--chart-2",
-  draft: "--chart-3",
-  overdue: "--destructive",
-  cancelled: "--chart-5",
+// Status colors - hardcoded from globals.css
+const STATUS_COLORS: Record<string, string> = {
+  paid: "oklch(0.6886 0.1136 122.0697)",    // --chart-1 (green)
+  sent: "oklch(0.6655 0.0902 172.4808)",    // --chart-2 (blue)
+  draft: "oklch(0.5416 0.111 21.4177)",     // --chart-3 (orange)
+  overdue: "oklch(0.5471 0.1438 32.9149)",  // --destructive (red)
+  cancelled: "oklch(0.5532 0.145 320.2471)", // --chart-5 (purple)
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -24,22 +23,6 @@ const STATUS_LABELS: Record<string, string> = {
 
 export function InvoiceStatusChart() {
   const { data, isLoading } = trpc.dashboard.getStatusDistribution.useQuery();
-
-  // Compute colors from CSS variables
-  const statusColors = useMemo(() => {
-    const colors: Record<string, string> = {};
-    Object.entries(STATUS_COLOR_VARS).forEach(([status, varName]) => {
-      if (typeof window !== "undefined") {
-        const value = getComputedStyle(document.documentElement)
-          .getPropertyValue(varName)
-          .trim();
-        colors[status] = value ? `oklch(${value})` : "#94a3b8";
-      } else {
-        colors[status] = "#94a3b8";
-      }
-    });
-    return colors;
-  }, []);
 
   if (isLoading || !data) {
     return (
@@ -122,7 +105,7 @@ export function InvoiceStatusChart() {
               {chartData.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={statusColors[entry.status] || "oklch(0.6777 0.0624 64.7755)"}
+                  fill={STATUS_COLORS[entry.status] || "oklch(0.6679 0.0888 94.524)"}
                 />
               ))}
             </Pie>
