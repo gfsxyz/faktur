@@ -120,7 +120,7 @@ export function RecordPaymentDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <DollarSign className="mr-2 h-4 w-4" />
+          <DollarSign />
           Record Payment
         </Button>
       </DialogTrigger>
@@ -181,18 +181,23 @@ export function RecordPaymentDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Payment Method *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      {Object.entries(PAYMENT_METHOD_LABELS).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -207,7 +212,10 @@ export function RecordPaymentDialog({
                 <FormItem>
                   <FormLabel>Reference Number</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Transaction ID, check number, etc." />
+                    <Input
+                      {...field}
+                      placeholder="Transaction ID, check number, etc."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

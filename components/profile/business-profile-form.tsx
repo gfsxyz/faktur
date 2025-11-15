@@ -9,15 +9,20 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Upload, X, ImageIcon } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Loader2, X, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const businessProfileSchema = z.object({
@@ -232,12 +237,19 @@ export function BusinessProfileForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto max-w-4xl space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto max-w-4xl space-y-8"
+      >
         {/* Logo Upload */}
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">Company Logo</CardTitle>
-            <CardDescription className="text-xs">Upload your company logo (max 2MB)</CardDescription>
+            <CardTitle className="text-base font-medium">
+              Company Logo
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Upload your company logo (max 2MB)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {logoPreview ? (
@@ -276,22 +288,26 @@ export function BusinessProfileForm() {
                 className={`
                   group relative cursor-pointer overflow-hidden rounded-lg border-2 border-dashed
                   transition-all duration-200
-                  ${isDragging
-                    ? 'border-primary bg-primary/5 scale-[1.02]'
-                    : 'border-border/50 bg-muted/20 hover:border-primary/50 hover:bg-muted/40'
+                  ${
+                    isDragging
+                      ? "border-primary bg-primary/5 scale-[1.02]"
+                      : "border-border/50 bg-muted/20 hover:border-primary/50 hover:bg-muted/40"
                   }
-                  ${uploadingLogo ? 'pointer-events-none opacity-60' : ''}
+                  ${uploadingLogo ? "pointer-events-none opacity-60" : ""}
                 `}
               >
                 <div className="flex flex-col items-center justify-center px-6 py-10">
-                  <div className={`
+                  <div
+                    className={`
                     mb-4 flex h-16 w-16 items-center justify-center rounded-full
                     transition-all duration-200
-                    ${isDragging
-                      ? 'bg-primary/20 text-primary scale-110'
-                      : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary group-hover:animate-pulse'
+                    ${
+                      isDragging
+                        ? "bg-primary/20 text-primary scale-110"
+                        : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary group-hover:animate-pulse"
                     }
-                  `}>
+                  `}
+                  >
                     {uploadingLogo ? (
                       <Loader2 className="h-8 w-8 animate-spin" />
                     ) : (
@@ -302,14 +318,13 @@ export function BusinessProfileForm() {
                   <div className="text-center">
                     <p className="mb-1 text-sm font-medium">
                       {uploadingLogo
-                        ? 'Uploading...'
+                        ? "Uploading..."
                         : isDragging
-                        ? 'Drop your logo here'
-                        : 'Click to upload or drag and drop'
-                      }
+                        ? "Drop your logo here"
+                        : "Click to upload or drag and drop"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      PNG, JPG or WEBP (max 2MB)
+                      Square ratio recommended. PNG, JPG or WEBP (max 2MB)
                     </p>
                   </div>
 
@@ -330,8 +345,12 @@ export function BusinessProfileForm() {
         {/* Company Information */}
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">Company Information</CardTitle>
-            <CardDescription className="text-xs">Basic information about your business</CardDescription>
+            <CardTitle className="text-base font-medium">
+              Company Information
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Basic information about your business
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
@@ -340,9 +359,15 @@ export function BusinessProfileForm() {
                 name="companyName"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Company Name *</FormLabel>
+                    <FormLabel className="text-sm font-medium">
+                      Company Name *
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Acme Inc." className="h-10" />
+                      <Input
+                        {...field}
+                        placeholder="Acme Inc."
+                        className="h-10"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -353,9 +378,16 @@ export function BusinessProfileForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Email *</FormLabel>
+                    <FormLabel className="text-sm font-medium">
+                      Email *
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" placeholder="info@company.com" className="h-10" />
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="info@company.com"
+                        className="h-10"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -371,7 +403,11 @@ export function BusinessProfileForm() {
                   <FormItem className="space-y-2">
                     <FormLabel className="text-sm font-medium">Phone</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="+1 (555) 123-4567" className="h-10" />
+                      <Input
+                        {...field}
+                        placeholder="+1 (555) 123-4567"
+                        className="h-10"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -382,9 +418,15 @@ export function BusinessProfileForm() {
                 name="website"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Website</FormLabel>
+                    <FormLabel className="text-sm font-medium">
+                      Website
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="https://company.com" className="h-10" />
+                      <Input
+                        {...field}
+                        placeholder="https://company.com"
+                        className="h-10"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -397,8 +439,12 @@ export function BusinessProfileForm() {
         {/* Address */}
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">Business Address</CardTitle>
-            <CardDescription className="text-xs">Your company's physical address</CardDescription>
+            <CardTitle className="text-base font-medium">
+              Business Address
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Your company's physical address
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -478,8 +524,12 @@ export function BusinessProfileForm() {
         {/* Tax Information */}
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">Tax Information</CardTitle>
-            <CardDescription className="text-xs">Tax identification numbers</CardDescription>
+            <CardTitle className="text-base font-medium">
+              Tax Information
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Tax identification numbers
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
@@ -516,7 +566,9 @@ export function BusinessProfileForm() {
         {/* Bank Information */}
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">Bank Information</CardTitle>
+            <CardTitle className="text-base font-medium">
+              Bank Information
+            </CardTitle>
             <CardDescription className="text-xs">
               Bank account details for payment instructions on invoices
             </CardDescription>
@@ -586,7 +638,10 @@ export function BusinessProfileForm() {
                   <FormItem>
                     <FormLabel>IBAN</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="GB29 NWBK 6016 1331 9268 19" />
+                      <Input
+                        {...field}
+                        placeholder="GB29 NWBK 6016 1331 9268 19"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -597,7 +652,11 @@ export function BusinessProfileForm() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" className="h-10 font-medium" disabled={upsertMutation.isPending}>
+          <Button
+            type="submit"
+            className="h-10 font-medium"
+            disabled={upsertMutation.isPending}
+          >
             {upsertMutation.isPending && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}

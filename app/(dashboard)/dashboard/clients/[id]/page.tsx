@@ -4,13 +4,7 @@ import { use } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { trpc } from "@/lib/trpc/client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -21,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeft, Pencil, Mail, Phone, MapPin } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 
 const statusColors = {
   draft: "secondary",
@@ -103,118 +97,150 @@ export default function ClientDetailPage({
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">
-              Total Invoiced
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              $
-              {totalInvoiced.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex flex-wrap items-center gap-6 rounded-lg border border-border/50 bg-card p-4 shadow-sm">
+        {/* Total Invoiced */}
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-medium text-muted-foreground">
+            Total Invoiced
+          </p>
+          <p className="text-sm font-bold">
+            $
+            {totalInvoiced.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Paid</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-green-600">
-              $
-              {totalPaid.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
-          </CardContent>
-        </Card>
+        {/* Divider */}
+        <div className="hidden h-6 w-px bg-border/50 md:block" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-orange-600">
-              $
-              {outstanding.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </p>
-          </CardContent>
-        </Card>
+        {/* Paid */}
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-medium text-muted-foreground">Paid</p>
+          <p className="text-sm font-bold text-green-600">
+            $
+            {totalPaid.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
+
+        {/* Divider */}
+        <div className="hidden h-6 w-px bg-border/50 md:block" />
+
+        {/* Outstanding */}
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-medium text-muted-foreground">
+            Outstanding
+          </p>
+          <p className="text-sm font-bold text-orange-600">
+            $
+            {outstanding.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="space-y-1 pb-3">
+            <CardTitle className="text-sm font-semibold">
+              Contact Information
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Email</p>
-                <p className="text-sm text-muted-foreground">{client.email}</p>
-              </div>
-            </div>
-            {client.phone && (
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-sm font-medium">Phone</p>
-                  <p className="text-sm text-muted-foreground">
-                    {client.phone}
-                  </p>
-                </div>
-              </div>
-            )}
-            {client.company && (
-              <div>
-                <p className="text-sm font-medium">Company</p>
-                <p className="text-sm text-muted-foreground">
-                  {client.company}
+          <CardContent className="p-0 px-6 pb-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Email
                 </p>
+                <p className="text-sm font-medium">{client.email}</p>
               </div>
-            )}
-            {client.taxId && (
-              <div>
-                <p className="text-sm font-medium">Tax ID</p>
-                <p className="text-sm text-muted-foreground">{client.taxId}</p>
-              </div>
-            )}
+              {client.phone && (
+                <>
+                  <div className="border-t border-border/30" />
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Phone
+                    </p>
+                    <p className="text-sm font-medium">{client.phone}</p>
+                  </div>
+                </>
+              )}
+              {client.company && (
+                <>
+                  <div className="border-t border-border/30" />
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Company
+                    </p>
+                    <p className="text-sm font-medium">{client.company}</p>
+                  </div>
+                </>
+              )}
+              {client.taxId && (
+                <>
+                  <div className="border-t border-border/30" />
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Tax ID
+                    </p>
+                    <p className="text-sm font-medium">{client.taxId}</p>
+                  </div>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Address</CardTitle>
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="space-y-1 pb-3">
+            <CardTitle className="text-sm font-semibold">Address</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 px-6 pb-4">
             {client.address || client.city || client.country ? (
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <div className="text-sm text-muted-foreground">
-                  {client.address && <p>{client.address}</p>}
-                  {(client.city || client.state || client.postalCode) && (
-                    <p>
-                      {[client.city, client.state, client.postalCode]
-                        .filter(Boolean)
-                        .join(", ")}
+              <div className="space-y-3">
+                {client.address && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Street
+                      </p>
+                      <p className="text-sm font-medium">{client.address}</p>
+                    </div>
+                    <div className="border-t border-border/30" />
+                  </>
+                )}
+                {(client.city || client.state || client.postalCode) && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        City
+                      </p>
+                      <p className="text-sm font-medium">
+                        {[client.city, client.state, client.postalCode]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </p>
+                    </div>
+                    <div className="border-t border-border/30" />
+                  </>
+                )}
+                {client.country && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Country
                     </p>
-                  )}
-                  {client.country && <p>{client.country}</p>}
-                </div>
+                    <p className="text-sm font-medium">{client.country}</p>
+                  </div>
+                )}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 No address provided
               </p>
             )}
@@ -223,27 +249,29 @@ export default function ClientDetailPage({
       </div>
 
       {client.notes && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Notes</CardTitle>
+        <Card className="border-border/50 shadow-sm gap-0">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-sm font-semibold">Notes</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+          <CardContent className="p-0 px-6 text-muted-foreground">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">
               {client.notes}
             </p>
           </CardContent>
         </Card>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoice History</CardTitle>
-          <CardDescription>
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="space-y-1 pb-3">
+          <CardTitle className="text-sm font-semibold">
+            Invoice History
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
             {clientInvoices.length} invoice
             {clientInvoices.length !== 1 ? "s" : ""}
-          </CardDescription>
+          </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {clientInvoices.length === 0 ? (
             <p className="text-center py-8 text-sm text-muted-foreground">
               No invoices for this client yet
@@ -251,39 +279,52 @@ export default function ClientDetailPage({
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice #</TableHead>
-                  <TableHead>Issue Date</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
+                <TableRow className="border-b border-border/30 hover:bg-transparent">
+                  <TableHead className="h-10 px-6 text-xs font-medium text-muted-foreground">
+                    Invoice #
+                  </TableHead>
+                  <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                    Issue Date
+                  </TableHead>
+                  <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                    Due Date
+                  </TableHead>
+                  <TableHead className="h-10 px-4 text-right text-xs font-medium text-muted-foreground">
+                    Amount
+                  </TableHead>
+                  <TableHead className="h-10 px-6 text-right text-xs font-medium text-muted-foreground">
+                    Status
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {clientInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">
+                  <TableRow
+                    key={invoice.id}
+                    className="border-b border-border/20 hover:bg-muted/50"
+                  >
+                    <TableCell className="px-6 py-3 font-mono text-sm">
                       <Link
                         href={`/dashboard/invoices/${invoice.id}`}
-                        className="hover:underline"
+                        className="hover:underline text-primary"
                       >
                         {invoice.invoiceNumber}
                       </Link>
                     </TableCell>
-                    <TableCell>
-                      {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
+                    <TableCell className="px-4 py-3 text-sm">
+                      {format(new Date(invoice.issueDate), "MMM dd")}
                     </TableCell>
-                    <TableCell>
-                      {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                    <TableCell className="px-4 py-3 text-sm">
+                      {format(new Date(invoice.dueDate), "MMM dd")}
                     </TableCell>
-                    <TableCell>
-                      USD{" "}
+                    <TableCell className="px-4 py-3 text-right font-mono text-sm font-medium">
+                      $
                       {invoice.total.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-6 py-3 text-right">
                       <Badge variant={statusColors[invoice.status]}>
                         {statusLabels[invoice.status]}
                       </Badge>
