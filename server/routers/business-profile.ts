@@ -103,7 +103,7 @@ export const businessProfileRouter = createTRPCRouter({
           .values({
             userId: ctx.userId,
             companyName: "My Company",
-            email: ctx.user?.email || "info@company.com",
+            email: ctx.session?.user?.email || "info@company.com",
             logo: input.logo,
           })
           .returning();
