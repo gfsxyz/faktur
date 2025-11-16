@@ -31,7 +31,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, FileText, Calendar, DollarSign, Info, UserPlus, AlertCircle } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  FileText,
+  Calendar,
+  DollarSign,
+  Info,
+  UserPlus,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 const invoiceItemSchema = z.object({
@@ -93,9 +102,7 @@ const invoiceFormSchema = z
       .min(0, "Tax rate cannot be negative")
       .max(100, "Tax rate cannot exceed 100%")
       .finite("Tax rate must be a valid finite number"),
-    discountType: z
-      .enum(["percentage", "fixed", "none"])
-      .optional(),
+    discountType: z.enum(["percentage", "fixed", "none"]).optional(),
     discountValue: z
       .number()
       .min(0, "Discount value cannot be negative")
@@ -163,10 +170,10 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
   const [total, setTotal] = useState(0);
 
   const { data: clients } = trpc.clients.list.useQuery();
-  const { data: nextInvoiceNumber } = trpc.invoices.getNextInvoiceNumber.useQuery(
-    undefined,
-    { enabled: !invoiceId }
-  );
+  const { data: nextInvoiceNumber } =
+    trpc.invoices.getNextInvoiceNumber.useQuery(undefined, {
+      enabled: !invoiceId,
+    });
 
   const createMutation = trpc.invoices.create.useMutation({
     onSuccess: () => {
@@ -249,7 +256,8 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
       ...data,
       issueDate: new Date(data.issueDate),
       dueDate: new Date(data.dueDate),
-      discountType: data.discountType === "none" ? undefined : data.discountType,
+      discountType:
+        data.discountType === "none" ? undefined : data.discountType,
     };
 
     if (invoiceId) {
@@ -264,7 +272,10 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto max-w-5xl space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto max-w-5xl space-y-8"
+      >
         {/* Header Section */}
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -291,30 +302,31 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
             {/* Basic Details */}
             <Card className="border-border/50 shadow-sm">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-base font-medium">Basic Details</CardTitle>
+                <CardTitle className="text-base font-medium">
+                  Basic Details
+                </CardTitle>
                 <CardDescription className="text-xs">
                   Invoice information and client details
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-2">
                 {/* Empty clients alert */}
                 {clients && clients.length === 0 && (
-                  <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950">
-                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-800 dark:text-amber-200">
-                      You don't have any clients yet. Please{" "}
+                  <div className="flex items-center gap-2 rounded-md border border-border bg-card/50 px-3 py-2 -mt-4">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-primary" />
+                    <p className="text-sm text-muted-foreground">
+                      Add a client first to create an invoice{" "}
                       <Link
                         href="/dashboard/clients/new"
-                        className="font-medium underline underline-offset-4 hover:text-amber-900 dark:hover:text-amber-100"
+                        className="font-medium text-primary hover:text-primary/80 transition-colors hover:underline"
                       >
-                        create a client
-                      </Link>{" "}
-                      before creating an invoice.
+                        Add client
+                      </Link>
                     </p>
                   </div>
                 )}
 
-                <div className="grid gap-6 sm:grid-cols-2">
+                <div className="grid gap-6 sm:grid-cols-2 pt-4">
                   <FormField
                     control={form.control}
                     name="clientId"
@@ -322,15 +334,6 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                       <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">
                           Client *
-                          {clients && clients.length > 0 && (
-                            <Link
-                              href="/dashboard/clients/new"
-                              className="ml-2 text-xs font-normal text-muted-foreground hover:text-primary"
-                            >
-                              <UserPlus className="inline-block h-3 w-3 mr-1" />
-                              Add new
-                            </Link>
-                          )}
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
@@ -339,11 +342,13 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                         >
                           <FormControl>
                             <SelectTrigger className="h-10">
-                              <SelectValue placeholder={
-                                !clients || clients.length === 0
-                                  ? "No clients available"
-                                  : "Select a client"
-                              } />
+                              <SelectValue
+                                placeholder={
+                                  !clients || clients.length === 0
+                                    ? "No clients available"
+                                    : "Select a client"
+                                }
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -357,6 +362,17 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                                 )}
                               </SelectItem>
                             ))}
+                            {clients && clients.length > 0 && (
+                              <>
+                                <Separator className="my-0.5" />
+                                <Link
+                                  href="/dashboard/clients/new"
+                                  className="flex items-center gap-2 px-2 py-1.5 text-sm text-primary hover:opacity-90 cursor-pointer opacity-70"
+                                >
+                                  Add new client
+                                </Link>
+                              </>
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -369,8 +385,13 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     name="status"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-medium">Status</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormLabel className="text-sm font-medium">
+                          Status
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="h-10">
                               <SelectValue />
@@ -390,7 +411,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   />
                 </div>
 
-                <Separator className="bg-border/50" />
+                {/* <Separator className="bg-border/50" /> */}
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   <FormField
@@ -435,7 +456,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
               <CardHeader className="space-y-1 pb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-base font-medium">Line Items</CardTitle>
+                    <CardTitle className="text-base font-medium">
+                      Line Items
+                    </CardTitle>
                     <CardDescription className="text-xs">
                       Add products or services to this invoice
                     </CardDescription>
@@ -505,8 +528,13 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                                   className="h-9 bg-background"
                                   {...field}
                                   onChange={(e) => {
-                                    field.onChange(parseFloat(e.target.value) || 0);
-                                    setTimeout(() => updateItemAmount(index), 0);
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0
+                                    );
+                                    setTimeout(
+                                      () => updateItemAmount(index),
+                                      0
+                                    );
                                   }}
                                 />
                               </FormControl>
@@ -532,8 +560,13 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                                   className="h-9 bg-background"
                                   {...field}
                                   onChange={(e) => {
-                                    field.onChange(parseFloat(e.target.value) || 0);
-                                    setTimeout(() => updateItemAmount(index), 0);
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0
+                                    );
+                                    setTimeout(
+                                      () => updateItemAmount(index),
+                                      0
+                                    );
                                   }}
                                 />
                               </FormControl>
@@ -590,7 +623,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
             {/* Tax & Discounts */}
             <Card className="border-border/50 shadow-sm">
               <CardHeader className="space-y-1 pb-4">
-                <CardTitle className="text-base font-medium">Tax & Discounts</CardTitle>
+                <CardTitle className="text-base font-medium">
+                  Tax & Discounts
+                </CardTitle>
                 <CardDescription className="text-xs">
                   Configure tax rates and discounts
                 </CardDescription>
@@ -602,7 +637,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     name="taxRate"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-medium">Tax Rate (%)</FormLabel>
+                        <FormLabel className="text-sm font-medium">
+                          Tax Rate (%)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -611,7 +648,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                             max="100"
                             className="h-10"
                             {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value) || 0)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -624,8 +663,13 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     name="discountType"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-medium">Discount Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormLabel className="text-sm font-medium">
+                          Discount Type
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="h-10">
                               <SelectValue placeholder="None" />
@@ -633,7 +677,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="none">None</SelectItem>
-                            <SelectItem value="percentage">Percentage</SelectItem>
+                            <SelectItem value="percentage">
+                              Percentage
+                            </SelectItem>
                             <SelectItem value="fixed">Fixed Amount</SelectItem>
                           </SelectContent>
                         </Select>
@@ -647,7 +693,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     name="discountValue"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-medium">Discount Value</FormLabel>
+                        <FormLabel className="text-sm font-medium">
+                          Discount Value
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -655,7 +703,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                             min="0"
                             className="h-10"
                             {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value) || 0)
+                            }
                             disabled={!form.watch("discountType")}
                           />
                         </FormControl>
@@ -684,7 +734,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   name="notes"
                   render={({ field }) => (
                     <FormItem className="space-y-1">
-                      <FormLabel className="text-sm font-medium">Notes</FormLabel>
+                      <FormLabel className="text-sm font-medium">
+                        Notes
+                      </FormLabel>
                       <FormControl>
                         <textarea
                           className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
@@ -702,7 +754,9 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   name="terms"
                   render={({ field }) => (
                     <FormItem className="space-y-1">
-                      <FormLabel className="text-sm font-medium">Terms & Conditions</FormLabel>
+                      <FormLabel className="text-sm font-medium">
+                        Terms & Conditions
+                      </FormLabel>
                       <FormControl>
                         <textarea
                           className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
