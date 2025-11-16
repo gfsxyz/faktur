@@ -17,7 +17,7 @@ export default function Home() {
   }, [session, router]);
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen">
       <AnimatedGrid />
       <HeroSection />
     </div>

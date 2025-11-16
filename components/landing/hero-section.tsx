@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, CheckCircle2, TrendingUp, FileText } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  TrendingUp,
+  FileText,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function HeroSection() {
@@ -57,7 +63,6 @@ export function HeroSection() {
           ease: "easeInOut",
         }}
       />
-
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -79,11 +84,11 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-5xl font-bold tracking-tight sm:text-7xl bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent"
+            className="text-5xl font-bold tracking-tight sm:text-7xl bg-linear-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent"
           >
             Invoice Management
             <br />
-            <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
               Made Simple
             </span>
           </motion.h1>
@@ -94,8 +99,9 @@ export function HeroSection() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-6 text-lg leading-8 text-muted-foreground"
           >
-            Create, manage, and track invoices with ease. Faktur provides a modern,
-            streamlined approach to invoice management for businesses of all sizes.
+            Create, manage, and track invoices with ease. Faktur provides a
+            modern, streamlined approach to invoice management for businesses of
+            all sizes.
           </motion.p>
 
           <motion.div
@@ -113,15 +119,6 @@ export function HeroSection() {
             <Button asChild variant="outline" size="lg">
               <Link href="/login">Sign In</Link>
             </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-8 text-sm text-muted-foreground"
-          >
-            No credit card required • Free forever plan available
           </motion.div>
         </motion.div>
 
@@ -143,18 +140,27 @@ export function HeroSection() {
                 transition={{
                   opacity: { delay: 0.8, duration: 0.5 },
                   scale: { delay: 0.8, duration: 0.5 },
-                  y: { delay: 1, duration: 3, repeat: Infinity, ease: "easeInOut" }
+                  y: {
+                    delay: 1,
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
                 }}
                 className="bg-card/90 backdrop-blur-sm border border-primary/50 shadow-lg rounded-lg p-4 w-64"
               >
                 <div className="flex items-center gap-2 mb-3">
                   <CheckCircle2 className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium text-primary">Payment Received</span>
+                  <span className="text-sm font-medium text-primary">
+                    Payment Received
+                  </span>
                 </div>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <div className="flex justify-between">
                     <span>Invoice #INV-2847</span>
-                    <span className="font-semibold text-foreground">$2,450</span>
+                    <span className="font-semibold text-foreground">
+                      $2,450
+                    </span>
                   </div>
                   <div className="h-1 bg-primary/20 rounded-full overflow-hidden">
                     <motion.div
@@ -183,7 +189,12 @@ export function HeroSection() {
                 transition={{
                   opacity: { delay: 1, duration: 0.5 },
                   scale: { delay: 1, duration: 0.5 },
-                  y: { delay: 1.2, duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  y: {
+                    delay: 1.2,
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
                 }}
                 className="bg-card/90 backdrop-blur-sm border shadow-lg rounded-lg p-4 w-56"
               >
@@ -193,7 +204,9 @@ export function HeroSection() {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold text-primary">+24%</span>
-                  <span className="text-xs text-muted-foreground">this month</span>
+                  <span className="text-xs text-muted-foreground">
+                    this month
+                  </span>
                 </div>
               </motion.div>
             </motion.div>
@@ -213,7 +226,12 @@ export function HeroSection() {
                 transition={{
                   opacity: { delay: 1.2, duration: 0.5 },
                   scale: { delay: 1.2, duration: 0.5 },
-                  y: { delay: 1.4, duration: 5, repeat: Infinity, ease: "easeInOut" }
+                  y: {
+                    delay: 1.4,
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
                 }}
                 className="bg-card/90 backdrop-blur-sm border border-accent/50 shadow-lg rounded-lg p-3 w-48"
               >
@@ -222,7 +240,9 @@ export function HeroSection() {
                     <FileText className="h-4 w-4 text-accent-foreground" />
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground">Draft Invoice</div>
+                    <div className="text-xs text-muted-foreground">
+                      Draft Invoice
+                    </div>
                     <div className="text-sm font-semibold">$1,250</div>
                   </div>
                 </div>
@@ -236,9 +256,9 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
-          className="mt-16 sm:mt-24 relative z-10"
+          className="mt-10 sm:mt-16 relative z-10"
         >
-          <div className="relative rounded-xl bg-gradient-to-b from-primary/10 to-transparent p-1">
+          <div className="relative rounded-xl bg-linear-to-b from-primary/10 to-transparent p-1">
             <div className="rounded-lg bg-background p-8 shadow-2xl ring-1 ring-border">
               <div className="flex items-center gap-2 mb-6">
                 <div className="h-3 w-3 rounded-full bg-red-500" />
