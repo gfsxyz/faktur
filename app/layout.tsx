@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const fontFamily = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -20,10 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontFamily.className} antialiased`}>
+      <body
+        className={`font-sans antialiased ${fontFamily.className} ${fontFamily.style}`}
+      >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

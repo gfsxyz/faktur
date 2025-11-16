@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signIn, signUp } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
-import { Github } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -122,6 +122,13 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
           <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
           <CardDescription>
             Choose your preferred sign-up method
@@ -130,16 +137,16 @@ export default function SignupPage() {
         <CardContent className="space-y-3">
           <Button
             type="button"
-            className="w-full bg-secondary-foreground hover:bg-secondary-foreground/90"
+            className="w-full bg-primary hover:bg-primary/90"
             onClick={handleGoogleSignUp}
             disabled={isLoading}
           >
             <Image src="/g.webp" alt="Google" width={16} height={16} />
-            Signup with Google
+            Sign up with Google
           </Button>
           <Button
             type="button"
-            className="w-full bg-secondary-foreground hover:bg-secondary-foreground/90"
+            className="w-full bg-primary hover:bg-primary/90"
             onClick={handleGithubSignUp}
             disabled={isLoading}
           >
@@ -149,7 +156,7 @@ export default function SignupPage() {
               width={16}
               height={16}
             />
-            Signup with GitHub
+            Sign up with GitHub
           </Button>
 
           {!showEmailSignup ? (
@@ -157,7 +164,7 @@ export default function SignupPage() {
               <Button
                 type="button"
                 className="w-full"
-                variant={"secondary"}
+                variant={"outline"}
                 onClick={() => setShowEmailSignup(true)}
               >
                 Or sign in with email
