@@ -31,7 +31,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, FileText, Calendar, DollarSign, Info } from "lucide-react";
+import { Plus, Trash2, FileText, Calendar, DollarSign, Info, UserPlus, AlertCircle } from "lucide-react";
+import Link from "next/link";
 
 const invoiceItemSchema = z.object({
   description: z
@@ -296,23 +297,64 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Empty clients alert */}
+                {clients && clients.length === 0 && (
+                  <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950">
+                    <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      You don't have any clients yet. Please{" "}
+                      <Link
+                        href="/dashboard/clients/new"
+                        className="font-medium underline underline-offset-4 hover:text-amber-900 dark:hover:text-amber-100"
+                      >
+                        create a client
+                      </Link>{" "}
+                      before creating an invoice.
+                    </p>
+                  </div>
+                )}
+
                 <div className="grid gap-6 sm:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="clientId"
                     render={({ field }) => (
                       <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-medium">Client</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormLabel className="text-sm font-medium">
+                          Client *
+                          {clients && clients.length > 0 && (
+                            <Link
+                              href="/dashboard/clients/new"
+                              className="ml-2 text-xs font-normal text-muted-foreground hover:text-primary"
+                            >
+                              <UserPlus className="inline-block h-3 w-3 mr-1" />
+                              Add new
+                            </Link>
+                          )}
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={!clients || clients.length === 0}
+                        >
                           <FormControl>
                             <SelectTrigger className="h-10">
-                              <SelectValue placeholder="Select a client" />
+                              <SelectValue placeholder={
+                                !clients || clients.length === 0
+                                  ? "No clients available"
+                                  : "Select a client"
+                              } />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {clients?.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
                                 {client.name}
+                                {client.company && (
+                                  <span className="text-xs text-muted-foreground ml-2">
+                                    ({client.company})
+                                  </span>
+                                )}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -734,10 +776,17 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                 <Button
                   type="submit"
                   className="w-full h-10 font-medium"
-                  disabled={createMutation.isPending || updateMutation.isPending}
+                  disabled={
+                    createMutation.isPending ||
+                    updateMutation.isPending ||
+                    !clients ||
+                    clients.length === 0
+                  }
                 >
                   {createMutation.isPending || updateMutation.isPending
                     ? "Saving..."
+                    : !clients || clients.length === 0
+                    ? "Create Client First"
                     : invoiceId
                     ? "Update Invoice"
                     : "Create Invoice"}
