@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, CheckCircle2, DollarSign, TrendingUp, FileText } from "lucide-react";
+import { ArrowRight, Sparkles, CheckCircle2, TrendingUp, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function HeroSection() {
@@ -46,7 +46,7 @@ export function HeroSection() {
         }}
       />
       <motion.div
-        className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+        className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.3, 0.2],
@@ -145,20 +145,20 @@ export function HeroSection() {
                   scale: { delay: 0.8, duration: 0.5 },
                   y: { delay: 1, duration: 3, repeat: Infinity, ease: "easeInOut" }
                 }}
-                className="bg-card/90 backdrop-blur-sm border border-green-500/50 shadow-lg rounded-lg p-4 w-64"
+                className="bg-card/90 backdrop-blur-sm border border-primary/50 shadow-lg rounded-lg p-4 w-64"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  <span className="text-sm font-medium text-green-600">Payment Received</span>
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium text-primary">Payment Received</span>
                 </div>
                 <div className="space-y-1 text-xs text-muted-foreground">
                   <div className="flex justify-between">
                     <span>Invoice #INV-2847</span>
                     <span className="font-semibold text-foreground">$2,450</span>
                   </div>
-                  <div className="h-1 bg-green-500/20 rounded-full overflow-hidden">
+                  <div className="h-1 bg-primary/20 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-green-500"
+                      className="h-full bg-primary"
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
                       transition={{ delay: 1.2, duration: 1.5 }}
@@ -198,43 +198,6 @@ export function HeroSection() {
               </motion.div>
             </motion.div>
 
-            {/* Floating Dollar Sign - Top Left */}
-            <motion.div
-              animate={{
-                y: [0, -20, 0],
-                rotate: [0, 10, 0]
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute top-32 left-1/4 hidden lg:block"
-            >
-              <div className="bg-primary/10 rounded-full p-3">
-                <DollarSign className="h-8 w-8 text-primary" />
-              </div>
-            </motion.div>
-
-            {/* Floating Document Icon - Right */}
-            <motion.div
-              animate={{
-                y: [0, 15, 0],
-                rotate: [0, -10, 0]
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1
-              }}
-              className="absolute top-60 right-1/4 hidden lg:block"
-            >
-              <div className="bg-blue-500/10 rounded-full p-3">
-                <FileText className="h-8 w-8 text-blue-500" />
-              </div>
-            </motion.div>
-
             {/* Floating Invoice Card - Bottom Left */}
             <motion.div
               style={{ x: x1, y: y1 }}
@@ -252,11 +215,11 @@ export function HeroSection() {
                   scale: { delay: 1.2, duration: 0.5 },
                   y: { delay: 1.4, duration: 5, repeat: Infinity, ease: "easeInOut" }
                 }}
-                className="bg-card/90 backdrop-blur-sm border border-orange-500/50 shadow-lg rounded-lg p-3 w-48"
+                className="bg-card/90 backdrop-blur-sm border border-accent/50 shadow-lg rounded-lg p-3 w-48"
               >
                 <div className="flex items-center gap-2">
-                  <div className="bg-orange-500/10 rounded p-1.5">
-                    <FileText className="h-4 w-4 text-orange-500" />
+                  <div className="bg-accent/10 rounded p-1.5">
+                    <FileText className="h-4 w-4 text-accent-foreground" />
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Draft Invoice</div>
