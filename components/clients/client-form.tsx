@@ -30,7 +30,10 @@ const clientFormSchema = z.object({
     .min(1, "Client name is required")
     .min(2, "Name must be at least 2 characters long")
     .max(100, "Name must not exceed 100 characters")
-    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Name can only contain letters, spaces, hyphens, and apostrophes"
+    )
     .transform((val) => val.trim()),
   email: z
     .string()
@@ -43,7 +46,7 @@ const clientFormSchema = z.object({
     .string()
     .refine(
       (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
-      "Phone number can only contain digits, spaces, hyphens, plus signs, and parentheses"
+      "Phone number invalid"
     )
     .transform((val) => val.trim())
     .optional()
@@ -190,7 +193,10 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto max-w-4xl space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto max-w-4xl space-y-8"
+      >
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="flex items-center gap-2 text-base font-medium">
@@ -207,10 +213,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Name *</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Name *
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" className="h-10" {...field} />
+                      <Input
+                        placeholder="John Doe"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -221,8 +233,10 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Email *</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Email *
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -242,10 +256,14 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="+1 (555) 123-4567" className="h-10" {...field} />
+                      <Input
+                        placeholder="+1 (555) 123-4567"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,10 +274,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="company"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Company</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Company
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Acme Corp" className="h-10" {...field} />
+                      <Input
+                        placeholder="Acme Corp"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -299,7 +323,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="city"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="space-y-1">
                     <FormLabel>City</FormLabel>
                     <FormControl>
                       <Input placeholder="New York" {...field} />
@@ -313,7 +337,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="state"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="space-y-1">
                     <FormLabel>State/Province</FormLabel>
                     <FormControl>
                       <Input placeholder="NY" {...field} />
@@ -371,10 +395,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
               control={form.control}
               name="taxId"
               render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-medium">Tax ID / VAT Number</FormLabel>
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm font-medium">
+                    Tax ID / VAT Number
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Tax identification number" className="h-10" {...field} />
+                    <Input
+                      placeholder="Tax identification number"
+                      className="h-10"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -385,7 +415,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
               control={form.control}
               name="notes"
               render={({ field }) => (
-                <FormItem className="space-y-2">
+                <FormItem className="space-y-1">
                   <FormLabel className="text-sm font-medium">Notes</FormLabel>
                   <FormControl>
                     <textarea

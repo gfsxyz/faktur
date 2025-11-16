@@ -185,13 +185,13 @@ export default function SignupPage() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-0.5"
                 >
                   <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Name</FormLabel>
                         <FormControl>
                           <Input placeholder="John Doe" {...field} />
@@ -204,7 +204,7 @@ export default function SignupPage() {
                     control={form.control}
                     name="email"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
@@ -221,7 +221,7 @@ export default function SignupPage() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <Input
@@ -238,7 +238,7 @@ export default function SignupPage() {
                     control={form.control}
                     name="confirmPassword"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
                           <Input

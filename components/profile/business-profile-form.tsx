@@ -43,7 +43,7 @@ const businessProfileSchema = z.object({
     .string()
     .refine(
       (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
-      "Phone number can only contain digits, spaces, hyphens, plus signs, and parentheses"
+      "Phone number invalid"
     )
     .refine(
       (val) => !val || val.length >= 7,
@@ -219,7 +219,9 @@ const businessProfileSchema = z.object({
       (val) => !val || val.length <= 34,
       "IBAN must not exceed 34 characters"
     )
-    .transform((val) => (val ? val.trim().replace(/\s/g, "").toUpperCase() : ""))
+    .transform((val) =>
+      val ? val.trim().replace(/\s/g, "").toUpperCase() : ""
+    )
     .optional()
     .or(z.literal("")),
 });
@@ -538,7 +540,7 @@ export function BusinessProfileForm() {
                 control={form.control}
                 name="companyName"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">
                       Company Name *
                     </FormLabel>
@@ -557,7 +559,7 @@ export function BusinessProfileForm() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">
                       Email *
                     </FormLabel>
@@ -580,7 +582,7 @@ export function BusinessProfileForm() {
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">Phone</FormLabel>
                     <FormControl>
                       <Input
@@ -597,7 +599,7 @@ export function BusinessProfileForm() {
                 control={form.control}
                 name="website"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">
                       Website
                     </FormLabel>

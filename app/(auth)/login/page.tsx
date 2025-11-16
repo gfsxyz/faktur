@@ -174,13 +174,13 @@ export default function LoginPage() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className="space-y-0.5"
                 >
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
@@ -197,7 +197,7 @@ export default function LoginPage() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="space-y-1">
                         <FormLabel>Password</FormLabel>
                         <FormControl>
                           <Input

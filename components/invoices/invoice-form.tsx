@@ -265,7 +265,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto max-w-5xl space-y-8">
         {/* Header Section */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <FileText className="h-5 w-5" />
@@ -301,7 +301,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="clientId"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">Client</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -326,7 +326,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="status"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">Status</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -355,7 +355,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="issueDate"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="flex items-center gap-2 text-sm font-medium">
                           <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                           Issue Date
@@ -372,7 +372,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="dueDate"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="flex items-center gap-2 text-sm font-medium">
                           <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                           Due Date
@@ -430,7 +430,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                           control={form.control}
                           name={`items.${index}.description`}
                           render={({ field }) => (
-                            <FormItem className="space-y-2">
+                            <FormItem className="space-y-1">
                               <FormLabel className="text-xs font-medium text-muted-foreground">
                                 Description
                               </FormLabel>
@@ -452,7 +452,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                           control={form.control}
                           name={`items.${index}.quantity`}
                           render={({ field }) => (
-                            <FormItem className="space-y-2">
+                            <FormItem className="space-y-1">
                               <FormLabel className="text-xs font-medium text-muted-foreground">
                                 Quantity
                               </FormLabel>
@@ -479,7 +479,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                           control={form.control}
                           name={`items.${index}.rate`}
                           render={({ field }) => (
-                            <FormItem className="space-y-2">
+                            <FormItem className="space-y-1">
                               <FormLabel className="text-xs font-medium text-muted-foreground">
                                 Rate
                               </FormLabel>
@@ -506,7 +506,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                           control={form.control}
                           name={`items.${index}.amount`}
                           render={({ field }) => (
-                            <FormItem className="space-y-2">
+                            <FormItem className="space-y-1">
                               <FormLabel className="text-xs font-medium text-muted-foreground">
                                 Amount
                               </FormLabel>
@@ -559,7 +559,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="taxRate"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">Tax Rate (%)</FormLabel>
                         <FormControl>
                           <Input
@@ -581,7 +581,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="discountType"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">Discount Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
@@ -604,7 +604,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                     control={form.control}
                     name="discountValue"
                     render={({ field }) => (
-                      <FormItem className="space-y-2">
+                      <FormItem className="space-y-1">
                         <FormLabel className="text-sm font-medium">Discount Value</FormLabel>
                         <FormControl>
                           <Input
@@ -641,7 +641,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   control={form.control}
                   name="notes"
                   render={({ field }) => (
-                    <FormItem className="space-y-2">
+                    <FormItem className="space-y-1">
                       <FormLabel className="text-sm font-medium">Notes</FormLabel>
                       <FormControl>
                         <textarea
@@ -659,7 +659,7 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
                   control={form.control}
                   name="terms"
                   render={({ field }) => (
-                    <FormItem className="space-y-2">
+                    <FormItem className="space-y-1">
                       <FormLabel className="text-sm font-medium">Terms & Conditions</FormLabel>
                       <FormControl>
                         <textarea
