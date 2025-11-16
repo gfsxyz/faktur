@@ -34,8 +34,37 @@ import { Input } from "@/components/ui/input";
 import { Loader2, DollarSign } from "lucide-react";
 
 const paymentSchema = z.object({
-  amount: z.string().min(1, "Amount is required"),
-  paymentDate: z.string().min(1, "Payment date is required"),
+  amount: z
+    .string()
+    .min(1, "Payment amount is required")
+    .refine((val) => !isNaN(parseFloat(val)), "Amount must be a valid number")
+    .refine(
+      (val) => parseFloat(val) > 0,
+      "Payment amount must be greater than 0"
+    )
+    .refine(
+      (val) => parseFloat(val) <= 100000000,
+      "Payment amount must not exceed 100,000,000"
+    )
+    .refine(
+      (val) => /^\d+(\.\d{1,2})?$/.test(val),
+      "Amount can have at most 2 decimal places"
+    ),
+  paymentDate: z
+    .string()
+    .min(1, "Payment date is required")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Payment date must be in YYYY-MM-DD format")
+    .refine((date) => {
+      const d = new Date(date);
+      return !isNaN(d.getTime());
+    }, "Payment date must be a valid date")
+    .refine((date) => {
+      const d = new Date(date);
+      const minDate = new Date("2000-01-01");
+      const maxDate = new Date();
+      maxDate.setDate(maxDate.getDate() + 1); // Allow today and earlier
+      return d >= minDate && d <= maxDate;
+    }, "Payment date must be between 2000 and today"),
   paymentMethod: z.enum([
     "cash",
     "check",
@@ -45,8 +74,24 @@ const paymentSchema = z.object({
     "stripe",
     "other",
   ]),
-  reference: z.string().optional(),
-  notes: z.string().optional(),
+  reference: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 100,
+      "Reference number must not exceed 100 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  notes: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 1000,
+      "Notes must not exceed 1000 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
 });
 
 type PaymentFormData = z.infer<typeof paymentSchema>;

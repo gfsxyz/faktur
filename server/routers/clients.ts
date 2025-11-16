@@ -5,17 +5,108 @@ import { clients } from "@/lib/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 const createClientSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  postalCode: z.string().optional(),
-  taxId: z.string().optional(),
-  notes: z.string().optional(),
+  name: z
+    .string()
+    .min(1, "Client name is required")
+    .min(2, "Name must be at least 2 characters long")
+    .max(100, "Name must not exceed 100 characters")
+    .regex(/^[a-zA-Z\s'-]+$/, "Name can only contain letters, spaces, hyphens, and apostrophes")
+    .transform((val) => val.trim()),
+  email: z
+    .string()
+    .min(1, "Email address is required")
+    .email("Please enter a valid email address (e.g., john@example.com)")
+    .max(255, "Email address must not exceed 255 characters")
+    .toLowerCase()
+    .transform((val) => val.trim()),
+  phone: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
+      "Phone number can only contain digits, spaces, hyphens, plus signs, and parentheses"
+    )
+    .transform((val) => val?.trim() || ""),
+  company: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 200,
+      "Company name must not exceed 200 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  address: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 500,
+      "Address must not exceed 500 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  city: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[a-zA-Z\s\-']+$/.test(val),
+      "City can only contain letters, spaces, hyphens, and apostrophes"
+    )
+    .refine(
+      (val) => !val || val.length <= 100,
+      "City name must not exceed 100 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  state: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 100,
+      "State/Province must not exceed 100 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  country: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[a-zA-Z\s\-']+$/.test(val),
+      "Country can only contain letters, spaces, hyphens, and apostrophes"
+    )
+    .refine(
+      (val) => !val || val.length <= 100,
+      "Country name must not exceed 100 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  postalCode: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || /^[A-Z0-9\s\-]+$/i.test(val),
+      "Postal code can only contain letters, numbers, spaces, and hyphens"
+    )
+    .refine(
+      (val) => !val || val.length <= 20,
+      "Postal code must not exceed 20 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  taxId: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length >= 5,
+      "Tax ID must be at least 5 characters if provided"
+    )
+    .refine(
+      (val) => !val || val.length <= 50,
+      "Tax ID must not exceed 50 characters"
+    )
+    .transform((val) => val?.trim() || ""),
+  notes: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 2000,
+      "Notes must not exceed 2000 characters"
+    )
+    .transform((val) => val?.trim() || ""),
 });
 
 export const clientsRouter = createTRPCRouter({

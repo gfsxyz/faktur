@@ -5,25 +5,97 @@ import { invoices, invoiceItems, clients } from "@/lib/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 
 const invoiceItemSchema = z.object({
-  description: z.string().min(1, "Description is required"),
-  quantity: z.number().min(0.01, "Quantity must be positive"),
-  rate: z.number().min(0, "Rate must be positive"),
-  amount: z.number(),
-  order: z.number().default(0),
+  description: z
+    .string()
+    .min(1, "Item description is required")
+    .min(3, "Description must be at least 3 characters long")
+    .max(500, "Description must not exceed 500 characters")
+    .transform((val) => val.trim()),
+  quantity: z
+    .number()
+    .min(0.01, "Quantity must be greater than 0")
+    .max(1000000, "Quantity must not exceed 1,000,000")
+    .finite("Quantity must be a valid finite number"),
+  rate: z
+    .number()
+    .min(0, "Rate cannot be negative")
+    .max(100000000, "Rate must not exceed 100,000,000")
+    .finite("Rate must be a valid finite number"),
+  amount: z
+    .number()
+    .min(0, "Amount cannot be negative")
+    .finite("Amount must be a valid finite number"),
+  order: z.number().int("Order must be a whole number").min(0).default(0),
 });
 
-const createInvoiceSchema = z.object({
-  clientId: z.string().min(1, "Client is required"),
-  issueDate: z.date(),
-  dueDate: z.date(),
-  status: z.enum(["draft", "sent", "paid", "overdue", "cancelled"]).default("draft"),
-  taxRate: z.number().min(0).max(100).default(0),
-  discountType: z.enum(["percentage", "fixed"]).optional(),
-  discountValue: z.number().min(0).default(0),
-  notes: z.string().optional(),
-  terms: z.string().optional(),
-  items: z.array(invoiceItemSchema).min(1, "At least one item is required"),
-});
+const createInvoiceSchema = z
+  .object({
+    clientId: z
+      .string()
+      .min(1, "Please select a client for this invoice")
+      .uuid("Invalid client selection"),
+    issueDate: z.date(),
+    dueDate: z.date(),
+    status: z
+      .enum(["draft", "sent", "paid", "overdue", "cancelled"])
+      .default("draft"),
+    taxRate: z
+      .number()
+      .min(0, "Tax rate cannot be negative")
+      .max(100, "Tax rate cannot exceed 100%")
+      .finite("Tax rate must be a valid finite number")
+      .default(0),
+    discountType: z
+      .enum(["percentage", "fixed"])
+      .optional(),
+    discountValue: z
+      .number()
+      .min(0, "Discount value cannot be negative")
+      .max(100000000, "Discount value must not exceed 100,000,000")
+      .finite("Discount value must be a valid finite number")
+      .default(0),
+    notes: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || val.length <= 5000,
+        "Notes must not exceed 5000 characters"
+      )
+      .transform((val) => val?.trim() || ""),
+    terms: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || val.length <= 5000,
+        "Terms must not exceed 5000 characters"
+      )
+      .transform((val) => val?.trim() || ""),
+    items: z
+      .array(invoiceItemSchema)
+      .min(1, "Invoice must have at least one line item")
+      .max(100, "Invoice cannot have more than 100 line items"),
+  })
+  .refine(
+    (data) => {
+      return data.dueDate >= data.issueDate;
+    },
+    {
+      message: "Due date must be on or after the issue date",
+      path: ["dueDate"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.discountType === "percentage" && data.discountValue > 0) {
+        return data.discountValue <= 100;
+      }
+      return true;
+    },
+    {
+      message: "Percentage discount cannot exceed 100%",
+      path: ["discountValue"],
+    }
+  );
 
 export const invoicesRouter = createTRPCRouter({
   // Get all invoices for the current user with client info

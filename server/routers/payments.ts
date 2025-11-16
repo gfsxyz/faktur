@@ -5,8 +5,15 @@ import { payments, invoices } from "@/lib/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 const createPaymentSchema = z.object({
-  invoiceId: z.string().min(1, "Invoice ID is required"),
-  amount: z.number().min(0.01, "Amount must be positive"),
+  invoiceId: z
+    .string()
+    .min(1, "Invoice ID is required")
+    .uuid("Invalid invoice ID"),
+  amount: z
+    .number()
+    .min(0.01, "Payment amount must be greater than 0")
+    .max(100000000, "Payment amount must not exceed 100,000,000")
+    .finite("Amount must be a valid finite number"),
   paymentDate: z.date(),
   paymentMethod: z.enum([
     "cash",
@@ -17,8 +24,22 @@ const createPaymentSchema = z.object({
     "stripe",
     "other",
   ]),
-  reference: z.string().optional(),
-  notes: z.string().optional(),
+  reference: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 100,
+      "Reference number must not exceed 100 characters"
+    )
+    .transform((val) => val?.trim() || undefined),
+  notes: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.length <= 1000,
+      "Notes must not exceed 1000 characters"
+    )
+    .transform((val) => val?.trim() || undefined),
 });
 
 export const paymentsRouter = createTRPCRouter({

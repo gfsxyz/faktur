@@ -25,17 +25,120 @@ import {
 import { User, MapPin, FileText } from "lucide-react";
 
 const clientFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  postalCode: z.string().optional(),
-  taxId: z.string().optional(),
-  notes: z.string().optional(),
+  name: z
+    .string()
+    .min(1, "Client name is required")
+    .min(2, "Name must be at least 2 characters long")
+    .max(100, "Name must not exceed 100 characters")
+    .regex(
+      /^[a-zA-Z\s'-]+$/,
+      "Name can only contain letters, spaces, hyphens, and apostrophes"
+    )
+    .transform((val) => val.trim()),
+  email: z
+    .string()
+    .min(1, "Email address is required")
+    .email("Please enter a valid email address (e.g., john@example.com)")
+    .max(255, "Email address must not exceed 255 characters")
+    .toLowerCase()
+    .transform((val) => val.trim()),
+  phone: z
+    .string()
+    .refine(
+      (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
+      "Phone number invalid"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  company: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 200,
+      "Company name must not exceed 200 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  address: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 500,
+      "Address must not exceed 500 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  city: z
+    .string()
+    .refine(
+      (val) => !val || /^[a-zA-Z\s\-']+$/.test(val),
+      "City can only contain letters, spaces, hyphens, and apostrophes"
+    )
+    .refine(
+      (val) => !val || val.length <= 100,
+      "City name must not exceed 100 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  state: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 100,
+      "State/Province must not exceed 100 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  country: z
+    .string()
+    .refine(
+      (val) => !val || /^[a-zA-Z\s\-']+$/.test(val),
+      "Country can only contain letters, spaces, hyphens, and apostrophes"
+    )
+    .refine(
+      (val) => !val || val.length <= 100,
+      "Country name must not exceed 100 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  postalCode: z
+    .string()
+    .refine(
+      (val) => !val || /^[A-Z0-9\s\-]+$/i.test(val),
+      "Postal code can only contain letters, numbers, spaces, and hyphens"
+    )
+    .refine(
+      (val) => !val || val.length <= 20,
+      "Postal code must not exceed 20 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  taxId: z
+    .string()
+    .refine(
+      (val) => !val || val.length >= 5,
+      "Tax ID must be at least 5 characters if provided"
+    )
+    .refine(
+      (val) => !val || val.length <= 50,
+      "Tax ID must not exceed 50 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
+  notes: z
+    .string()
+    .refine(
+      (val) => !val || val.length <= 2000,
+      "Notes must not exceed 2000 characters"
+    )
+    .transform((val) => val.trim())
+    .optional()
+    .or(z.literal("")),
 });
 
 type ClientFormValues = z.infer<typeof clientFormSchema>;
@@ -90,7 +193,10 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto max-w-4xl space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto max-w-4xl space-y-8"
+      >
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="flex items-center gap-2 text-base font-medium">
@@ -107,10 +213,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Name *</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Name *
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" className="h-10" {...field} />
+                      <Input
+                        placeholder="John Doe"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,8 +233,10 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Email *</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Email *
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="email"
@@ -142,10 +256,14 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
+                  <FormItem className="space-y-1">
                     <FormLabel className="text-sm font-medium">Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="+1 (555) 123-4567" className="h-10" {...field} />
+                      <Input
+                        placeholder="+1 (555) 123-4567"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,10 +274,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="company"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium">Company</FormLabel>
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Company
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="Acme Corp" className="h-10" {...field} />
+                      <Input
+                        placeholder="Acme Corp"
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -199,7 +323,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="city"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="space-y-1">
                     <FormLabel>City</FormLabel>
                     <FormControl>
                       <Input placeholder="New York" {...field} />
@@ -213,7 +337,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                 control={form.control}
                 name="state"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="space-y-1">
                     <FormLabel>State/Province</FormLabel>
                     <FormControl>
                       <Input placeholder="NY" {...field} />
@@ -271,10 +395,16 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
               control={form.control}
               name="taxId"
               render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-medium">Tax ID / VAT Number</FormLabel>
+                <FormItem className="space-y-1">
+                  <FormLabel className="text-sm font-medium">
+                    Tax ID / VAT Number
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Tax identification number" className="h-10" {...field} />
+                    <Input
+                      placeholder="Tax identification number"
+                      className="h-10"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -285,7 +415,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
               control={form.control}
               name="notes"
               render={({ field }) => (
-                <FormItem className="space-y-2">
+                <FormItem className="space-y-1">
                   <FormLabel className="text-sm font-medium">Notes</FormLabel>
                   <FormControl>
                     <textarea
