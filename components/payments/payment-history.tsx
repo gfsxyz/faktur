@@ -31,7 +31,10 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   other: "Other",
 };
 
-export function PaymentHistory({ invoiceId, currency = "USD" }: PaymentHistoryProps) {
+export function PaymentHistory({
+  invoiceId,
+  currency = "USD",
+}: PaymentHistoryProps) {
   const { data: payments, isLoading } = trpc.payments.getByInvoiceId.useQuery({
     invoiceId,
   });
@@ -40,7 +43,11 @@ export function PaymentHistory({ invoiceId, currency = "USD" }: PaymentHistoryPr
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (paymentId: string) => {
-    if (!confirm("Are you sure you want to delete this payment? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this payment? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
@@ -52,7 +59,7 @@ export function PaymentHistory({ invoiceId, currency = "USD" }: PaymentHistoryPr
       await utils.dashboard.getStats.invalidate();
       await utils.dashboard.getRecentActivity.invalidate();
     } catch (error) {
-      console.error("Failed to delete payment:", error);
+      console.error("Failed to delete the payment:", error);
     } finally {
       setDeletingId(null);
     }
