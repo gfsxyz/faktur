@@ -47,10 +47,11 @@ export function Sidebar() {
           className="flex items-center gap-2 font-semibold"
         >
           <Image
-            src={"/faktur-logo.png"}
+            src={"/faktur-logo.svg"}
             alt="Faktur logo"
             width={24}
             height={24}
+            className="dark:grayscale-100 dark:invert-100"
           />
           <span className="text-xl font-bold">Faktur</span>
         </Link>

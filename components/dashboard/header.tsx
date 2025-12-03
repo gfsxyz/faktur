@@ -19,7 +19,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, Moon, Sun, Monitor } from "lucide-react";
+import { LogOut, User, Moon, Sun, Monitor } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 
 export function Header() {
@@ -34,14 +34,14 @@ export function Header() {
   }
 
   const initials =
-    session?.user?.name
+    session?.data?.user?.name
       ?.split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase() || "U";
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-background px-6">
+    <header className="flex h-16 items-center justify-between border-b bg-card px-6">
       <div className="flex-1">
         {/* Future: Add search bar or breadcrumbs here */}
       </div>
@@ -55,11 +55,13 @@ export function Header() {
               <Avatar>
                 <AvatarImage
                   src={
-                    businessProfile?.logo || session?.user?.image || undefined
+                    businessProfile?.logo ||
+                    session?.data?.user?.image ||
+                    undefined
                   }
                   alt={
                     businessProfile?.companyName ||
-                    session?.user?.name ||
+                    session?.data?.user?.name ||
                     "user avatar"
                   }
                 />
@@ -71,10 +73,10 @@ export function Header() {
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {session?.user?.name}
+                  {session?.data?.user?.name}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {session?.user?.email}
+                  {session?.data?.user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
