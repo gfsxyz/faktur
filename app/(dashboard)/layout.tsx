@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useSessionSafe } from "@/lib/hooks/use-session-safe";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
+import LoadingLogo from "@/components/loading-logo";
 
 export default function DashboardLayout({
   children,
@@ -23,7 +24,7 @@ export default function DashboardLayout({
   if (isPending) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+        <LoadingLogo />
       </div>
     );
   }
