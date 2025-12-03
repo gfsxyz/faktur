@@ -34,7 +34,7 @@ export function Header() {
   }
 
   const initials =
-    session?.data?.user?.name
+    session?.user?.name
       ?.split(" ")
       .map((n: string) => n[0])
       .join("")
@@ -55,13 +55,11 @@ export function Header() {
               <Avatar>
                 <AvatarImage
                   src={
-                    businessProfile?.logo ||
-                    session?.data?.user?.image ||
-                    undefined
+                    businessProfile?.logo || session?.user?.image || undefined
                   }
                   alt={
                     businessProfile?.companyName ||
-                    session?.data?.user?.name ||
+                    session?.user?.name ||
                     "user avatar"
                   }
                 />
@@ -73,10 +71,10 @@ export function Header() {
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {session?.data?.user?.name}
+                  {session?.user?.name}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {session?.data?.user?.email}
+                  {session?.user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>

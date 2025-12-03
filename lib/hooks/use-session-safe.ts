@@ -26,14 +26,11 @@ export function useSessionSafe(): SessionData {
       try {
         const data = await authClient.getSession();
         setSession({
-          data: data,
+          ...data,
           isPending: false,
         });
       } catch {
-        setSession({
-          data: null,
-          isPending: false,
-        });
+        console.log("Session error!");
       }
     };
 
