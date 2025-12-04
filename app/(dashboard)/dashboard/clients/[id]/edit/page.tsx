@@ -54,8 +54,8 @@ export default function EditClientPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Client</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-lg font-bold tracking-tight">Edit Client</h1>
+        <p className="text-muted-foreground text-sm">
           Update information for {client.name}
         </p>
       </div>

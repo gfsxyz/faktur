@@ -22,7 +22,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { User, MapPin, FileText } from "lucide-react";
 
 const clientFormSchema = z.object({
   name: z
@@ -206,9 +205,8 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
         className="mx-auto space-y-8"
       >
         <Card>
-          <CardHeader className="space-y-1 pb-4">
+          <CardHeader className="gap-0">
             <CardTitle className="flex items-center gap-2 text-base font-medium">
-              <User className="h-4 w-4 text-muted-foreground" />
               Basic Information
             </CardTitle>
             <CardDescription className="text-xs">
@@ -302,9 +300,8 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
         </Card>
 
         <Card>
-          <CardHeader className="space-y-1 pb-4">
+          <CardHeader className="gap-0">
             <CardTitle className="flex items-center gap-2 text-base font-medium">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
               Address
             </CardTitle>
             <CardDescription className="text-xs">
@@ -389,9 +386,8 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
         </Card>
 
         <Card>
-          <CardHeader className="space-y-1 pb-4">
+          <CardHeader className="gap-0">
             <CardTitle className="flex items-center gap-2 text-base font-medium">
-              <FileText className="h-4 w-4 text-muted-foreground" />
               Additional Information
             </CardTitle>
             <CardDescription className="text-xs">
@@ -427,7 +423,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
                   <FormLabel className="text-sm font-medium">Notes</FormLabel>
                   <FormControl>
                     <textarea
-                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Additional notes about this client..."
                       value={field.value ?? ""}
                       onChange={field.onChange}
