@@ -227,6 +227,32 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
   const clientId = form.watch("clientId");
   const isClientSelected = clientId && clientId.trim() !== "";
 
+  // Load recent client from localStorage on mount (only for new invoices)
+  useEffect(() => {
+    if (!invoiceId && clients && clients.length > 0) {
+      const recentClientId = localStorage.getItem("recentClientId");
+      if (recentClientId) {
+        // Check if the client still exists in the list
+        const clientExists = clients.some(
+          (client) => client.id === recentClientId
+        );
+        if (clientExists && !defaultValues?.clientId) {
+          form.setValue("clientId", recentClientId);
+        } else if (!clientExists) {
+          // Clean up if client no longer exists
+          localStorage.removeItem("recentClientId");
+        }
+      }
+    }
+  }, [invoiceId, clients, form, defaultValues]);
+
+  // Save selected client to localStorage whenever it changes
+  useEffect(() => {
+    if (clientId && clientId.trim() !== "") {
+      localStorage.setItem("recentClientId", clientId);
+    }
+  }, [clientId]);
+
   // Calculate totals whenever form values change
   useEffect(() => {
     const subscription = form.watch((value) => {

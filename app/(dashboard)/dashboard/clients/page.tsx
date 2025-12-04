@@ -40,6 +40,12 @@ export default function ClientsPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this client?")) {
       await deleteMutation.mutateAsync({ id });
+
+      // Clean up localStorage if the deleted client was the recent one
+      const recentClientId = localStorage.getItem("recentClientId");
+      if (recentClientId === id) {
+        localStorage.removeItem("recentClientId");
+      }
     }
   };
 
