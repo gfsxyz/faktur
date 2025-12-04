@@ -421,7 +421,7 @@ export function BusinessProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-4xl space-y-8"
+        className="mx-auto space-y-8"
       >
         {/* Logo Upload */}
         <Card className="border-border/50 shadow-sm">

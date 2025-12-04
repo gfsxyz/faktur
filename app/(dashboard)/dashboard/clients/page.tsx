@@ -63,24 +63,25 @@ export default function ClientsPage() {
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Clients</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  Clients
+                </h1>
                 <p className="text-sm text-muted-foreground">
                   Manage your client relationships
                 </p>
               </div>
             </div>
             <Button asChild className="h-10">
-              <Link href="/dashboard/clients/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Client
-              </Link>
+              <Link href="/dashboard/clients/new">Add Client</Link>
             </Button>
           </div>
         </div>
 
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">No clients yet</CardTitle>
+            <CardTitle className="text-base font-medium">
+              No clients yet
+            </CardTitle>
             <CardDescription className="text-xs">
               Add your first client to get started
             </CardDescription>
@@ -93,10 +94,7 @@ export default function ClientsPage() {
               Clients you add will appear here
             </p>
             <Button asChild className="h-10">
-              <Link href="/dashboard/clients/new">
-                <Plus className="mr-2 h-4 w-4" />
-                Add Your First Client
-              </Link>
+              <Link href="/dashboard/clients/new">Add Your First Client</Link>
             </Button>
           </CardContent>
         </Card>
@@ -121,10 +119,7 @@ export default function ClientsPage() {
             </div>
           </div>
           <Button asChild className="h-10">
-            <Link href="/dashboard/clients/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Client
-            </Link>
+            <Link href="/dashboard/clients/new">Add Client</Link>
           </Button>
         </div>
       </div>
@@ -151,12 +146,21 @@ export default function ClientsPage() {
             <TableBody>
               {clients.map((client) => (
                 <TableRow key={client.id}>
-                  <TableCell className="text-sm font-medium">{client.name}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{client.email}</TableCell>
-                  <TableCell className="text-sm">{client.company || "-"}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{client.phone || "-"}</TableCell>
+                  <TableCell className="text-sm font-medium">
+                    {client.name}
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {client.email}
+                  </TableCell>
                   <TableCell className="text-sm">
-                    {[client.city, client.country].filter(Boolean).join(", ") || "-"}
+                    {client.company || "-"}
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {client.phone || "-"}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {[client.city, client.country].filter(Boolean).join(", ") ||
+                      "-"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -167,7 +171,6 @@ export default function ClientsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
                           <Link href={`/dashboard/clients/${client.id}`}>
                             <Eye className="mr-2 h-4 w-4" />

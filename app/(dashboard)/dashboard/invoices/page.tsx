@@ -73,24 +73,25 @@ export default function InvoicesPage() {
                 <FileText className="h-5 w-5" />
               </div>
               <div>
-                <h1 className="text-2xl font-semibold tracking-tight">Invoices</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  Invoices
+                </h1>
                 <p className="text-sm text-muted-foreground">
                   Manage and track all your invoices
                 </p>
               </div>
             </div>
             <Button asChild className="h-10">
-              <Link href="/dashboard/invoices/new">
-                <Plus className="mr-2 h-4 w-4" />
-                New Invoice
-              </Link>
+              <Link href="/dashboard/invoices/new">New Invoice</Link>
             </Button>
           </div>
         </div>
 
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">No invoices yet</CardTitle>
+            <CardTitle className="text-base font-medium">
+              No invoices yet
+            </CardTitle>
             <CardDescription className="text-xs">
               Get started by creating your first invoice
             </CardDescription>
@@ -104,7 +105,6 @@ export default function InvoicesPage() {
             </p>
             <Button asChild className="h-10">
               <Link href="/dashboard/invoices/new">
-                <Plus className="mr-2 h-4 w-4" />
                 Create Your First Invoice
               </Link>
             </Button>
@@ -124,17 +124,16 @@ export default function InvoicesPage() {
               <FileText className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">Invoices</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Invoices
+              </h1>
               <p className="text-sm text-muted-foreground">
                 Manage and track all your invoices
               </p>
             </div>
           </div>
           <Button asChild className="h-10">
-            <Link href="/dashboard/invoices/new">
-              <Plus className="mr-2 h-4 w-4" />
-              New Invoice
-            </Link>
+            <Link href="/dashboard/invoices/new">New Invoice</Link>
           </Button>
         </div>
       </div>
@@ -172,7 +171,9 @@ export default function InvoicesPage() {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="text-sm font-medium">{invoice.clientName}</p>
+                      <p className="text-sm font-medium">
+                        {invoice.clientName}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {invoice.clientEmail}
                       </p>
@@ -212,7 +213,6 @@ export default function InvoicesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
                           <Link href={`/dashboard/invoices/${invoice.id}`}>
                             <Eye className="mr-2 h-4 w-4" />

@@ -203,7 +203,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-4xl space-y-8"
+        className="mx-auto space-y-8"
       >
         <Card className="border-border/50 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
