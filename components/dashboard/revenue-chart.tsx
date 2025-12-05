@@ -12,9 +12,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { STATUS_COLORS } from "@/lib/constants/status-colors";
 
-// Chart color - hardcoded from globals.css
-const CHART_COLOR = "oklch(0.6886 0.1136 122.0697)"; // --chart-1 (green)
+const CHART_COLOR = STATUS_COLORS.draft;
 
 export function RevenueChart() {
   const [months, setMonths] = useState(6);
@@ -54,7 +54,9 @@ export function RevenueChart() {
     <Card className="p-6">
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h3 className="text-base lg:text-lg font-semibold">Revenue Overview</h3>
+          <h3 className="text-base lg:text-lg font-semibold">
+            Revenue Overview
+          </h3>
           <p className="text-xs lg:text-sm text-muted-foreground">
             Monthly revenue from paid invoices
           </p>
@@ -100,8 +102,8 @@ export function RevenueChart() {
           >
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={0.3} />
-                <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0} />
+                <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={1} />
+                <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0.5} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -125,15 +127,26 @@ export function RevenueChart() {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "6px",
-              }}
-              labelStyle={{
-                color: "hsl(var(--foreground))",
+                backgroundColor: "var(--popover)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "var(--shadow-lg)",
+                padding: "8px 12px",
+                color: "var(--popover-foreground)",
               }}
               itemStyle={{
-                color: "hsl(var(--foreground))",
+                color: "var(--popover-foreground)",
+                fontSize: "13px",
+                fontWeight: "500",
+                padding: "2px 0",
+              }}
+              labelStyle={{
+                color: "var(--muted-foreground)",
+                fontSize: "11px",
+                fontWeight: "500",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                marginBottom: "2px",
               }}
               formatter={(value: number) => [formatCurrency(value), "Revenue"]}
             />

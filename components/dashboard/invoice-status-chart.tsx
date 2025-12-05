@@ -2,7 +2,7 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { Card } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 
 export function InvoiceStatusChart() {
@@ -38,89 +38,92 @@ export function InvoiceStatusChart() {
     }).format(value);
   };
 
-  const renderCustomLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }: any) => {
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        className="text-xs font-medium"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
+  const totalInvoices = chartData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <Card className="p-6">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Invoice Status</h3>
-        <p className="text-sm text-muted-foreground">
+    <Card className="p-6 gap-6 lg:gap-11">
+      <div>
+        <h3 className="text-base lg:text-lg font-semibold">Invoice Status</h3>
+        <p className="text-xs lg:text-sm text-muted-foreground">
           Distribution by status
         </p>
       </div>
-      <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={renderCustomLabel}
-              outerRadius={100}
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={STATUS_COLORS[entry.status] || "oklch(0.6679 0.0888 94.524)"}
+
+      <div className="space-y-6">
+        <div className="w-full max-w-sm mx-auto h-48 lg:h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius="60%"
+                outerRadius="100%"
+                dataKey="value"
+                stroke="var(--card)"
+                strokeWidth={4}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      STATUS_COLORS[entry.status] ||
+                      "oklch(0.6679 0.0888 94.524)"
+                    }
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--popover)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-lg)",
+                  boxShadow: "var(--shadow-lg)",
+                  padding: "8px 12px",
+                  color: "var(--popover-foreground)",
+                }}
+                itemStyle={{
+                  color: "var(--popover-foreground)",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  padding: "2px 0",
+                }}
+                labelStyle={{
+                  color: "var(--muted-foreground)",
+                  fontSize: "11px",
+                  fontWeight: "500",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  marginBottom: "2px",
+                }}
+                formatter={(value: number, name: string, props: any) => [
+                  `${value} (${formatCurrency(props.payload.total)})`,
+                  name,
+                ]}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 max-w-md mx-auto">
+          {chartData.map((item, index) => {
+            const percentage = ((item.value / totalInvoices) * 100).toFixed(0);
+            return (
+              <div key={index} className="flex items-center gap-2">
+                <div
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: STATUS_COLORS[item.status] }}
                 />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "6px",
-              }}
-              labelStyle={{
-                color: "hsl(var(--foreground))",
-              }}
-              itemStyle={{
-                color: "hsl(var(--foreground))",
-              }}
-              formatter={(value: number, name: string, props: any) => [
-                `${value} invoice${value !== 1 ? "s" : ""} (${formatCurrency(props.payload.total)})`,
-                props.payload.name,
-              ]}
-            />
-            <Legend
-              verticalAlign="bottom"
-              height={36}
-              formatter={(value, entry: any) => (
-                <span className="text-sm">
-                  {value}: {entry.payload.value}
+                <span className="text-xs font-medium truncate">
+                  {item.name}
                 </span>
-              )}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+                <span className="text-xs text-muted-foreground ml-auto">
+                  {percentage}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Card>
   );
