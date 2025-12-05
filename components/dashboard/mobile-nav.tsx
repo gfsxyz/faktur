@@ -96,7 +96,7 @@ const MobileNav = () => {
         </Button>
       </header>
       {isOpen && (
-        <nav className="pt-20 px-1 bg-background fixed w-full h-screen z-10">
+        <nav className="pt-20 px-1 bg-background fixed w-full h-screen z-10 md:hidden">
           <div>
             {navigationPages.map((item) => (
               <Button
