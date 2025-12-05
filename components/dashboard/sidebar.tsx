@@ -19,7 +19,7 @@ import {
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useSessionSafe } from "@/lib/hooks/use-session-safe";
-import { useTheme } from "next-themes";
+import { useThemeToggle } from "@/lib/hooks/use-theme-toggle";
 import { trpc } from "@/lib/trpc/client";
 import { signOut } from "@/lib/auth/client";
 import { navigationPages } from "@/lib/constants/navigation-pages";
@@ -30,19 +30,13 @@ export function Sidebar() {
 
   const { data: session } = useSessionSafe();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { isDark, toggleTheme } = useThemeToggle();
   const { data: businessProfile } = trpc.businessProfile.get.useQuery();
 
   async function handleSignOut() {
     await signOut();
     router.push("/");
   }
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
-
-  const isDark = theme === "dark";
 
   const initials =
     session?.user?.name
