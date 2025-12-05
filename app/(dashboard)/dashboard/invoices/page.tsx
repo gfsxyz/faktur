@@ -116,7 +116,8 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      <Card>
+      {/* Desktop View - Table */}
+      <Card className="hidden lg:block">
         <CardHeader className="space-y-1 pb-4">
           <CardTitle className="text-base font-medium">All Invoices</CardTitle>
           <CardDescription className="text-xs">
@@ -220,6 +221,116 @@ export default function InvoicesPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Mobile View - Cards */}
+      <div className="lg:hidden space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-muted-foreground">
+            {invoices.length} invoice{invoices.length !== 1 ? "s" : ""} total
+          </p>
+        </div>
+        {invoices.map((invoice) => (
+          <Card
+            key={invoice.id}
+            className="overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <CardContent className="p-0">
+              <Link
+                href={`/dashboard/invoices/${invoice.id}`}
+                className="block px-4 pb-3 pt-0"
+              >
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-mono text-sm font-semibold text-foreground mb-1">
+                      {invoice.invoiceNumber}
+                    </p>
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {invoice.clientName}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {invoice.clientEmail}
+                    </p>
+                  </div>
+                  <Badge
+                    className="text-xs font-medium shrink-0"
+                    style={{
+                      backgroundColor: STATUS_COLORS[invoice.status],
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    {STATUS_LABELS[invoice.status]}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-0.5">
+                      Issue Date
+                    </p>
+                    <p className="text-sm font-medium">
+                      {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-0.5">
+                      Due Date
+                    </p>
+                    <p className="text-sm font-medium">
+                      {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t">
+                  <p className="text-xs text-muted-foreground mb-0.5">Amount</p>
+                  <p className="font-mono text-lg font-semibold">
+                    ${" "}
+                    {invoice.total.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+              </Link>
+
+              <div className="bg-muted/50 px-4 py-2 flex items-center justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  asChild
+                >
+                  <Link href={`/dashboard/invoices/${invoice.id}`}>
+                    <Eye className="mr-1.5 h-3.5 w-3.5" />
+                    View
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  asChild
+                >
+                  <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
+                    <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                    Edit
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs text-destructive hover:text-destructive"
+                  onClick={() => handleDelete(invoice.id)}
+                >
+                  <Trash className="mr-1.5 h-3.5 w-3.5" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

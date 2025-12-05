@@ -117,7 +117,8 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      <Card>
+      {/* Desktop View - Table */}
+      <Card className="hidden lg:block">
         <CardHeader className="space-y-1 pb-4">
           <CardTitle className="text-base font-medium">All Clients</CardTitle>
           <CardDescription className="text-xs">
@@ -193,6 +194,106 @@ export default function ClientsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Mobile View - Cards */}
+      <div className="lg:hidden space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-muted-foreground">
+            {clients.length} client{clients.length !== 1 ? "s" : ""} total
+          </p>
+        </div>
+        {clients.map((client) => (
+          <Card
+            key={client.id}
+            className="overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <CardContent className="p-0">
+              <Link
+                href={`/dashboard/clients/${client.id}`}
+                className="block px-4 pb-3 pt-0"
+              >
+                <div className="mb-3">
+                  <h3 className="text-base font-semibold text-foreground mb-1">
+                    {client.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {client.email}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  {client.company && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs text-muted-foreground min-w-[70px]">
+                        Company
+                      </span>
+                      <span className="text-sm font-medium flex-1">
+                        {client.company}
+                      </span>
+                    </div>
+                  )}
+                  {client.phone && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs text-muted-foreground min-w-[70px]">
+                        Phone
+                      </span>
+                      <span className="text-sm font-medium flex-1">
+                        {client.phone}
+                      </span>
+                    </div>
+                  )}
+                  {[client.city, client.country].filter(Boolean).length > 0 && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-xs text-muted-foreground min-w-[70px]">
+                        Location
+                      </span>
+                      <span className="text-sm font-medium flex-1">
+                        {[client.city, client.country]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+
+              <div className="bg-muted/50 px-4 py-2 flex items-center justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  asChild
+                >
+                  <Link href={`/dashboard/clients/${client.id}`}>
+                    <Eye className="mr-1.5 h-3.5 w-3.5" />
+                    View
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs"
+                  asChild
+                >
+                  <Link href={`/dashboard/clients/${client.id}/edit`}>
+                    <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                    Edit
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs text-destructive hover:text-destructive"
+                  onClick={() => handleDelete(client.id)}
+                >
+                  <Trash className="mr-1.5 h-3.5 w-3.5" />
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
