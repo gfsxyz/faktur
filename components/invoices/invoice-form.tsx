@@ -31,16 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Plus,
-  Trash2,
-  FileText,
-  Calendar,
-  DollarSign,
-  Info,
-  UserPlus,
-  AlertCircle,
-} from "lucide-react";
+import { Trash2, Calendar, DollarSign, Info, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 const invoiceItemSchema = z.object({
@@ -156,10 +147,15 @@ type InvoiceFormValues = z.infer<typeof invoiceFormSchema>;
 
 interface InvoiceFormProps {
   invoiceId?: string;
+  invoiceNumber?: string;
   defaultValues?: Partial<InvoiceFormValues>;
 }
 
-export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
+export function InvoiceForm({
+  invoiceId,
+  invoiceNumber,
+  defaultValues,
+}: InvoiceFormProps) {
   const router = useRouter();
   const utils = trpc.useUtils();
   const [subtotal, setSubtotal] = useState(0);
@@ -331,23 +327,20 @@ export function InvoiceForm({ invoiceId, defaultValues }: InvoiceFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-5xl space-y-8"
+        className="mx-auto max-w-5xl space-y-6"
       >
         {/* Header Section */}
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <FileText className="h-5 w-5" />
-            </div>
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
+              <h1 className="text-2xl font-semibold tracking-tight text-primary">
                 {invoiceId ? "Edit Invoice" : "Create Invoice"}
               </h1>
-              {nextInvoiceNumber && !invoiceId && (
-                <p className="text-sm text-muted-foreground">
-                  Invoice #{nextInvoiceNumber}
-                </p>
-              )}
+              <p className="text-sm text-muted-foreground">
+                {nextInvoiceNumber && !invoiceId
+                  ? `Invoice #${nextInvoiceNumber}`
+                  : invoiceNumber && `Invoice #${invoiceNumber}`}
+              </p>
             </div>
           </div>
         </div>

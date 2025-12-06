@@ -43,7 +43,9 @@ export default function EditInvoicePage({
     dueDate: new Date(invoice.dueDate).toISOString().split("T")[0],
     status: invoice.status,
     taxRate: invoice.taxRate,
-    discountType: (invoice.discountType as "percentage" | "fixed" | "none" | undefined) || "none",
+    discountType:
+      (invoice.discountType as "percentage" | "fixed" | "none" | undefined) ||
+      "none",
     discountValue: invoice.discountValue || 0,
     notes: invoice.notes || "",
     terms: invoice.terms || "",
@@ -52,14 +54,11 @@ export default function EditInvoicePage({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Edit Invoice</h1>
-        <p className="text-muted-foreground">
-          Update invoice {invoice.invoiceNumber}
-        </p>
-      </div>
-
-      <InvoiceForm invoiceId={id} defaultValues={defaultValues} />
+      <InvoiceForm
+        invoiceId={id}
+        invoiceNumber={invoice.invoiceNumber}
+        defaultValues={defaultValues}
+      />
     </div>
   );
 }
