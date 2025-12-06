@@ -66,7 +66,7 @@ export default function InvoicesPage() {
                 Manage and track all your invoices
               </p>
             </div>
-            <Button asChild className="h-10">
+            <Button asChild className="h-10" variant={"outline"} size={"sm"}>
               <Link href="/dashboard/invoices/new">New Invoice</Link>
             </Button>
           </div>
@@ -110,7 +110,7 @@ export default function InvoicesPage() {
               Manage and track all your invoices
             </p>
           </div>
-          <Button asChild className="h-10">
+          <Button asChild className="h-10" variant={"outline"} size={"sm"}>
             <Link href="/dashboard/invoices/new">New Invoice</Link>
           </Button>
         </div>

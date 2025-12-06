@@ -69,7 +69,7 @@ export default function ClientsPage() {
                 Manage your client relationships
               </p>
             </div>
-            <Button asChild className="h-10">
+            <Button asChild className="h-10" variant={"outline"} size={"sm"}>
               <Link href="/dashboard/clients/new">Add Client</Link>
             </Button>
           </div>
@@ -111,7 +111,7 @@ export default function ClientsPage() {
               Manage your client relationships
             </p>
           </div>
-          <Button asChild className="h-10">
+          <Button asChild className="h-10" variant={"outline"} size={"sm"}>
             <Link href="/dashboard/clients/new">Add Client</Link>
           </Button>
         </div>
