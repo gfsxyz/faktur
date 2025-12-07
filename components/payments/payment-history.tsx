@@ -15,6 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Trash2, Loader2 } from "lucide-react";
 import { useState } from "react";
+import {
+  DeleteConfirmationDialog,
+  useDeleteConfirmation,
+} from "@/components/ui/delete-confirmation-dialog";
+import { toast } from "sonner";
 
 interface PaymentHistoryProps {
   invoiceId: string;
@@ -41,35 +46,31 @@ export function PaymentHistory({
   const deletePaymentMutation = trpc.payments.delete.useMutation();
   const utils = trpc.useUtils();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const deleteConfirmation = useDeleteConfirmation();
 
   const handleDelete = async (paymentId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this payment? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
-
-    setDeletingId(paymentId);
-    try {
-      await deletePaymentMutation.mutateAsync({ id: paymentId });
-      await utils.payments.getByInvoiceId.invalidate({ invoiceId });
-      await utils.invoices.getById.invalidate({ id: invoiceId });
-      await utils.dashboard.getStats.invalidate();
-      await utils.dashboard.getRecentActivity.invalidate();
-    } catch (error) {
-      console.error("Failed to delete the payment:", error);
-    } finally {
-      setDeletingId(null);
-    }
+    deleteConfirmation.confirm(async () => {
+      setDeletingId(paymentId);
+      try {
+        await deletePaymentMutation.mutateAsync({ id: paymentId });
+        await utils.payments.getByInvoiceId.invalidate({ invoiceId });
+        await utils.invoices.getById.invalidate({ id: invoiceId });
+        await utils.dashboard.getStats.invalidate();
+        await utils.dashboard.getRecentActivity.invalidate();
+        toast.success("Payment deleted successfully");
+      } catch (error: any) {
+        toast.error(error.message || "Failed to delete payment");
+      } finally {
+        setDeletingId(null);
+      }
+    });
   };
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+      <Card className="gap-0">
+        <CardHeader className="space-y-1 pb-3">
+          <CardTitle className="text-sm font-semibold">Payment History</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
@@ -82,13 +83,16 @@ export function PaymentHistory({
 
   if (!payments || payments.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+      <Card className="gap-0">
+        <CardHeader className="space-y-1 pb-3">
+          <CardTitle className="text-sm font-semibold">Payment History</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            No payments recorded yet
+          </p>
         </CardHeader>
         <CardContent>
           <p className="text-center text-sm text-muted-foreground py-8">
-            No payments recorded yet
+            Payments will appear here once recorded
           </p>
         </CardContent>
       </Card>
@@ -98,118 +102,133 @@ export function PaymentHistory({
   const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="gap-0">
+      <CardHeader className="space-y-1 pb-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <CardTitle>Payment History</CardTitle>
-          <div className="text-sm">
+          <CardTitle className="text-sm font-semibold">Payment History</CardTitle>
+          <div className="text-xs">
             <span className="text-muted-foreground">Total Paid: </span>
-            <span className="font-semibold">
-              {currency} {totalPaid.toFixed(2)}
+            <span className="font-mono font-semibold text-primary">
+              ${totalPaid.toFixed(2)}
             </span>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          {payments.length} payment{payments.length !== 1 ? "s" : ""} recorded
+        </p>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         {/* Mobile View - Cards */}
-        <div className="lg:hidden space-y-4">
+        <div className="md:hidden space-y-3 p-4">
           {payments.map((payment) => (
             <div
               key={payment.id}
-              className="relative rounded-xl border border-border bg-card p-4 shadow-sm hover:shadow-md transition-shadow"
+              className="group relative rounded-lg border border-border/50 bg-card p-4 hover:bg-muted/30 transition-colors"
             >
-              <div className="absolute top-4 right-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-destructive/10"
-                  onClick={() => handleDelete(payment.id)}
-                  disabled={deletingId === payment.id}
-                >
-                  {deletingId === payment.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  )}
-                </Button>
-              </div>
-
-              <div className="pr-8 space-y-3">
-                <div>
+              <div className="pr-8 space-y-2">
+                <div className="flex items-baseline justify-between">
                   <div className="text-lg font-bold font-mono text-primary">
-                    {currency} {payment.amount.toFixed(2)}
+                    ${payment.amount.toFixed(2)}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
-                    {format(new Date(payment.paymentDate), "MMMM dd, yyyy")}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs font-medium">
+                  <Badge variant="secondary" className="text-xs">
                     {PAYMENT_METHOD_LABELS[payment.paymentMethod] ||
                       payment.paymentMethod}
                   </Badge>
                 </div>
 
+                <div className="text-xs text-muted-foreground">
+                  {format(new Date(payment.paymentDate), "MMM dd, yyyy")}
+                </div>
+
                 {(payment.reference || payment.notes) && (
-                  <div className="space-y-1.5 pt-2 border-t border-border/50">
+                  <div className="space-y-1 pt-2 border-t border-border/30">
                     {payment.reference && (
                       <div className="text-xs">
-                        <span className="text-muted-foreground font-medium">Reference:</span>
+                        <span className="text-muted-foreground">Ref:</span>
                         <span className="ml-1.5 text-foreground">{payment.reference}</span>
                       </div>
                     )}
                     {payment.notes && (
                       <div className="text-xs">
-                        <span className="text-muted-foreground font-medium">Note:</span>
+                        <span className="text-muted-foreground">Note:</span>
                         <span className="ml-1.5 text-foreground/80">{payment.notes}</span>
                       </div>
                     )}
                   </div>
                 )}
               </div>
+
+              <div className="absolute bottom-4 right-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10"
+                  onClick={() => handleDelete(payment.id)}
+                  disabled={deletingId === payment.id}
+                >
+                  {deletingId === payment.id ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                  )}
+                </Button>
+              </div>
             </div>
           ))}
         </div>
 
         {/* Desktop View - Table */}
-        <div className="hidden lg:block">
+        <div className="hidden md:block">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead>Reference</TableHead>
-                <TableHead>Notes</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
+              <TableRow className="border-b border-border/30 hover:bg-transparent">
+                <TableHead className="h-10 px-6 text-xs font-medium text-muted-foreground">
+                  Date
+                </TableHead>
+                <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                  Amount
+                </TableHead>
+                <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                  Method
+                </TableHead>
+                <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                  Reference
+                </TableHead>
+                <TableHead className="h-10 px-4 text-xs font-medium text-muted-foreground">
+                  Notes
+                </TableHead>
+                <TableHead className="h-10 px-6 w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {payments.map((payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell>
+                <TableRow
+                  key={payment.id}
+                  className="group border-b border-border/20 hover:bg-muted/50"
+                >
+                  <TableCell className="px-6 py-3 text-sm">
                     {format(new Date(payment.paymentDate), "MMM dd, yyyy")}
                   </TableCell>
-                  <TableCell className="font-medium">
-                    {currency} {payment.amount.toFixed(2)}
+                  <TableCell className="px-4 py-3 font-mono text-sm font-medium text-primary">
+                    ${payment.amount.toFixed(2)}
                   </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
+                  <TableCell className="px-4 py-3">
+                    <Badge variant="secondary" className="text-xs">
                       {PAYMENT_METHOD_LABELS[payment.paymentMethod] ||
                         payment.paymentMethod}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="px-4 py-3 text-sm text-muted-foreground">
                     {payment.reference || "-"}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="px-4 py-3 text-sm text-muted-foreground max-w-xs truncate">
                     {payment.notes || "-"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="px-6 py-3">
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => handleDelete(payment.id)}
                       disabled={deletingId === payment.id}
                     >
@@ -226,6 +245,14 @@ export function PaymentHistory({
           </Table>
         </div>
       </CardContent>
+
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.isOpen}
+        onOpenChange={deleteConfirmation.handleCancel}
+        onConfirm={deleteConfirmation.handleConfirm}
+        title="Delete Payment"
+        description="Are you sure you want to delete this payment? This action cannot be undone."
+      />
     </Card>
   );
 }

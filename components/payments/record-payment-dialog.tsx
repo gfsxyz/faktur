@@ -53,7 +53,7 @@ const paymentSchema = z.object({
       const maxDate = new Date();
       maxDate.setDate(maxDate.getDate() + 1); // Allow today and earlier
       return d >= minDate && d <= maxDate;
-    }, "Payment date must be between 2000 and today"),
+    }, "Payment date invalid"),
   paymentMethod: z.enum([
     "cash",
     "check",
@@ -113,13 +113,27 @@ export function RecordPaymentDialog({
   const form = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
-      amount: Math.round(remainingBalance * 100) / 100,
+      amount: 0,
       paymentDate: new Date().toISOString().split("T")[0],
       paymentMethod: "bank_transfer",
       reference: "",
       notes: "",
     },
   });
+
+  // Update amount when dialog opens or remainingBalance changes
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (newOpen) {
+      form.reset({
+        amount: Math.round(remainingBalance * 100) / 100,
+        paymentDate: new Date().toISOString().split("T")[0],
+        paymentMethod: "bank_transfer",
+        reference: "",
+        notes: "",
+      });
+    }
+  };
 
   const onSubmit = async (data: PaymentFormData) => {
     try {
@@ -138,8 +152,7 @@ export function RecordPaymentDialog({
       await utils.dashboard.getStats.invalidate();
       await utils.dashboard.getRecentActivity.invalidate();
 
-      // Reset form and close dialog
-      form.reset();
+      // Close dialog
       setOpen(false);
 
       if (onSuccess) {
@@ -151,131 +164,163 @@ export function RecordPaymentDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>Record Payment</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>Record Payment</DialogTitle>
-          <DialogDescription>
-            Record a payment received for this invoice. Remaining balance: USD{" "}
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="gap-0">
+          <DialogTitle className="text-base font-medium">
+            Record Payment
+          </DialogTitle>
+          <DialogDescription className="text-xs">
+            Record a payment received for this invoice. Remaining balance: ${" "}
             {remainingBalance.toFixed(2)}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount *</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground z-10">
-                        $
-                      </span>
-                      <NumberInput
-                        value={field.value}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 pt-2"
+          >
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Amount
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground z-10">
+                          $
+                        </span>
+                        <NumberInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          max={remainingBalance}
+                          placeholder="0.00"
+                          className="pl-8 h-10"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="paymentDate"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Payment Date
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="date"
+                        className="h-10"
+                        max={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="paymentMethod"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Payment Method
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Select payment method" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.entries(PAYMENT_METHOD_LABELS).map(
+                          ([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="reference"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">
+                      Reference Number
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Transaction ID, check number, etc."
+                        className="h-10"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel className="text-sm font-medium">Notes</FormLabel>
+                    <FormControl>
+                      <textarea
+                        className="flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Additional notes..."
+                        value={field.value ?? ""}
                         onChange={field.onChange}
                         onBlur={field.onBlur}
-                        max={remainingBalance}
-                        placeholder="0.00"
-                        className="pl-8"
                       />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="paymentDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment Date *</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="date" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="paymentMethod"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment Method *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select payment method" />
-                      </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      {Object.entries(PAYMENT_METHOD_LABELS).map(
-                        ([value, label]) => (
-                          <SelectItem key={value} value={value}>
-                            {label}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="reference"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Reference Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Transaction ID, check number, etc."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Additional notes" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
                 disabled={createPaymentMutation.isPending}
+                className="h-10"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createPaymentMutation.isPending}>
+              <Button
+                type="submit"
+                disabled={createPaymentMutation.isPending}
+                className="h-10"
+              >
                 {createPaymentMutation.isPending && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
