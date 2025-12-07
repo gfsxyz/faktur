@@ -9,7 +9,7 @@ export default function ProfilePage() {
       <div className="space-y-2">
         <div className="space-y-2">
           <div>
-            <h1 className="text-lg font-bold tracking-tight">
+            <h1 className="text-lg font-bold tracking-tight text-primary">
               Business Profile
             </h1>
             <p className="text-sm text-muted-foreground">

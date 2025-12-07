@@ -14,7 +14,7 @@ export default function DashboardPage() {
       {/* Header Section */}
       <div className="space-y-2">
         <div>
-          <h1 className="text-lg font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-lg font-bold tracking-tight text-primary">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
             Welcome back, {session?.user?.name}!
           </p>

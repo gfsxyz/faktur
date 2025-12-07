@@ -64,7 +64,9 @@ export default function ClientsPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-lg font-bold tracking-tight">Clients</h1>
+              <h1 className="text-lg font-bold tracking-tight text-primary">
+                Clients
+              </h1>
               <p className="text-sm text-muted-foreground">
                 Manage your client relationships
               </p>
@@ -106,7 +108,9 @@ export default function ClientsPage() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold tracking-tight">Clients</h1>
+            <h1 className="text-lg font-bold tracking-tight text-primary">
+              Clients
+            </h1>
             <p className="text-sm text-muted-foreground">
               Manage your client relationships
             </p>
