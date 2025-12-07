@@ -225,7 +225,11 @@ export function RecordPaymentDialog({
                         {...field}
                         type="date"
                         className="h-10"
-                        max={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                        max={
+                          new Date(Date.now() + 24 * 60 * 60 * 1000)
+                            .toISOString()
+                            .split("T")[0]
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -306,7 +310,7 @@ export function RecordPaymentDialog({
               />
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-2">
               <Button
                 type="button"
                 variant="outline"
