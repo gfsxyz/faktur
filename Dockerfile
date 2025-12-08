@@ -21,9 +21,6 @@ ENV NODE_ENV=production
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/drizzle ./drizzle
-COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
-COPY --from=builder /app/migrate.js ./migrate.js
 
 EXPOSE 3000
-CMD ["sh", "-c", "node migrate.js && node server.js"]
+CMD ["node", "server.js"]
