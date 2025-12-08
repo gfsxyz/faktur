@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Loader2, X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { processImageForUpload } from "@/lib/image-utils";
 
 const businessProfileSchema = z.object({
   companyName: z
@@ -300,38 +301,25 @@ export function BusinessProfileForm() {
   };
 
   const processFile = async (file: File) => {
-    // Validate file size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Logo must be smaller than 2MB");
-      return;
-    }
-
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      toast.error("Only image files are allowed");
-      return;
-    }
-
     setUploadingLogo(true);
 
-    // Convert to base64
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64 = reader.result as string;
-      setLogoPreview(base64);
+    try {
+      // Process and validate image (handles WebP conversion automatically)
+      const base64Image = await processImageForUpload(file);
+      setLogoPreview(base64Image);
 
-      try {
-        await uploadLogoMutation.mutateAsync({ logo: base64 });
-        await utils.businessProfile.get.invalidate();
-        toast.success("Logo uploaded successfully");
-      } catch (error) {
-        toast.error("Failed to upload logo");
-        setLogoPreview(null);
-      } finally {
-        setUploadingLogo(false);
-      }
-    };
-    reader.readAsDataURL(file);
+      // Upload to server
+      await uploadLogoMutation.mutateAsync({ logo: base64Image });
+      await utils.businessProfile.get.invalidate();
+      toast.success("Logo uploaded successfully");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to upload logo";
+      toast.error(errorMessage);
+      setLogoPreview(null);
+    } finally {
+      setUploadingLogo(false);
+    }
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -483,7 +471,7 @@ export function BusinessProfileForm() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={handleLogoUpload}
                     disabled={uploadingLogo}
                     className="hidden"
