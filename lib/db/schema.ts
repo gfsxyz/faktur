@@ -1,36 +1,43 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import {
+  pgTable,
+  text,
+  integer,
+  real,
+  boolean,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 
 // ============================================
 // AUTH TABLES (Better Auth Compatible)
 // ============================================
 
-export const users = sqliteTable("user", {
+export const users = pgTable("user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: integer("emailVerified", { mode: "boolean" }).notNull().default(false),
+  emailVerified: boolean("emailVerified").notNull().default(false),
   image: text("image"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
 
-export const sessions = sqliteTable("session", {
+export const sessions = pgTable("session", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
-  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
   token: text("token").notNull().unique(),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
   ipAddress: text("ipAddress"),
@@ -40,7 +47,7 @@ export const sessions = sqliteTable("session", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const accounts = sqliteTable("account", {
+export const accounts = pgTable("account", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -52,36 +59,34 @@ export const accounts = sqliteTable("account", {
   accessToken: text("accessToken"),
   refreshToken: text("refreshToken"),
   idToken: text("idToken"),
-  accessTokenExpiresAt: integer("accessTokenExpiresAt", { mode: "timestamp" }),
-  refreshTokenExpiresAt: integer("refreshTokenExpiresAt", { mode: "timestamp" }),
+  accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
+  refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
   scope: text("scope"),
   password: text("password"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
 
-export const verifications = sqliteTable("verification", {
+export const verifications = pgTable("verification", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
-  createdAt: integer("createdAt", { mode: "timestamp" })
-    .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
-    .$defaultFn(() => new Date()),
+  expiresAt: timestamp("expiresAt").notNull(),
+  createdAt: timestamp("createdAt").$defaultFn(() => new Date()),
+  updatedAt: timestamp("updatedAt").$defaultFn(() => new Date()),
 });
 
 // ============================================
 // BUSINESS PROFILE
 // ============================================
 
-export const businessProfiles = sqliteTable("business_profile", {
+export const businessProfiles = pgTable("business_profile", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -105,10 +110,10 @@ export const businessProfiles = sqliteTable("business_profile", {
   bankRoutingNumber: text("bankRoutingNumber"),
   swiftCode: text("swiftCode"),
   iban: text("iban"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
@@ -117,7 +122,7 @@ export const businessProfiles = sqliteTable("business_profile", {
 // CLIENTS
 // ============================================
 
-export const clients = sqliteTable("client", {
+export const clients = pgTable("client", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -135,10 +140,10 @@ export const clients = sqliteTable("client", {
   postalCode: text("postalCode"),
   taxId: text("taxId"),
   notes: text("notes"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
@@ -147,7 +152,7 @@ export const clients = sqliteTable("client", {
 // INVOICES
 // ============================================
 
-export const invoices = sqliteTable("invoice", {
+export const invoices = pgTable("invoice", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -163,8 +168,8 @@ export const invoices = sqliteTable("invoice", {
   })
     .notNull()
     .default("draft"),
-  issueDate: integer("issueDate", { mode: "timestamp" }).notNull(),
-  dueDate: integer("dueDate", { mode: "timestamp" }).notNull(),
+  issueDate: timestamp("issueDate").notNull(),
+  dueDate: timestamp("dueDate").notNull(),
   subtotal: real("subtotal").notNull().default(0),
   taxRate: real("taxRate").notNull().default(0),
   taxAmount: real("taxAmount").notNull().default(0),
@@ -175,10 +180,10 @@ export const invoices = sqliteTable("invoice", {
   amountPaid: real("amountPaid").notNull().default(0),
   notes: text("notes"),
   terms: text("terms"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
@@ -187,7 +192,7 @@ export const invoices = sqliteTable("invoice", {
 // INVOICE ITEMS
 // ============================================
 
-export const invoiceItems = sqliteTable("invoice_item", {
+export const invoiceItems = pgTable("invoice_item", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -199,10 +204,10 @@ export const invoiceItems = sqliteTable("invoice_item", {
   rate: real("rate").notNull(),
   amount: real("amount").notNull(),
   order: integer("order").notNull().default(0),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
@@ -211,7 +216,7 @@ export const invoiceItems = sqliteTable("invoice_item", {
 // PAYMENTS
 // ============================================
 
-export const payments = sqliteTable("payment", {
+export const payments = pgTable("payment", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -219,16 +224,24 @@ export const payments = sqliteTable("payment", {
     .notNull()
     .references(() => invoices.id, { onDelete: "cascade" }),
   amount: real("amount").notNull(),
-  paymentDate: integer("paymentDate", { mode: "timestamp" }).notNull(),
+  paymentDate: timestamp("paymentDate").notNull(),
   paymentMethod: text("paymentMethod", {
-    enum: ["cash", "check", "bank_transfer", "credit_card", "paypal", "stripe", "other"],
+    enum: [
+      "cash",
+      "check",
+      "bank_transfer",
+      "credit_card",
+      "paypal",
+      "stripe",
+      "other",
+    ],
   }).notNull(),
   reference: text("reference"),
   notes: text("notes"),
-  createdAt: integer("createdAt", { mode: "timestamp" })
+  createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updatedAt", { mode: "timestamp" })
+  updatedAt: timestamp("updatedAt")
     .notNull()
     .$defaultFn(() => new Date()),
 });
