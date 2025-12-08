@@ -23,7 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader2, X, ImageIcon } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const businessProfileSchema = z.object({
   companyName: z
@@ -229,7 +229,6 @@ const businessProfileSchema = z.object({
 type BusinessProfileFormData = z.infer<typeof businessProfileSchema>;
 
 export function BusinessProfileForm() {
-  const { toast } = useToast();
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -294,37 +293,22 @@ export function BusinessProfileForm() {
     try {
       await upsertMutation.mutateAsync(data);
       await utils.businessProfile.get.invalidate();
-      toast({
-        title: "Success",
-        description: "Business profile saved successfully",
-      });
+      toast.success("Business profile saved successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save business profile",
-        variant: "destructive",
-      });
+      toast.error("Failed to save business profile");
     }
   };
 
   const processFile = async (file: File) => {
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      toast({
-        title: "Error",
-        description: "Logo must be smaller than 2MB",
-        variant: "destructive",
-      });
+      toast.error("Logo must be smaller than 2MB");
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Error",
-        description: "Only image files are allowed",
-        variant: "destructive",
-      });
+      toast.error("Only image files are allowed");
       return;
     }
 
@@ -339,16 +323,9 @@ export function BusinessProfileForm() {
       try {
         await uploadLogoMutation.mutateAsync({ logo: base64 });
         await utils.businessProfile.get.invalidate();
-        toast({
-          title: "Success",
-          description: "Logo uploaded successfully",
-        });
+        toast.success("Logo uploaded successfully");
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to upload logo",
-          variant: "destructive",
-        });
+        toast.error("Failed to upload logo");
         setLogoPreview(null);
       } finally {
         setUploadingLogo(false);
@@ -396,16 +373,9 @@ export function BusinessProfileForm() {
       await deleteLogoMutation.mutateAsync();
       await utils.businessProfile.get.invalidate();
       setLogoPreview(null);
-      toast({
-        title: "Success",
-        description: "Logo deleted successfully",
-      });
+      toast.success("Logo deleted successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete logo",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete logo");
     }
   };
 

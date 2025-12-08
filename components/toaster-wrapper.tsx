@@ -16,5 +16,5 @@ export function ToasterWrapper() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  return <Toaster position={isMobile ? "bottom-center" : "top-center"} />;
+  return <Toaster position={isMobile ? "bottom-center" : "top-right"} />;
 }
