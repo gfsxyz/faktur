@@ -47,7 +47,7 @@ export default function EditClientPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-3xl mx-auto">
       <div>
         <h1 className="text-lg font-bold tracking-tight text-primary">
           Edit Client
