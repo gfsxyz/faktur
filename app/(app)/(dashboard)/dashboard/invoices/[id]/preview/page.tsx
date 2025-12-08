@@ -5,7 +5,6 @@ import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { generateInvoicePDF } from "@/lib/pdf/generate-invoice-pdf";
 import { TEMPLATE_OPTIONS, TemplateType } from "@/components/invoices/types";
 import { cn } from "@/lib/utils";
 import { pdf } from "@react-pdf/renderer";
@@ -17,6 +16,7 @@ import { SakuraTemplate } from "@/components/invoices/templates/sakura-template"
 import { CorporateTemplate } from "@/components/invoices/templates/corporate-template";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
+import { useTemplatePreference } from "@/lib/hooks/use-template-preference";
 
 export default function InvoicePreviewPage({
   params,
@@ -26,9 +26,8 @@ export default function InvoicePreviewPage({
   const { id } = use(params);
   const { data: invoice, isLoading } = trpc.invoices.getById.useQuery({ id });
   const { data: businessProfile } = trpc.businessProfile.get.useQuery();
-  const [selectedTemplate, setSelectedTemplate] =
-    useState<TemplateType>("newyork");
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { template: selectedTemplate, setTemplate: setSelectedTemplate } =
+    useTemplatePreference();
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
@@ -135,20 +134,6 @@ export default function InvoicePreviewPage({
       }
     };
   }, [selectedTemplate, invoice, businessProfile]);
-
-  const handleDownloadPDF = async () => {
-    const invoiceData = getInvoiceData();
-    if (!invoiceData) return;
-
-    setIsDownloading(true);
-    try {
-      await generateInvoicePDF(invoiceData, selectedTemplate);
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   if (isLoading) {
     return (
