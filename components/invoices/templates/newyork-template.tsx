@@ -18,10 +18,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   header: {
-    marginBottom: 40,
     borderBottomWidth: 3,
     borderBottomColor: "#000",
-    paddingBottom: 20,
+    paddingBottom: 5,
   },
   titleSection: {
     flexDirection: "row",
@@ -74,8 +73,8 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   detailsSection: {
-    marginTop: 30,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -111,13 +110,6 @@ const styles = StyleSheet.create({
   table: {
     marginTop: 10,
     marginBottom: 30,
-  },
-  tableTitle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginBottom: 15,
-    textTransform: "uppercase",
-    letterSpacing: 1,
   },
   tableHeader: {
     flexDirection: "row",
@@ -158,7 +150,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   totalsSection: {
-    marginTop: 20,
     marginLeft: "55%",
   },
   totalRow: {
@@ -275,8 +266,10 @@ export function NewYorkTemplate({ invoice }: { invoice: InvoiceData }) {
                   {invoice.businessProfile.address && (
                     <Text style={styles.companyDetails}>
                       {invoice.businessProfile.address}
-                      {invoice.businessProfile.city && `, ${invoice.businessProfile.city}`}
-                      {invoice.businessProfile.state && `, ${invoice.businessProfile.state}`}
+                      {invoice.businessProfile.city &&
+                        `, ${invoice.businessProfile.city}`}
+                      {invoice.businessProfile.state &&
+                        `, ${invoice.businessProfile.state}`}
                     </Text>
                   )}
                 </>
@@ -315,7 +308,9 @@ export function NewYorkTemplate({ invoice }: { invoice: InvoiceData }) {
                 {invoice.client.company && (
                   <>
                     <Text style={styles.detailLabel}>Company</Text>
-                    <Text style={styles.detailValue}>{invoice.client.company}</Text>
+                    <Text style={styles.detailValue}>
+                      {invoice.client.company}
+                    </Text>
                   </>
                 )}
               </>
@@ -325,7 +320,6 @@ export function NewYorkTemplate({ invoice }: { invoice: InvoiceData }) {
 
         {/* Items Table */}
         <View style={styles.table}>
-          <Text style={styles.tableTitle}>Line Items</Text>
           <View style={styles.tableHeader}>
             <Text style={[styles.tableHeaderText, styles.tableColDescription]}>
               Description
