@@ -1,22 +1,16 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { use } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
-import { TEMPLATE_OPTIONS, TemplateType } from "@/components/invoices/types";
+import { TEMPLATE_OPTIONS } from "@/components/invoices/types";
 import { cn } from "@/lib/utils";
-import { pdf } from "@react-pdf/renderer";
-import { ClassicTemplate } from "@/components/invoices/templates/classic-template";
-import { NewYorkTemplate } from "@/components/invoices/templates/newyork-template";
-import { MinimalistTemplate } from "@/components/invoices/templates/minimalist-template";
-import { ElegantTemplate } from "@/components/invoices/templates/elegant-template";
-import { SakuraTemplate } from "@/components/invoices/templates/sakura-template";
-import { CorporateTemplate } from "@/components/invoices/templates/corporate-template";
+import { PDFViewer } from "@react-pdf/renderer";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
 import { useTemplatePreference } from "@/lib/hooks/use-template-preference";
+import { SelectedTemplateComponent } from "@/components/invoices/selected-template";
 
 export default function InvoicePreviewPage({
   params,
@@ -28,8 +22,6 @@ export default function InvoicePreviewPage({
   const { data: businessProfile } = trpc.businessProfile.get.useQuery();
   const { template: selectedTemplate, setTemplate: setSelectedTemplate } =
     useTemplatePreference();
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
   const getInvoiceData = () => {
     if (!invoice) return null;
@@ -78,63 +70,6 @@ export default function InvoicePreviewPage({
     };
   };
 
-  const getTemplateComponent = (template: TemplateType, data: any) => {
-    switch (template) {
-      case "classic":
-        return <ClassicTemplate invoice={data} />;
-      case "newyork":
-        return <NewYorkTemplate invoice={data} />;
-      case "minimalist":
-        return <MinimalistTemplate invoice={data} />;
-      case "elegant":
-        return <ElegantTemplate invoice={data} />;
-      case "sakura":
-        return <SakuraTemplate invoice={data} />;
-      case "corporate":
-        return <CorporateTemplate invoice={data} />;
-      default:
-        return <ClassicTemplate invoice={data} />;
-    }
-  };
-
-  // Generate preview whenever template or data changes
-  useEffect(() => {
-    const generatePreview = async () => {
-      const invoiceData = getInvoiceData();
-      if (!invoiceData) return;
-
-      setIsGeneratingPreview(true);
-      try {
-        const templateComponent = getTemplateComponent(
-          selectedTemplate,
-          invoiceData
-        );
-        const blob = await pdf(templateComponent).toBlob();
-        const url = URL.createObjectURL(blob);
-
-        // Cleanup previous URL
-        if (pdfUrl) {
-          URL.revokeObjectURL(pdfUrl);
-        }
-
-        setPdfUrl(url);
-      } catch (error) {
-        console.error("Failed to generate preview:", error);
-      } finally {
-        setIsGeneratingPreview(false);
-      }
-    };
-
-    generatePreview();
-
-    // Cleanup on unmount
-    return () => {
-      if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
-      }
-    };
-  }, [selectedTemplate, invoice, businessProfile]);
-
   if (isLoading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
@@ -152,6 +87,8 @@ export default function InvoicePreviewPage({
       />
     );
   }
+
+  const invoiceData = getInvoiceData();
 
   return (
     <div className="space-y-6">
@@ -197,23 +134,16 @@ export default function InvoicePreviewPage({
         {/* Preview Area */}
         <Card>
           <CardContent className="p-0">
-            {isGeneratingPreview ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : pdfUrl ? (
-              <iframe
-                src={pdfUrl}
-                className="w-full h-[800px] border-0"
-                title="Invoice Preview"
+            <PDFViewer
+              key={selectedTemplate}
+              className="w-full h-[calc(100dvh-225px)] max-h-[1000px] border-0"
+              showToolbar={true}
+            >
+              <SelectedTemplateComponent
+                template={selectedTemplate}
+                invoiceData={invoiceData}
               />
-            ) : (
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <div className="text-center space-y-2">
-                  <p className="text-sm">Generating preview...</p>
-                </div>
-              </div>
-            )}
+            </PDFViewer>
           </CardContent>
         </Card>
       </div>

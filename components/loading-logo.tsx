@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-const LoadingLogo = () => {
+const LoadingLogo = ({ className }: { className?: string }) => {
   return (
-    <div className="bg-primary p-2.5 rounded-xl">
+    <div className={cn("bg-primary p-2.5 rounded-xl", className)}>
       <svg
         width="36"
         height="36"
