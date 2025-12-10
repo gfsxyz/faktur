@@ -1,16 +1,24 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useMemo, useCallback } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TEMPLATE_OPTIONS } from "@/components/invoices/types";
 import { cn } from "@/lib/utils";
-import { PDFViewer } from "@react-pdf/renderer";
+import { BlobProvider } from "@react-pdf/renderer";
+import { Document, Page, pdfjs } from "react-pdf";
+import { Download, Printer } from "lucide-react";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
 import { useTemplatePreference } from "@/lib/hooks/use-template-preference";
 import { SelectedTemplateComponent } from "@/components/invoices/selected-template";
+
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+// Configure PDF.js worker (self-hosted)
+pdfjs.GlobalWorkerOptions.workerSrc = `/pdf-worker/pdf.worker.min.mjs`;
 
 export default function InvoicePreviewPage({
   params,
@@ -22,8 +30,9 @@ export default function InvoicePreviewPage({
   const { data: businessProfile } = trpc.businessProfile.get.useQuery();
   const { template: selectedTemplate, setTemplate: setSelectedTemplate } =
     useTemplatePreference();
+  const [numPages, setNumPages] = useState<number>(0);
 
-  const getInvoiceData = () => {
+  const invoiceData = useMemo(() => {
     if (!invoice) return null;
 
     return {
@@ -68,12 +77,17 @@ export default function InvoicePreviewPage({
           }
         : null,
     };
-  };
+  }, [invoice, businessProfile]);
 
   if (isLoading) {
     return (
-      <div className="flex min-h-dvh items-center justify-center">
+      <div
+        className="flex min-h-dvh items-center justify-center"
+        role="status"
+        aria-live="polite"
+      >
         <LoadingLogo />
+        <span className="sr-only">Loading invoice...</span>
       </div>
     );
   }
@@ -87,8 +101,6 @@ export default function InvoicePreviewPage({
       />
     );
   }
-
-  const invoiceData = getInvoiceData();
 
   return (
     <div className="space-y-6">
@@ -124,6 +136,8 @@ export default function InvoicePreviewPage({
                   selectedTemplate === template.value &&
                     "border-primary/20 bg-accent/30 shadow-sm text-primary dark:text-white border"
                 )}
+                aria-label={`${template.label} Template`}
+                title={`${template.label} Template`}
               >
                 {template.label}
               </Button>
@@ -132,18 +146,127 @@ export default function InvoicePreviewPage({
         </div>
 
         {/* Preview Area */}
-        <Card>
+        <Card className="pt-0">
           <CardContent className="p-0">
-            <PDFViewer
+            <BlobProvider
               key={selectedTemplate}
-              className="w-full h-[calc(100dvh-225px)] max-h-[1000px] border-0"
-              showToolbar={true}
+              document={
+                <SelectedTemplateComponent
+                  template={selectedTemplate}
+                  invoiceData={invoiceData}
+                />
+              }
             >
-              <SelectedTemplateComponent
-                template={selectedTemplate}
-                invoiceData={invoiceData}
-              />
-            </PDFViewer>
+              {({ url, loading, blob }) => {
+                const handleDownload = useCallback(() => {
+                  if (!blob) return;
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `Invoice-${invoice.invoiceNumber}.pdf`;
+                  link.click();
+                }, [blob, invoice.invoiceNumber]);
+
+                const handlePrint = useCallback(() => {
+                  if (!url) return;
+                  const printWindow = window.open(url);
+                  printWindow?.print();
+                }, [url]);
+
+                if (loading) {
+                  return (
+                    <div
+                      className="flex items-center justify-center h-[calc(100dvh-225px)] max-h-[1000px]"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <LoadingLogo className="animate-pulse" />
+                      <span className="sr-only">Generating PDF...</span>
+                    </div>
+                  );
+                }
+
+                if (!url) return null;
+
+                return (
+                  <>
+                    {/* Toolbar */}
+                    <div
+                      className="flex items-center justify-end gap-2 p-2 border-b bg-muted/30"
+                      role="toolbar"
+                      aria-label="PDF actions"
+                    >
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleDownload}
+                        className="h-7 w-7 p-0"
+                        aria-label="Download PDF"
+                        title="Download PDF"
+                        disabled={!blob}
+                      >
+                        <Download className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handlePrint}
+                        className="h-7 w-7 p-0"
+                        aria-label="Print PDF"
+                        title="Print PDF"
+                        disabled={!url}
+                      >
+                        <Printer className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                    </div>
+
+                    <div
+                      className="w-full h-[calc(100dvh-285px)] max-h-[1000px] overflow-auto flex flex-col items-center py-4 gap-8 bg-card"
+                      role="region"
+                      aria-label="PDF preview"
+                    >
+                      <Document
+                        file={url}
+                        onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                        loading={
+                          <div
+                            className="flex items-center justify-center py-12"
+                            role="status"
+                            aria-live="polite"
+                          >
+                            <LoadingLogo className="animate-pulse" />
+                            <span className="sr-only">Loading PDF...</span>
+                          </div>
+                        }
+                        error={
+                          <div
+                            className="flex items-center justify-center py-12 text-destructive"
+                            role="alert"
+                          >
+                            Failed to load PDF. Please try again.
+                          </div>
+                        }
+                      >
+                        {numPages > 0 &&
+                          Array.from(new Array(numPages), (_, index) => (
+                            <div
+                              key={`page_${index + 1}`}
+                              className="shadow-lg bg-card border-2 border-border"
+                              aria-label={`Page ${index + 1} of ${numPages}`}
+                            >
+                              <Page
+                                pageNumber={index + 1}
+                                width={Math.min(window.innerWidth - 100, 800)}
+                                renderTextLayer={true}
+                                renderAnnotationLayer={true}
+                              />
+                            </div>
+                          ))}
+                      </Document>
+                    </div>
+                  </>
+                );
+              }}
+            </BlobProvider>
           </CardContent>
         </Card>
       </div>
