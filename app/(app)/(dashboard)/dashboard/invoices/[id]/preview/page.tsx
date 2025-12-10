@@ -4,7 +4,6 @@ import { use, useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
 import { TEMPLATE_OPTIONS, TemplateType } from "@/components/invoices/types";
 import { cn } from "@/lib/utils";
 import { pdf } from "@react-pdf/renderer";
@@ -198,13 +197,13 @@ export default function InvoicePreviewPage({
         <Card>
           <CardContent className="p-0">
             {isGeneratingPreview ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <div className="flex items-center justify-center py-12 h-[calc(100dvh-225px)] max-h-[1000px]">
+                <LoadingLogo className="animate-pulse" />
               </div>
             ) : pdfUrl ? (
               <iframe
                 src={pdfUrl}
-                className="w-full h-[800px] border-0"
+                className="w-full h-[calc(100dvh-225px)] max-h-[1000px] border-0"
                 title="Invoice Preview"
               />
             ) : (
