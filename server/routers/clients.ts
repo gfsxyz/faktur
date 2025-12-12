@@ -2,8 +2,9 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { clients, invoices } from "@/lib/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql, ilike, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 
 const createClientSchema = z.object({
   name: z
@@ -114,14 +115,76 @@ const createClientSchema = z.object({
 });
 
 export const clientsRouter = createTRPCRouter({
-  // Get all clients for the current user
-  list: protectedProcedure.query(async ({ ctx }) => {
-    return await db
-      .select()
+  // Check if user has any clients
+  hasAny: protectedProcedure.query(async ({ ctx }) => {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
       .from(clients)
-      .where(eq(clients.userId, ctx.userId))
-      .orderBy(desc(clients.createdAt));
+      .where(eq(clients.userId, ctx.userId));
+
+    return (result[0]?.count ?? 0) > 0;
   }),
+
+  // Get all clients for the current user
+  list: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().min(1).max(100).default(10),
+          page: z.number().min(1).default(1),
+          search: z.string().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit ?? 10;
+      const page = input?.page ?? 1;
+      const searchRaw = input?.search;
+      const offset = (page - 1) * limit;
+
+      // Build where conditions
+      const conditions = [eq(clients.userId, ctx.userId)];
+
+      // Add search filter if provided (sanitized)
+      if (searchRaw) {
+        const sanitizedSearch = sanitizeSearchInput(searchRaw);
+        if (sanitizedSearch) {
+          const pattern = createILikePattern(sanitizedSearch);
+          conditions.push(
+            or(
+              ilike(clients.name, pattern),
+              ilike(clients.company, pattern),
+              ilike(clients.email, pattern)
+            )!
+          );
+        }
+      }
+
+      // Get total count
+      const countResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(clients)
+        .where(and(...conditions));
+
+      const total = countResult[0]?.count ?? 0;
+
+      // Get paginated clients
+      const clientsList = await db
+        .select()
+        .from(clients)
+        .where(and(...conditions))
+        .orderBy(desc(clients.createdAt))
+        .limit(limit)
+        .offset(offset);
+
+      return {
+        clients: clientsList,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
+    }),
 
   // Get a single client by ID
   getById: protectedProcedure

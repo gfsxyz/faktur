@@ -185,7 +185,8 @@ export function InvoiceForm({
     defaultValues?.notes || defaultValues?.terms
   );
 
-  const { data: clients } = trpc.clients.list.useQuery();
+  const { data: clientsData } = trpc.clients.list.useQuery();
+  const clients = clientsData?.clients || [];
   const { data: nextInvoiceNumber } =
     trpc.invoices.getNextInvoiceNumber.useQuery(undefined, {
       enabled: !invoiceId,

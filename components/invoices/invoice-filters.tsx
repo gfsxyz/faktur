@@ -5,7 +5,9 @@ import { Search, X, SlidersHorizontal } from "lucide-react";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -81,65 +83,65 @@ function FilterContent({
       <div className="space-y-4">
         {/* Items per page */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-foreground/90">
-            Items per page
-          </label>
           <Select value={limit.toString()} onValueChange={onLimitChange}>
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="10">10 items</SelectItem>
-              <SelectItem value="20">20 items</SelectItem>
-              <SelectItem value="50">50 items</SelectItem>
-              <SelectItem value="100">100 items</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Items per page</SelectLabel>
+                <SelectItem value="10">10 items</SelectItem>
+                <SelectItem value="20">20 items</SelectItem>
+                <SelectItem value="50">50 items</SelectItem>
+                <SelectItem value="100">100 items</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
 
         {/* Date range */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-foreground/90">
-            Date range
-          </label>
           <Select value={days?.toString() || "all"} onValueChange={onDaysChange}>
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All time</SelectItem>
-              <SelectItem value="1">Today</SelectItem>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="365">Last year</SelectItem>
+              <SelectGroup>
+                <SelectLabel>Date range</SelectLabel>
+                <SelectItem value="all">All time</SelectItem>
+                <SelectItem value="1">Today</SelectItem>
+                <SelectItem value="7">Last 7 days</SelectItem>
+                <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="365">Last year</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
 
         {/* Status */}
         <div className="space-y-2">
-          <label className="text-xs font-medium text-foreground/90">
-            Status
-          </label>
           <Select value={status || "all"} onValueChange={onStatusChange}>
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              {STATUSES.map((statusValue) => (
-                <SelectItem key={statusValue} value={statusValue}>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor: STATUS_COLORS[statusValue],
-                      }}
-                    />
-                    <span>{STATUS_LABELS[statusValue]}</span>
-                  </div>
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                <SelectLabel>Status</SelectLabel>
+                <SelectItem value="all">All</SelectItem>
+                {STATUSES.map((statusValue) => (
+                  <SelectItem key={statusValue} value={statusValue}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-2 w-2 rounded-full"
+                        style={{
+                          backgroundColor: STATUS_COLORS[statusValue],
+                        }}
+                      />
+                      <span>{STATUS_LABELS[statusValue]}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
@@ -187,7 +189,7 @@ export function InvoiceFilters({
   ].filter(Boolean).length;
 
   return (
-    <div className="flex items-center gap-3 lg:justify-end">
+    <div className="flex items-center gap-3">
       {/* Search Input - Always visible */}
       <InputGroup className="flex-1 lg:flex-initial lg:w-[280px]">
         <InputGroupInput

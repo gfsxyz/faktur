@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -59,6 +60,7 @@ interface InvoiceTableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  filters?: React.ReactNode;
 }
 
 export function InvoiceTable({
@@ -69,6 +71,7 @@ export function InvoiceTable({
   currentPage,
   totalPages,
   onPageChange,
+  filters,
 }: InvoiceTableProps) {
   const router = useRouter();
 
@@ -111,11 +114,16 @@ export function InvoiceTable({
 
   return (
     <Card className="hidden lg:block">
-      <CardHeader className="space-y-1 pb-4">
-        <CardTitle className="text-base font-medium">All Invoices</CardTitle>
-        <CardDescription className="text-xs">
-          {total} invoice{total !== 1 ? "s" : ""} found
-        </CardDescription>
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <CardTitle className="text-base font-medium">All Invoices</CardTitle>
+            <CardDescription className="text-xs">
+              {total} invoice{total !== 1 ? "s" : ""} found
+            </CardDescription>
+          </div>
+          {filters}
+        </div>
       </CardHeader>
       <CardContent className="relative">
         {isFetching && (

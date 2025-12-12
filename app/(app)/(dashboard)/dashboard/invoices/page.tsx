@@ -207,7 +207,7 @@ export default function InvoicesPage() {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold tracking-tight text-primary">
@@ -221,8 +221,10 @@ export default function InvoicesPage() {
             <Link href="/dashboard/invoices/new">New Invoice</Link>
           </Button>
         </div>
+      </div>
 
-        {/* Filters */}
+      {/* Mobile Filters - Show only on mobile */}
+      <div className="lg:hidden">
         <InvoiceFilters
           limit={limit}
           days={days}
@@ -251,6 +253,18 @@ export default function InvoicesPage() {
             currentPage={page}
             totalPages={totalPages}
             onPageChange={handlePageChange}
+            filters={
+              <InvoiceFilters
+                limit={limit}
+                days={days}
+                status={status}
+                search={searchInput}
+                onLimitChange={handleLimitChange}
+                onDaysChange={handleDaysChange}
+                onStatusChange={handleStatusChange}
+                onSearchChange={handleSearchChange}
+              />
+            }
           />
           <InvoiceTablePagination
             currentPage={page}
