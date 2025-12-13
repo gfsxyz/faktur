@@ -158,7 +158,9 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
   const utils = trpc.useUtils();
 
   // Open collapsible by default if editing and has tax ID or notes
-  const hasAdditionalInfo = Boolean(defaultValues?.taxId || defaultValues?.notes);
+  const hasAdditionalInfo = Boolean(
+    defaultValues?.taxId || defaultValues?.notes
+  );
 
   const createMutation = trpc.clients.create.useMutation({
     onSuccess: () => {
@@ -175,6 +177,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
         utils.clients.getById.invalidate({ id: clientId });
       }
       utils.clients.list.invalidate();
+      utils.invoices.list.invalidate();
       router.push("/dashboard/clients");
     },
   });

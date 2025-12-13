@@ -42,7 +42,7 @@ export default function InvoicesPage() {
   const page = parseInt(searchParams.get("page") || "1");
   const daysParam = searchParams.get("days");
   const days =
-    daysParam === "all" ? undefined : daysParam ? parseInt(daysParam) : 30;
+    daysParam === "all" ? undefined : daysParam ? parseInt(daysParam) : 90;
   const statusParam = searchParams.get("status");
   const status =
     statusParam === "all"
@@ -158,7 +158,7 @@ export default function InvoicesPage() {
   const handleFilterReset = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("limit", "10");
-    params.set("days", "30");
+    params.set("days", "90");
     params.set("status", "all");
     params.set("page", "1");
     router.push(`?${params.toString()}`);

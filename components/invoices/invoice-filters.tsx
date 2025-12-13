@@ -66,7 +66,7 @@ function FilterContent({
 >) {
 
   const hasNonDefaultValues =
-    limit !== 10 || days !== 30 || (status && status !== "all");
+    limit !== 10 || days !== 90 || (status && status !== "all");
 
   return (
     <div className="space-y-6">
@@ -111,6 +111,7 @@ function FilterContent({
                 <SelectItem value="1">Today</SelectItem>
                 <SelectItem value="7">Last 7 days</SelectItem>
                 <SelectItem value="30">Last 30 days</SelectItem>
+                <SelectItem value="90">Last 90 days</SelectItem>
                 <SelectItem value="365">Last year</SelectItem>
               </SelectGroup>
             </SelectContent>
@@ -192,7 +193,7 @@ export function InvoiceFilters({
   // Count active filters (excluding search)
   const activeFilterCount = [
     limit !== 10,
-    days !== 30,
+    days !== 90,
     status && status !== "all",
   ].filter(Boolean).length;
 
