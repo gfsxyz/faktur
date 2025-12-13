@@ -90,128 +90,169 @@ export default function InvoiceDetailPage({
       </div>
 
       {/* Mobile View - Cards */}
-      <div className="sm:hidden grid grid-cols-2 gap-3">
-        <div className="rounded-lg border border-border/50 bg-card p-3 shadow-sm">
-          <p className="text-xs font-medium text-muted-foreground mb-2">
-            Status
-          </p>
-          <Badge
-            className="text-xs font-medium"
-            style={{
-              backgroundColor: STATUS_COLORS[invoice.status],
-              color: "white",
-              border: "none",
-            }}
-          >
-            {STATUS_LABELS[invoice.status]}
-          </Badge>
-        </div>
-
-        <div className="rounded-lg border border-border/50 bg-card p-3 shadow-sm">
-          <p className="text-xs font-medium text-muted-foreground mb-2">
-            Issued
-          </p>
-          <p className="text-sm font-semibold">
-            {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-border/50 bg-card p-3 shadow-sm col-span-2">
-          <p className="text-xs font-medium text-muted-foreground mb-2">
-            Due Date
-          </p>
-          <p className="text-sm font-semibold">
-            {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
-          </p>
-        </div>
-      </div>
-
-      {/* Desktop View */}
-      <div className="hidden sm:flex items-center gap-6 rounded-lg border border-border/50 bg-card p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-muted-foreground">Status</p>
-          <Badge
-            className="text-xs font-medium"
-            style={{
-              backgroundColor: STATUS_COLORS[invoice.status],
-              color: "white",
-              border: "none",
-            }}
-          >
-            {STATUS_LABELS[invoice.status]}
-          </Badge>
-        </div>
-
-        <div className="h-6 w-px bg-border/50" />
-
-        <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-muted-foreground">Issued</p>
-          <p className="text-sm font-medium">
-            {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
-          </p>
-        </div>
-
-        <div className="h-6 w-px bg-border/50" />
-
-        <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-muted-foreground">Due</p>
-          <p className="text-sm font-medium">
-            {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="gap-1">
-          <CardHeader className="space-y-1 pb-3">
-            <CardTitle className="text-sm font-semibold">
-              Client Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 px-6 pb-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Name
-                </p>
-                <p className="text-sm font-medium">{invoice.client?.name}</p>
-              </div>
-              <div className="border-t border-border/30" />
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-muted-foreground">
-                  Email
-                </p>
-                <p className="text-sm font-medium">{invoice.client?.email}</p>
-              </div>
-              {invoice.client?.phone && (
-                <>
-                  <div className="border-t border-border/30" />
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      Phone
-                    </p>
-                    <p className="text-sm font-medium">
-                      {invoice.client.phone}
-                    </p>
-                  </div>
-                </>
-              )}
-              {invoice.client?.company && (
-                <>
-                  <div className="border-t border-border/30" />
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-muted-foreground">
-                      Company
-                    </p>
-                    <p className="text-sm font-medium">
-                      {invoice.client.company}
-                    </p>
-                  </div>
-                </>
-              )}
+      <div className="lg:hidden grid grid-cols-2 gap-3">
+        <Card className="py-3">
+          <CardContent>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Status
+              </p>
+              <Badge
+                className="text-xs font-medium"
+                style={{
+                  backgroundColor: STATUS_COLORS[invoice.status],
+                  color: "white",
+                  border: "none",
+                }}
+              >
+                {STATUS_LABELS[invoice.status]}
+              </Badge>
             </div>
           </CardContent>
         </Card>
+
+        <Card className="py-3">
+          <CardContent>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Issued
+              </p>
+              <p className="text-sm font-semibold">
+                {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="py-3">
+          <CardContent>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Due Date
+              </p>
+              <p className="text-sm font-semibold">
+                {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="py-3">
+          <CardContent>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Remaining
+              </p>
+              <p className="text-sm font-mono font-semibold text-primary">
+                ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Desktop View */}
+      <Card className="py-4 hidden lg:flex">
+        <CardContent className="flex items-center gap-6 rounded-lg">
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-medium text-muted-foreground">Status</p>
+            <Badge
+              className="text-xs font-medium"
+              style={{
+                backgroundColor: STATUS_COLORS[invoice.status],
+                color: "white",
+                border: "none",
+              }}
+            >
+              {STATUS_LABELS[invoice.status]}
+            </Badge>
+          </div>
+
+          <div className="h-6 w-px bg-border/50" />
+
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-medium text-muted-foreground">Issued</p>
+            <p className="text-sm font-medium">
+              {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
+            </p>
+          </div>
+
+          <div className="h-6 w-px bg-border/50" />
+
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-medium text-muted-foreground">Due</p>
+            <p className="text-sm font-medium">
+              {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+            </p>
+          </div>
+
+          <div className="h-6 w-px bg-border/50" />
+
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-medium text-muted-foreground">Remaining</p>
+            <p className="text-sm font-mono font-semibold text-primary">
+              ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <Link
+          href={`/dashboard/clients/${invoice.client?.id}`}
+          className="cursor-pointer"
+        >
+          <Card className="gap-1 h-full hover:bg-muted/30 transition-colors">
+            <CardHeader className="space-y-1 pb-3">
+              <CardTitle className="text-sm font-semibold">
+                Client Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 px-6 pb-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Name
+                  </p>
+                  <p className="text-sm font-medium">{invoice.client?.name}</p>
+                </div>
+                <div className="border-t border-border/30" />
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Email
+                  </p>
+                  <p className="text-sm font-medium">{invoice.client?.email}</p>
+                </div>
+                {invoice.client?.phone && (
+                  <>
+                    <div className="border-t border-border/30" />
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Phone
+                      </p>
+                      <p className="text-sm font-medium">
+                        {invoice.client.phone}
+                      </p>
+                    </div>
+                  </>
+                )}
+                {invoice.client?.company && (
+                  <>
+                    <div className="border-t border-border/30" />
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">
+                        Company
+                      </p>
+                      <p className="text-sm font-medium">
+                        {invoice.client.company}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
         <Card className="gap-1">
           <CardHeader className="space-y-1 pb-3">
@@ -244,10 +285,7 @@ export default function InvoiceDetailPage({
                   Balance Due
                 </span>
                 <span className="text-sm font-mono font-bold text-primary">
-                  $
-                  {moneySubtract(invoice.total, invoice.amountPaid).toFixed(
-                    2
-                  )}
+                  ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
                 </span>
               </div>
             </div>
