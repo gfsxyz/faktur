@@ -90,16 +90,24 @@ export default function ClientDetailPage({
           </div>
         </div>
         <div className="space-x-2">
-          <Button size="sm" variant={"outline"} asChild>
+          <Button
+            size="sm"
+            variant={"outline"}
+            asChild
+            title="Edit Clients"
+            aria-label="Edit Clients Button"
+          >
             <Link href={`/dashboard/clients/${id}/edit`}>
               <Cog />
-              Edit
+              <span className="hidden sm:inline-block">Edit</span>
             </Link>
           </Button>
 
           <Button
             size="sm"
             asChild
+            title="Add Invoice"
+            aria-label="Add Invoice Button"
             variant={"outline"}
             onClick={() => {
               localStorage.setItem("recentClientId", id);
@@ -107,7 +115,7 @@ export default function ClientDetailPage({
           >
             <Link href="/dashboard/invoices/new">
               <FilePlusCorner />
-              Add Invoice
+              <span className="hidden sm:inline-block">Add Invoice</span>
             </Link>
           </Button>
         </div>
