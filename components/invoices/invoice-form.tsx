@@ -200,8 +200,9 @@ export function InvoiceForm({
 
   const createMutation = trpc.invoices.create.useMutation({
     onSuccess: () => {
-      // Invalidate invoices list to refresh the list view
+      // Invalidate invoices list and hasAny to refresh the list view
       utils.invoices.list.invalidate();
+      utils.invoices.hasAny.invalidate();
       router.push("/dashboard/invoices");
     },
   });

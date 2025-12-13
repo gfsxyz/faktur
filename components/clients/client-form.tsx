@@ -164,8 +164,9 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
 
   const createMutation = trpc.clients.create.useMutation({
     onSuccess: () => {
-      // Invalidate clients list to refresh the list view
+      // Invalidate clients list and hasAny to refresh the list view
       utils.clients.list.invalidate();
+      utils.clients.hasAny.invalidate();
       router.push("/dashboard/clients");
     },
   });
