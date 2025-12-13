@@ -125,6 +125,46 @@ export const clientsRouter = createTRPCRouter({
     return (result[0]?.count ?? 0) > 0;
   }),
 
+  // Search clients by name or company (for combobox/autocomplete)
+  search: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().min(0).max(100),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const sanitizedQuery = sanitizeSearchInput(input.query);
+
+      // If query is empty, return empty array
+      if (!sanitizedQuery) {
+        return [];
+      }
+
+      const pattern = createILikePattern(sanitizedQuery);
+
+      // Search by name or company, limit to 10 results
+      const results = await db
+        .select({
+          id: clients.id,
+          name: clients.name,
+          company: clients.company,
+        })
+        .from(clients)
+        .where(
+          and(
+            eq(clients.userId, ctx.userId),
+            or(
+              ilike(clients.name, pattern),
+              ilike(clients.company, pattern)
+            )!
+          )
+        )
+        .orderBy(desc(clients.createdAt))
+        .limit(10);
+
+      return results;
+    }),
+
   // Get all clients for the current user
   list: protectedProcedure
     .input(

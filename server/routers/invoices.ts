@@ -242,16 +242,30 @@ export const invoicesRouter = createTRPCRouter({
 
   // Generate next invoice number
   getNextInvoiceNumber: protectedProcedure.query(async ({ ctx }) => {
-    const result = await db
-      .select({
-        maxNumber: sql<string>`MAX(CAST(SUBSTRING("invoiceNumber" FROM 5) AS INTEGER))`,
-      })
-      .from(invoices)
-      .where(eq(invoices.userId, ctx.userId));
+    try {
+      // Get all invoice numbers for the user
+      const userInvoices = await db
+        .select({ invoiceNumber: invoices.invoiceNumber })
+        .from(invoices)
+        .where(eq(invoices.userId, ctx.userId));
 
-    const maxNum = result[0]?.maxNumber ? parseInt(result[0].maxNumber) : 0;
-    const nextNum = maxNum + 1;
-    return `INV-${nextNum.toString().padStart(5, "0")}`;
+      // Extract numbers from valid INV-XXXXX format invoices
+      const numbers = userInvoices
+        .map((inv) => {
+          const match = inv.invoiceNumber?.match(/^INV-(\d+)$/);
+          return match ? parseInt(match[1], 10) : 0;
+        })
+        .filter((num) => num > 0);
+
+      // Get the max number, or start at 0 if no valid invoices
+      const maxNum = numbers.length > 0 ? Math.max(...numbers) : 0;
+      const nextNum = maxNum + 1;
+      return `INV-${nextNum.toString().padStart(5, "0")}`;
+    } catch (error) {
+      // Fallback to a safe default if query fails
+      console.error("Error getting next invoice number:", error);
+      return "INV-00001";
+    }
   }),
 
   // Calculate invoice totals
