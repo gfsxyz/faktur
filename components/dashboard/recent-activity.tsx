@@ -16,8 +16,8 @@ export function RecentActivity() {
 
   if (isLoading || !activities) {
     return (
-      <Card className="overflow-hidden border-muted/40 backdrop-blur-sm">
-        <div className="border-b border-border/40 bg-gradient-to-br from-muted/30 to-muted/10 px-5 py-4">
+      <Card className="border-muted/40 backdrop-blur-sm">
+        <div className="border-b border-border/40 bg-linear-to-br from-muted/30 to-muted/10 px-5 py-4">
           <h3 className="font-semibold tracking-tight">Recent Activity</h3>
           <p className="text-xs text-muted-foreground/80">
             Latest invoice updates
@@ -48,7 +48,7 @@ export function RecentActivity() {
 
   if (activities.length === 0) {
     return (
-      <Card className="overflow-hidden border-muted/40 backdrop-blur-sm">
+      <Card className="border-muted/40 backdrop-blur-sm">
         <div className="bg-gradient-to-br from-muted/30 to-muted/10 px-5 py-4">
           <h3 className="font-semibold tracking-tight">Recent Activity</h3>
           <p className="text-xs text-muted-foreground/80">
@@ -71,7 +71,7 @@ export function RecentActivity() {
   }
 
   return (
-    <Card className="overflow-hidden border-muted/40 backdrop-blur-sm px-4">
+    <Card className="border-muted/40 backdrop-blur-sm px-4">
       <div className="px-4 pt-3">
         <h3 className="font-semibold tracking-tight">Recent Activity</h3>
         <p className="text-xs text-muted-foreground/80">

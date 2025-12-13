@@ -3,6 +3,13 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { payments, invoices } from "@/lib/db/schema";
 import { eq, and, desc } from "drizzle-orm";
+import {
+  roundMoney,
+  moneyAdd,
+  moneySubtract,
+  moneyGreaterThanOrEqual,
+  moneyLessThan,
+} from "@/lib/utils/money";
 
 const createPaymentSchema = z.object({
   invoiceId: z.string().min(1, "Invoice ID is required"),
@@ -91,9 +98,9 @@ export const paymentsRouter = createTRPCRouter({
         })
         .returning();
 
-      // Update invoice amountPaid
-      const newAmountPaid = invoice.amountPaid + input.amount;
-      const isPaid = newAmountPaid >= invoice.total;
+      // Update invoice amountPaid with proper rounding
+      const newAmountPaid = moneyAdd(invoice.amountPaid, input.amount);
+      const isPaid = moneyGreaterThanOrEqual(newAmountPaid, invoice.total);
 
       await db
         .update(invoices)
@@ -134,14 +141,19 @@ export const paymentsRouter = createTRPCRouter({
       // Delete payment
       await db.delete(payments).where(eq(payments.id, input.id));
 
-      // Update invoice amountPaid
-      const newAmountPaid = payment.invoice.amountPaid - payment.payment.amount;
+      // Update invoice amountPaid with proper rounding
+      const newAmountPaid = moneySubtract(
+        payment.invoice.amountPaid,
+        payment.payment.amount
+      );
 
       await db
         .update(invoices)
         .set({
           amountPaid: Math.max(0, newAmountPaid),
-          status: newAmountPaid < payment.invoice.total ? "sent" : "paid",
+          status: moneyLessThan(newAmountPaid, payment.invoice.total)
+            ? "sent"
+            : "paid",
           updatedAt: new Date(),
         })
         .where(eq(invoices.id, payment.invoice.id));

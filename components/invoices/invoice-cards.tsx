@@ -16,6 +16,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { Cog, Shredder } from "lucide-react";
 
 interface Invoice {
   id: string;
@@ -166,6 +167,7 @@ export function InvoiceCards({
             <div className="bg-muted/50 px-4 py-2 flex items-center justify-end">
               <Button variant="ghost" size="sm" className="h-8 text-xs" asChild>
                 <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
+                  <Cog />
                   Edit
                 </Link>
               </Button>
@@ -175,6 +177,7 @@ export function InvoiceCards({
                 className="h-8 text-xs text-destructive hover:text-destructive"
                 onClick={() => onDelete(invoice.id)}
               >
+                <Shredder />
                 Delete
               </Button>
             </div>

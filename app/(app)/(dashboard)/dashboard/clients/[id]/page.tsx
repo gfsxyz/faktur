@@ -19,6 +19,8 @@ import {
 import { STATUS_COLORS } from "@/lib/constants/status-colors";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
+import { Cog, FilePlusCorner } from "lucide-react";
+import { roundMoney, moneySubtract } from "@/lib/utils/money";
 
 const statusColors = {
   draft: "secondary",
@@ -66,11 +68,15 @@ export default function ClientDetailPage({
     );
   }
 
-  const totalInvoiced = clientInvoices.reduce((sum, inv) => sum + inv.total, 0);
-  const totalPaid = clientInvoices
-    .filter((inv) => inv.status === "paid")
-    .reduce((sum, inv) => sum + inv.total, 0);
-  const outstanding = totalInvoiced - totalPaid;
+  const totalInvoiced = roundMoney(
+    clientInvoices.reduce((sum, inv) => sum + inv.total, 0)
+  );
+  const totalPaid = roundMoney(
+    clientInvoices
+      .filter((inv) => inv.status === "paid")
+      .reduce((sum, inv) => sum + inv.total, 0)
+  );
+  const outstanding = moneySubtract(totalInvoiced, totalPaid);
 
   return (
     <div className="space-y-6">
@@ -84,18 +90,33 @@ export default function ClientDetailPage({
           </div>
         </div>
         <div className="space-x-2">
-          <Button size="sm" variant={"outline"} asChild>
-            <Link href={`/dashboard/clients/${id}/edit`}>Edit</Link>
+          <Button
+            size="sm"
+            variant={"outline"}
+            asChild
+            title="Edit Clients"
+            aria-label="Edit Clients Button"
+          >
+            <Link href={`/dashboard/clients/${id}/edit`}>
+              <Cog />
+              <span className="hidden sm:inline-block">Edit</span>
+            </Link>
           </Button>
 
           <Button
             size="sm"
             asChild
+            title="Add Invoice"
+            aria-label="Add Invoice Button"
+            variant={"outline"}
             onClick={() => {
               localStorage.setItem("recentClientId", id);
             }}
           >
-            <Link href="/dashboard/invoices/new">Add Invoice</Link>
+            <Link href="/dashboard/invoices/new">
+              <FilePlusCorner />
+              <span className="hidden sm:inline-block">Add Invoice</span>
+            </Link>
           </Button>
         </div>
       </div>

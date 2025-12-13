@@ -71,9 +71,7 @@ export default function ClientsLayout({
                         </Link>
                       </BreadcrumbLink>
                     ) : (
-                      <BreadcrumbPage>
-                        {client?.name || "..."}
-                      </BreadcrumbPage>
+                      <BreadcrumbPage>{client?.name || "..."}</BreadcrumbPage>
                     )}
                   </BreadcrumbItem>
 

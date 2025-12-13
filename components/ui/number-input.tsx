@@ -7,6 +7,7 @@ export interface NumberInputProps
   onChange?: (value: number) => void;
   allowNegative?: boolean;
   suffix?: string;
+  maxDecimals?: number;
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
@@ -21,6 +22,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       step = "0.01",
       min,
       max,
+      maxDecimals = 2,
       ...props
     },
     ref
@@ -31,6 +33,15 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       if (inputValue === "") {
         onChange?.(0);
         return;
+      }
+
+      // Prevent typing more than maxDecimals decimal places
+      if (maxDecimals !== undefined) {
+        const decimalParts = inputValue.split(".");
+        if (decimalParts[1] && decimalParts[1].length > maxDecimals) {
+          // Don't update - prevent the input
+          return;
+        }
       }
 
       const parsedValue = parseFloat(inputValue);

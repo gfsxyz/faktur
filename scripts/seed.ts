@@ -3,9 +3,9 @@ import { clients, invoices, invoiceItems, users } from "../lib/db/schema";
 import { eq } from "drizzle-orm";
 
 // Configuration
-const USER_EMAIL = "testing@mail.com";
-const NUM_CLIENTS = 50;
-const NUM_INVOICES = 500;
+const USER_EMAIL = "kataliskstudio@gmail.com";
+const NUM_CLIENTS = 1000;
+const NUM_INVOICES = 15000;
 
 // Sample data pools for realistic generation
 const firstNames = [
@@ -183,8 +183,7 @@ function generatePostalCode(): string {
 }
 
 function generateInvoiceNumber(index: number): string {
-  const year = new Date().getFullYear();
-  return `INV-${year}-${String(index + 1).padStart(4, "0")}`;
+  return `INV-${String(index + 1).padStart(5, "0")}`;
 }
 
 async function main() {

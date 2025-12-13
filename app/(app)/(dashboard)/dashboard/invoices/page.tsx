@@ -29,7 +29,7 @@ import {
   InvoiceCardsPagination,
 } from "@/components/invoices/invoice-cards";
 import { InvoiceEmptyState } from "@/components/invoices/invoice-empty-state";
-import { FileText } from "lucide-react";
+import { FilePlusCorner, FileText } from "lucide-react";
 
 export default function InvoicesPage() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function InvoicesPage() {
   const page = parseInt(searchParams.get("page") || "1");
   const daysParam = searchParams.get("days");
   const days =
-    daysParam === "all" ? undefined : daysParam ? parseInt(daysParam) : 30;
+    daysParam === "all" ? undefined : daysParam ? parseInt(daysParam) : 90;
   const statusParam = searchParams.get("status");
   const status =
     statusParam === "all"
@@ -158,7 +158,7 @@ export default function InvoicesPage() {
   const handleFilterReset = () => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("limit", "10");
-    params.set("days", "30");
+    params.set("days", "90");
     params.set("status", "all");
     params.set("page", "1");
     router.push(`?${params.toString()}`);
@@ -192,8 +192,11 @@ export default function InvoicesPage() {
                 Manage and track all your invoices
               </p>
             </div>
-            <Button asChild>
-              <Link href="/dashboard/invoices/new">New Invoice</Link>
+            <Button asChild variant={"outline"}>
+              <Link href="/dashboard/invoices/new">
+                <FilePlusCorner />
+                Add Invoice
+              </Link>
             </Button>
           </div>
         </div>
@@ -216,7 +219,8 @@ export default function InvoicesPage() {
             </p>
             <Button asChild className="h-10">
               <Link href="/dashboard/invoices/new">
-                Create Your First Invoice
+                <FilePlusCorner />
+                Create First Invoice
               </Link>
             </Button>
           </CardContent>
@@ -238,8 +242,11 @@ export default function InvoicesPage() {
               Manage and track all your invoices
             </p>
           </div>
-          <Button asChild>
-            <Link href="/dashboard/invoices/new">New Invoice</Link>
+          <Button asChild variant={"outline"}>
+            <Link href="/dashboard/invoices/new">
+              <FilePlusCorner />
+              Add Invoice
+            </Link>
           </Button>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { trpc } from "@/lib/trpc/client";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ClientCombobox } from "@/components/clients/client-combobox";
+import LoadingLogo from "@/components/loading-logo";
 import {
   Card,
   CardContent,
@@ -46,6 +49,13 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { NumberInput } from "@/components/ui/number-input";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  roundMoney,
+  moneyAdd,
+  moneySubtract,
+  moneyMultiply,
+} from "@/lib/utils/money";
 
 const invoiceItemSchema = z.object({
   description: z
@@ -185,8 +195,10 @@ export function InvoiceForm({
     defaultValues?.notes || defaultValues?.terms
   );
 
-  const { data: clientsData } = trpc.clients.list.useQuery();
-  const clients = clientsData?.clients || [];
+  // Check if user has any clients (for empty state)
+  const { data: hasClients = false, isLoading: isLoadingClients } =
+    trpc.clients.hasAny.useQuery();
+
   const { data: nextInvoiceNumber } =
     trpc.invoices.getNextInvoiceNumber.useQuery(undefined, {
       enabled: !invoiceId,
@@ -194,8 +206,9 @@ export function InvoiceForm({
 
   const createMutation = trpc.invoices.create.useMutation({
     onSuccess: () => {
-      // Invalidate invoices list to refresh the list view
+      // Invalidate invoices list and hasAny to refresh the list view
       utils.invoices.list.invalidate();
+      utils.invoices.hasAny.invalidate();
       router.push("/dashboard/invoices");
     },
   });
@@ -216,7 +229,7 @@ export function InvoiceForm({
     defaultValues: defaultValues || {
       clientId: "",
       issueDate: new Date().toISOString().split("T")[0],
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0],
       status: "draft",
@@ -247,23 +260,16 @@ export function InvoiceForm({
   const isClientSelected = clientId && clientId.trim() !== "";
 
   // Load recent client from localStorage on mount (only for new invoices)
+  // Using useEffect to avoid hydration issues
   useEffect(() => {
-    if (!invoiceId && clients && clients.length > 0) {
+    if (!invoiceId && !defaultValues?.clientId) {
       const recentClientId = localStorage.getItem("recentClientId");
       if (recentClientId) {
-        // Check if the client still exists in the list
-        const clientExists = clients.some(
-          (client) => client.id === recentClientId
-        );
-        if (clientExists && !defaultValues?.clientId) {
-          form.setValue("clientId", recentClientId);
-        } else if (!clientExists) {
-          // Clean up if client no longer exists
-          localStorage.removeItem("recentClientId");
-        }
+        // Set the value directly - combobox will validate if client exists
+        form.setValue("clientId", recentClientId);
       }
     }
-  }, [invoiceId, clients, form, defaultValues]);
+  }, [invoiceId, form, defaultValues]);
 
   // Save selected client to localStorage whenever it changes
   useEffect(() => {
@@ -276,53 +282,57 @@ export function InvoiceForm({
   useEffect(() => {
     const subscription = form.watch((value) => {
       const items = value.items || [];
-      const sub = items.reduce((sum, item) => sum + (item?.amount || 0), 0);
+      const sub = roundMoney(
+        items.reduce((sum, item) => sum + (item?.amount || 0), 0)
+      );
       setSubtotal(sub);
 
       let disc = 0;
       if (value.discountType === "percentage") {
-        disc = (sub * (value.discountValue || 0)) / 100;
+        disc = moneyMultiply(sub, (value.discountValue || 0) / 100);
       } else if (value.discountType === "fixed") {
-        disc = value.discountValue || 0;
+        disc = roundMoney(value.discountValue || 0);
       }
       setDiscountAmount(disc);
 
-      const afterDiscount = sub - disc;
-      const tax = (afterDiscount * (value.taxRate || 0)) / 100;
+      const afterDiscount = moneySubtract(sub, disc);
+      const tax = moneyMultiply(afterDiscount, (value.taxRate || 0) / 100);
       setTaxAmount(tax);
 
-      const tot = afterDiscount + tax;
+      const tot = moneyAdd(afterDiscount, tax);
       setTotal(tot);
     });
 
     // Calculate totals on mount with default values
     const values = form.getValues();
     const items = values.items || [];
-    const sub = items.reduce((sum, item) => sum + (item?.amount || 0), 0);
+    const sub = roundMoney(
+      items.reduce((sum, item) => sum + (item?.amount || 0), 0)
+    );
     setSubtotal(sub);
 
     let disc = 0;
     if (values.discountType === "percentage") {
-      disc = (sub * (values.discountValue || 0)) / 100;
+      disc = moneyMultiply(sub, (values.discountValue || 0) / 100);
     } else if (values.discountType === "fixed") {
-      disc = values.discountValue || 0;
+      disc = roundMoney(values.discountValue || 0);
     }
     setDiscountAmount(disc);
 
-    const afterDiscount = sub - disc;
-    const tax = (afterDiscount * (values.taxRate || 0)) / 100;
+    const afterDiscount = moneySubtract(sub, disc);
+    const tax = moneyMultiply(afterDiscount, (values.taxRate || 0) / 100);
     setTaxAmount(tax);
 
-    const tot = afterDiscount + tax;
+    const tot = moneyAdd(afterDiscount, tax);
     setTotal(tot);
 
     return () => subscription.unsubscribe();
   }, [form]);
 
-  // Update item amount when quantity or rate changes
+  // Update item amount when quantity or rate changes with proper rounding
   const updateItemAmount = (index: number) => {
     const item = form.getValues(`items.${index}`);
-    const amount = item.quantity * item.rate;
+    const amount = moneyMultiply(item.quantity, item.rate);
     form.setValue(`items.${index}.amount`, amount);
   };
 
@@ -345,6 +355,15 @@ export function InvoiceForm({
       await createMutation.mutateAsync(payload as any);
     }
   };
+
+  // Show loading state while checking if user has clients
+  if (isLoadingClients) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <LoadingLogo />
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>
@@ -384,7 +403,7 @@ export function InvoiceForm({
               </CardHeader>
               <CardContent className="pt-2">
                 {/* Empty clients alert */}
-                {clients && clients.length === 0 && (
+                {!hasClients && (
                   <div className="flex items-center gap-2 rounded-md border px-3 py-2 border-amber-400">
                     <AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
                     <p className="text-sm text-muted-foreground">
@@ -399,7 +418,7 @@ export function InvoiceForm({
                   </div>
                 )}
 
-                <div className="grid gap-6 sm:grid-cols-2 pt-4">
+                <div className="grid gap-1 sm:grid-cols-2 sm:gap-6 pt-4">
                   <FormField
                     control={form.control}
                     name="clientId"
@@ -408,51 +427,14 @@ export function InvoiceForm({
                         <FormLabel className="text-sm font-medium">
                           Client
                         </FormLabel>
-                        <Select
-                          value={field.value || ""}
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                          }}
-                          onOpenChange={(open) => {
-                            if (!open) field.onBlur();
-                          }}
-                          disabled={!clients || clients.length === 0}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="h-10">
-                              <SelectValue
-                                placeholder={
-                                  !clients || clients.length === 0
-                                    ? "No clients available"
-                                    : "Select a client"
-                                }
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {clients?.map((client) => (
-                              <SelectItem key={client.id} value={client.id}>
-                                {client.name}
-                                {client.company && (
-                                  <span className="text-xs text-muted-foreground block max-w-20 text-ellipsis overflow-hidden">
-                                    {client.company}
-                                  </span>
-                                )}
-                              </SelectItem>
-                            ))}
-                            {clients && clients.length > 0 && (
-                              <>
-                                <Separator className="my-0.5" />
-                                <Link
-                                  href="/dashboard/clients/new"
-                                  className="flex items-center gap-2 px-2 py-1.5 text-sm text-primary hover:opacity-90 cursor-pointer opacity-70"
-                                >
-                                  Add new client
-                                </Link>
-                              </>
-                            )}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <ClientCombobox
+                            value={field.value || ""}
+                            onValueChange={field.onChange}
+                            onBlur={field.onBlur}
+                            disabled={!hasClients}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -492,7 +474,7 @@ export function InvoiceForm({
 
                 {/* <Separator className="bg-border/50" /> */}
 
-                <div className="grid gap-6 sm:grid-cols-2">
+                <div className="grid gap-1 sm:grid-cols-2 sm:gap-6">
                   <FormField
                     control={form.control}
                     name="issueDate"
@@ -503,11 +485,18 @@ export function InvoiceForm({
                           Issue Date
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="date"
-                            className="h-10"
+                          <DatePicker
+                            value={
+                              field.value ? new Date(field.value) : undefined
+                            }
+                            onChange={(date) =>
+                              field.onChange(
+                                date?.toISOString().split("T")[0] || ""
+                              )
+                            }
+                            maxDate={new Date(Date.now() + 24 * 60 * 60 * 1000)}
                             disabled={!isClientSelected}
-                            {...field}
+                            placeholder="Select issue date"
                           />
                         </FormControl>
                         <FormMessage />
@@ -518,30 +507,44 @@ export function InvoiceForm({
                   <FormField
                     control={form.control}
                     name="dueDate"
-                    render={({ field }) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className="flex items-center gap-2 text-sm font-medium">
-                          <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                          Due Date
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            className="h-10"
-                            disabled={!isClientSelected}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const issueDate = form.watch("issueDate");
+                      const minDate = issueDate
+                        ? new Date(issueDate)
+                        : new Date();
+
+                      return (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="flex items-center gap-2 text-sm font-medium">
+                            <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                            Due Date
+                          </FormLabel>
+                          <FormControl>
+                            <DatePicker
+                              value={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onChange={(date) =>
+                                field.onChange(
+                                  date?.toISOString().split("T")[0] || ""
+                                )
+                              }
+                              minDate={minDate}
+                              disabled={!isClientSelected}
+                              placeholder="Select due date"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                 </div>
               </CardContent>
             </Card>
 
             {/* Line Items */}
-            <Card className="pb-3">
+            <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -572,26 +575,30 @@ export function InvoiceForm({
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-0">
                 {fields.map((field, index) => (
                   <div
                     key={field.id}
-                    className="group relative space-y-4 transition-all hover:bg-muted/30"
+                    className={cn(
+                      "group relative rounded-lg p-4 transition-colors",
+                      "hover:bg-accent/50",
+                      index !== fields.length - 1 && "border-b"
+                    )}
                   >
-                    <div className="grid gap-4 md:grid-cols-12">
+                    <div className="grid gap-1 sm:gap-4 md:grid-cols-12">
                       <div className="md:col-span-5">
                         <FormField
                           control={form.control}
                           name={`items.${index}.description`}
                           render={({ field }) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className="text-xs font-medium text-muted-foreground">
+                            <FormItem className="space-y-1.5">
+                              <FormLabel className="text-xs font-medium">
                                 Description
                               </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Item description"
-                                  className="h-9 bg-background"
+                                  className="h-9"
                                   disabled={!isClientSelected}
                                   {...field}
                                 />
@@ -607,13 +614,13 @@ export function InvoiceForm({
                           control={form.control}
                           name={`items.${index}.quantity`}
                           render={({ field }) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className="text-xs font-medium text-muted-foreground">
+                            <FormItem className="space-y-1.5">
+                              <FormLabel className="text-xs font-medium">
                                 Quantity
                               </FormLabel>
                               <FormControl>
                                 <NumberInput
-                                  className="h-9 bg-background"
+                                  className="h-9"
                                   placeholder="0"
                                   disabled={!isClientSelected}
                                   value={field.value}
@@ -639,13 +646,13 @@ export function InvoiceForm({
                           control={form.control}
                           name={`items.${index}.rate`}
                           render={({ field }) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className="text-xs font-medium text-muted-foreground">
+                            <FormItem className="space-y-1.5">
+                              <FormLabel className="text-xs font-medium">
                                 Rate
                               </FormLabel>
                               <FormControl>
                                 <NumberInput
-                                  className="h-9 bg-background"
+                                  className="h-9"
                                   placeholder="0.00"
                                   disabled={!isClientSelected}
                                   value={field.value}
@@ -671,8 +678,8 @@ export function InvoiceForm({
                           control={form.control}
                           name={`items.${index}.amount`}
                           render={({ field }) => (
-                            <FormItem className="space-y-1">
-                              <FormLabel className="text-xs font-medium text-muted-foreground">
+                            <FormItem className="space-y-1.5">
+                              <FormLabel className="text-xs font-medium">
                                 Amount
                               </FormLabel>
                               <FormControl>
@@ -680,7 +687,7 @@ export function InvoiceForm({
                                   type="number"
                                   step="0.01"
                                   disabled
-                                  className="h-9 bg-muted/50"
+                                  className="h-9 bg-muted/30"
                                   {...field}
                                   value={field.value.toFixed(2)}
                                 />
@@ -697,11 +704,11 @@ export function InvoiceForm({
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9 opacity-50 transition-opacity hover:opacity-100"
+                            className="h-9 w-9 text-muted-foreground hover:text-destructive transition-colors"
                             disabled={!isClientSelected}
                             onClick={() => remove(index)}
                           >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         )}
                       </div>
@@ -970,13 +977,12 @@ export function InvoiceForm({
                   disabled={
                     createMutation.isPending ||
                     updateMutation.isPending ||
-                    !clients ||
-                    clients.length === 0
+                    !hasClients
                   }
                 >
                   {createMutation.isPending || updateMutation.isPending
                     ? "Saving..."
-                    : !clients || clients.length === 0
+                    : !hasClients
                     ? "Create Client First"
                     : invoiceId
                     ? "Update Invoice"

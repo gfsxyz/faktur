@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users } from "lucide-react";
+import { Handshake, Users } from "lucide-react";
 
 interface ClientEmptyStateProps {
   type: "no-clients" | "no-results";
@@ -36,7 +36,10 @@ export function ClientEmptyState({ type }: ClientEmptyStateProps) {
           Clients you add will appear here
         </p>
         <Button asChild className="h-10">
-          <Link href="/dashboard/clients/new">Add Your First Client</Link>
+          <Link href="/dashboard/clients/new">
+            <Handshake />
+            Add First Client
+          </Link>
         </Button>
       </CardContent>
     </Card>

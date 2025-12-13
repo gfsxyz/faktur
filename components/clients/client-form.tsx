@@ -158,12 +158,15 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
   const utils = trpc.useUtils();
 
   // Open collapsible by default if editing and has tax ID or notes
-  const hasAdditionalInfo = Boolean(defaultValues?.taxId || defaultValues?.notes);
+  const hasAdditionalInfo = Boolean(
+    defaultValues?.taxId || defaultValues?.notes
+  );
 
   const createMutation = trpc.clients.create.useMutation({
     onSuccess: () => {
-      // Invalidate clients list to refresh the list view
+      // Invalidate clients list and hasAny to refresh the list view
       utils.clients.list.invalidate();
+      utils.clients.hasAny.invalidate();
       router.push("/dashboard/clients");
     },
   });
@@ -175,6 +178,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
         utils.clients.getById.invalidate({ id: clientId });
       }
       utils.clients.list.invalidate();
+      utils.invoices.list.invalidate();
       router.push("/dashboard/clients");
     },
   });

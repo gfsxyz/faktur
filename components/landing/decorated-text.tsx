@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { CornerIcons } from "@/components/ui/corner-icons";
 
 interface DecoratedTextProps {
   text?: string;
@@ -48,57 +49,8 @@ function DecoratedText({
       <span className="relative z-10 inline-block leading-none">{content}</span>
 
       {/* CORNER ICONS */}
-      {showIcons && (
-        <>
-          <Icon
-            className={cn(
-              "absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 h-2.5 w-2.5 text-foreground/50",
-              iconClassName
-            )}
-          />
-          <Icon
-            className={cn(
-              "absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 h-2.5 w-2.5 text-foreground/50",
-              iconClassName
-            )}
-          />
-          <Icon
-            className={cn(
-              "absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 h-2.5 w-2.5 text-foreground/50",
-              iconClassName
-            )}
-          />
-          <Icon
-            className={cn(
-              "absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 h-2.5 w-2.5 text-foreground/50",
-              iconClassName
-            )}
-          />
-        </>
-      )}
+      {showIcons && <CornerIcons size="md" iconClassName={iconClassName} />}
     </motion.span>
-  );
-}
-
-function Icon({ className, ...props }: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      className={className}
-      {...props}
-    >
-      <rect
-        x="8"
-        y="8"
-        width="8"
-        height="8"
-        rx="1.5"
-        transform="rotate(45 12 12)"
-        fill="currentColor"
-      />
-    </svg>
   );
 }
 

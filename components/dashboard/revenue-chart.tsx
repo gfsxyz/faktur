@@ -119,11 +119,11 @@ export function RevenueChart() {
             <YAxis
               tick={{
                 fill: "var(--secondary-foreground)",
-                dx: -7,
+                dx: -2,
                 fontSize: 12,
               }}
               tickFormatter={formatCurrency}
-              width={45}
+              width={55}
             />
             <Tooltip
               contentStyle={{

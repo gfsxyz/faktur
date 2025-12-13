@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Moon, Sun, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import { FakturLogo } from "@/components/ui/faktur-logo";
+import { NavAccent } from "@/components/ui/nav-accent";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
@@ -46,7 +46,7 @@ export function Sidebar() {
       .toUpperCase() || "U";
 
   return (
-    <div className="flex h-full flex-col border-r">
+    <div className="flex h-full flex-col bg-accent/50">
       <div className="flex h-16 items-center px-6">
         <Link
           href="/dashboard"
@@ -62,7 +62,6 @@ export function Sidebar() {
           </span>
         </Link>
       </div>
-      <Separator />
       <nav className="flex-1 px-3 py-4 relative">
         {navigationPages.map((item) => {
           const isActive =
@@ -78,7 +77,10 @@ export function Sidebar() {
               href={item.href}
               onMouseEnter={() => setHoveredItem(item.name)}
               onMouseLeave={() => setHoveredItem(null)}
-              className="relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors"
+              className={cn(
+                "relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                isActive && "bg-accent"
+              )}
             >
               {shouldShowHighlight && (
                 <motion.div
@@ -106,6 +108,8 @@ export function Sidebar() {
               >
                 {item.name}
               </span>
+
+              {isActive && <NavAccent />}
             </Link>
           );
         })}

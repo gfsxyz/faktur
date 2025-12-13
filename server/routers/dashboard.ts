@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { invoices, clients } from "@/lib/db/schema";
 import { eq, and, sql, desc, gte } from "drizzle-orm";
 import { startOfMonth, subMonths, format } from "date-fns";
+import { roundMoney, moneyAdd, moneySubtract } from "@/lib/utils/money";
 
 export const dashboardRouter = createTRPCRouter({
   // Get overall statistics
@@ -18,14 +19,21 @@ export const dashboardRouter = createTRPCRouter({
       .from(invoices)
       .where(eq(invoices.userId, ctx.userId));
 
-    // Calculate statistics
-    const totalRevenue = userInvoices
-      .filter((inv) => inv.status === "paid")
-      .reduce((sum, inv) => sum + (inv.total || 0), 0);
+    // Calculate statistics with proper rounding
+    const totalRevenue = roundMoney(
+      userInvoices
+        .filter((inv) => inv.status === "paid")
+        .reduce((sum, inv) => sum + (inv.total || 0), 0)
+    );
 
-    const outstandingAmount = userInvoices
-      .filter((inv) => inv.status !== "paid" && inv.status !== "cancelled")
-      .reduce((sum, inv) => sum + (inv.total || 0) - (inv.amountPaid || 0), 0);
+    const outstandingAmount = roundMoney(
+      userInvoices
+        .filter((inv) => inv.status !== "paid" && inv.status !== "cancelled")
+        .reduce(
+          (sum, inv) => sum + ((inv.total || 0) - (inv.amountPaid || 0)),
+          0
+        )
+    );
 
     const paidInvoicesCount = userInvoices.filter(
       (inv) => inv.status === "paid"
@@ -88,7 +96,10 @@ export const dashboardRouter = createTRPCRouter({
         if (invoice.issueDate) {
           const monthKey = format(invoice.issueDate, "MMM yyyy");
           const currentRevenue = revenueByMonth.get(monthKey) || 0;
-          revenueByMonth.set(monthKey, currentRevenue + (invoice.total || 0));
+          revenueByMonth.set(
+            monthKey,
+            moneyAdd(currentRevenue, invoice.total || 0)
+          );
         }
       });
 
@@ -121,7 +132,7 @@ export const dashboardRouter = createTRPCRouter({
     return statusCounts.map((item) => ({
       status: item.status,
       count: Number(item.count),
-      total: Number(item.total || 0),
+      total: roundMoney(Number(item.total || 0)),
     }));
   }),
 

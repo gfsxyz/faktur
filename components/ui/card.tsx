@@ -1,17 +1,32 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+import { CornerIcons } from "./corner-icons";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+interface CardProps extends React.ComponentProps<"div"> {
+  showCorners?: boolean;
+  cornerSize?: "sm" | "md" | "lg";
+}
+
+function Card({
+  className,
+  showCorners = true,
+  cornerSize = "sm",
+  children,
+  ...props
+}: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-xs/5",
+        "bg-background border-border/50 border text-card-foreground flex flex-col gap-6 rounded-xl py-6 relative",
         className
       )}
       {...props}
-    />
+    >
+      {showCorners && <CornerIcons size={cornerSize} />}
+      {children}
+    </div>
   );
 }
 

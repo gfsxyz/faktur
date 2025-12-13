@@ -28,7 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Users, MoreHorizontal } from "lucide-react";
+import { Users, MoreHorizontal, Handshake, Cog, Shredder } from "lucide-react";
 import {
   DeleteConfirmationDialog,
   useDeleteConfirmation,
@@ -209,8 +209,11 @@ export default function ClientsPage() {
                 Manage your client
               </p>
             </div>
-            <Button asChild>
-              <Link href="/dashboard/clients/new">Add Client</Link>
+            <Button asChild variant={"outline"}>
+              <Link href="/dashboard/clients/new">
+                <Handshake />
+                Add Client
+              </Link>
             </Button>
           </div>
         </div>
@@ -231,8 +234,11 @@ export default function ClientsPage() {
             </h1>
             <p className="text-sm text-muted-foreground">Manage your client</p>
           </div>
-          <Button asChild>
-            <Link href="/dashboard/clients/new">Add Client</Link>
+          <Button asChild variant={"outline"}>
+            <Link href="/dashboard/clients/new">
+              <Handshake />
+              Add Client
+            </Link>
           </Button>
         </div>
       </div>
@@ -260,7 +266,9 @@ export default function ClientsPage() {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-1">
-              <CardTitle className="text-base font-medium">All Clients</CardTitle>
+              <CardTitle className="text-base font-medium">
+                All Clients
+              </CardTitle>
               <CardDescription className="text-xs">
                 {total} client{total !== 1 ? "s" : ""} total
               </CardDescription>
@@ -329,6 +337,7 @@ export default function ClientsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
                             <Link href={`/dashboard/clients/${client.id}/edit`}>
+                              <Cog />
                               Edit
                             </Link>
                           </DropdownMenuItem>
@@ -337,6 +346,7 @@ export default function ClientsPage() {
                             onClick={() => handleDelete(client.id)}
                             className="text-destructive"
                           >
+                            <Shredder className="text-destructive" />
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

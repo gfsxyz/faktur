@@ -28,7 +28,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { Cog, MoreHorizontal, Shredder } from "lucide-react";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 import LoadingLogo from "@/components/loading-logo";
 import { InvoiceEmptyState } from "@/components/invoices/invoice-empty-state";
@@ -118,7 +118,9 @@ export function InvoiceTable({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-base font-medium">All Invoices</CardTitle>
+            <CardTitle className="text-base font-medium">
+              All Invoices
+            </CardTitle>
             <CardDescription className="text-xs">
               {total} invoice{total !== 1 ? "s" : ""} found
             </CardDescription>
@@ -134,90 +136,96 @@ export function InvoiceTable({
         )}
         {invoices.length > 0 ? (
           <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Invoice #</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Issue Date</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-[70px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invoices.map((invoice) => (
-              <TableRow
-                key={invoice.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/dashboard/invoices/${invoice.id}`)}
-              >
-                <TableCell className="font-mono text-sm font-semibold text-primary">
-                  {invoice.invoiceNumber}
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <p className="text-sm font-medium">{invoice.clientName}</p>
-                    {invoice.clientCompany && (
-                      <p className="text-xs text-muted-foreground">
-                        {invoice.clientCompany}
-                      </p>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm">
-                  {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
-                </TableCell>
-                <TableCell className="text-sm">
-                  {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
-                </TableCell>
-                <TableCell className="font-mono text-sm font-medium">
-                  ${" "}
-                  {invoice.total.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    className="text-xs font-medium"
-                    style={{
-                      backgroundColor: STATUS_COLORS[invoice.status],
-                      color: "white",
-                      border: "none",
-                    }}
-                  >
-                    {STATUS_LABELS[invoice.status]}
-                  </Badge>
-                </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => onDelete(invoice.id)}
-                        className="text-destructive"
-                      >
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Invoice #</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Issue Date</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="w-[70px]"></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((invoice) => (
+                <TableRow
+                  key={invoice.id}
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push(`/dashboard/invoices/${invoice.id}`)
+                  }
+                >
+                  <TableCell className="font-mono text-sm font-semibold text-primary">
+                    {invoice.invoiceNumber}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="text-sm font-medium">
+                        {invoice.clientName}
+                      </p>
+                      {invoice.clientCompany && (
+                        <p className="text-xs text-muted-foreground">
+                          {invoice.clientCompany}
+                        </p>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {format(new Date(invoice.issueDate), "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
+                  </TableCell>
+                  <TableCell className="font-mono text-sm font-medium">
+                    ${" "}
+                    {invoice.total.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      className="text-xs font-medium"
+                      style={{
+                        backgroundColor: STATUS_COLORS[invoice.status],
+                        color: "white",
+                        border: "none",
+                      }}
+                    >
+                      {STATUS_LABELS[invoice.status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/invoices/${invoice.id}/edit`}>
+                            <Cog />
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => onDelete(invoice.id)}
+                          className="text-destructive"
+                        >
+                          <Shredder className="text-destructive" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         ) : (
           <div className="py-8">
             <InvoiceEmptyState type="no-results" />

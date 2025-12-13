@@ -20,6 +20,7 @@ import {
   useDeleteConfirmation,
 } from "@/components/ui/delete-confirmation-dialog";
 import { toast } from "sonner";
+import { roundMoney } from "@/lib/utils/money";
 
 interface PaymentHistoryProps {
   invoiceId: string;
@@ -98,10 +99,12 @@ export function PaymentHistory({
     );
   }
 
-  const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
+  const totalPaid = roundMoney(
+    payments.reduce((sum, payment) => sum + payment.amount, 0)
+  );
 
   return (
-    <Card className="gap-0">
+    <Card className="gap-0 pb-3">
       <CardHeader className="space-y-1 pb-3">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <CardTitle className="text-sm font-semibold">
