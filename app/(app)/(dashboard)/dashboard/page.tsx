@@ -5,9 +5,17 @@ import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { InvoiceStatusChart } from "@/components/dashboard/invoice-status-chart";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { OnboardingBanner } from "@/components/dashboard/onboarding-banner";
+import { trpc } from "@/lib/trpc/client";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { data: hasClients } = trpc.clients.hasAny.useQuery();
+  const { data: stats } = trpc.dashboard.getStats.useQuery();
+
+  const showClientBanner = hasClients === false;
+  const showInvoiceBanner = hasClients === true && stats?.totalInvoices === 0;
+  const showBanner = showClientBanner || showInvoiceBanner;
 
   return (
     <div className="space-y-4 md:space-y-8">
@@ -22,6 +30,28 @@ export default function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* Onboarding Banner */}
+      {showBanner && (
+        <OnboardingBanner
+          title={
+            showClientBanner
+              ? "Welcome! Let's get started"
+              : "Ready to send your first invoice?"
+          }
+          description={
+            showClientBanner
+              ? "Add your first client to unlock invoicing. It only takes a moment to set up."
+              : "Your client is set up. Create a professional invoice now and start the cash flow."
+          }
+          buttonText={showClientBanner ? "Add Client" : "Create Invoice"}
+          href={
+            showClientBanner
+              ? "/dashboard/clients/new"
+              : "/dashboard/invoices/new"
+          }
+        />
+      )}
 
       {/* Stats Cards */}
       <DashboardStats />
