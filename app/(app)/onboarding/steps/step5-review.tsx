@@ -1,30 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { OnboardingData } from "../schemas";
 
 interface Step5Props {
   data: OnboardingData;
   logoPreview: string | null;
-  onBack: () => void;
-  onConfirm: () => void;
-  isSubmitting: boolean;
 }
 
-export function Step5Review({
-  data,
-  logoPreview,
-  onBack,
-  onConfirm,
-  isSubmitting,
-}: Step5Props) {
+export function Step5Review({ data, logoPreview }: Step5Props) {
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 min-h-[468px]">
-      <div className="text-left space-y-3 pb-2">
-        <h2 className="text-3xl font-bold tracking-tight">
-          Review & Confirm
-        </h2>
-        <p className="text-base text-muted-foreground">Everything looks good?</p>
-      </div>
+    <div className="animate-in fade-in slide-in-from-right-4 duration-300">
       <div className="space-y-4 max-w-lg">
         <div className="rounded-xl border bg-muted/20 p-6 space-y-5">
           <div>
@@ -103,31 +86,6 @@ export function Step5Review({
             </div>
           )}
         </div>
-      </div>
-      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 max-w-lg pt-6">
-        <Button
-          variant="outline"
-          onClick={onBack}
-          size="lg"
-          className="w-full sm:w-auto sm:min-w-20"
-        >
-          Back
-        </Button>
-        <Button
-          onClick={onConfirm}
-          disabled={isSubmitting}
-          size="lg"
-          className="w-full sm:w-auto sm:min-w-20"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Setting up...
-            </>
-          ) : (
-            "Launch"
-          )}
-        </Button>
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ export const step3Schema = z.object({
         /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(
           val
         ),
-      "Please enter a valid website URL"
+      "Please enter a valid website URL (e.g., https://company.com)"
     )
     .transform((val) => val.trim())
     .optional()
