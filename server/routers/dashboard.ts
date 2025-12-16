@@ -89,6 +89,8 @@ export const dashboardRouter = createTRPCRouter({
         )
         .orderBy(invoices.issueDate);
 
+      if (!paidInvoices.length) return null;
+
       // Group by month
       const revenueByMonth = new Map<string, number>();
 

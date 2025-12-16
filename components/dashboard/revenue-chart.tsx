@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { ChartNoAxesColumn } from "lucide-react";
+import EmptyState from "../ui/empty-state";
 
 const CHART_COLOR = "var(--primary)";
 
@@ -28,7 +30,7 @@ export function RevenueChart() {
     months,
   });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
       <Card className="p-6">
         <div className="mb-4">
@@ -37,7 +39,7 @@ export function RevenueChart() {
             Monthly revenue from paid invoices
           </p>
         </div>
-        <div className="h-80 animate-pulse rounded bg-muted"></div>
+        <div className="h-80 animate-pulse bg-muted"></div>
       </Card>
     );
   }
@@ -67,124 +69,133 @@ export function RevenueChart() {
             Monthly revenue from paid invoices
           </p>
         </div>
-        <Select
-          value={String(months)}
-          onValueChange={(value) => setMonths(Number(value))}
-        >
-          <SelectTrigger className="w-30 text-xs lg:text-sm" size="sm">
-            <SelectValue placeholder="Range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="3">3 Months</SelectItem>
-            <SelectItem value="6">6 Months</SelectItem>
-            <SelectItem value="12">12 Months</SelectItem>
-          </SelectContent>
-        </Select>
+        {data && (
+          <Select
+            value={String(months)}
+            onValueChange={(value) => setMonths(Number(value))}
+          >
+            <SelectTrigger className="w-30 text-xs lg:text-sm" size="sm">
+              <SelectValue placeholder="Range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="3">3 Months</SelectItem>
+              <SelectItem value="6">6 Months</SelectItem>
+              <SelectItem value="12">12 Months</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
       </div>
       <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={data}
-            margin={{ top: 10, right: 10, left: 5, bottom: 0 }}
-          >
-            <defs>
-              <pattern
-                id="diagonalHatch"
-                patternUnits="userSpaceOnUse"
-                width="10"
-                height="10"
-                patternTransform="rotate(-45)"
-              >
-                <line
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="10"
-                  stroke={CHART_COLOR}
-                  strokeWidth="1"
-                  opacity="1"
-                />
-              </pattern>
+        {data ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={data}
+              margin={{ top: 10, right: 10, left: 5, bottom: 0 }}
+            >
+              <defs>
+                <pattern
+                  id="diagonalHatch"
+                  patternUnits="userSpaceOnUse"
+                  width="10"
+                  height="10"
+                  patternTransform="rotate(-45)"
+                >
+                  <line
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="10"
+                    stroke={CHART_COLOR}
+                    strokeWidth="1"
+                    opacity="1"
+                  />
+                </pattern>
 
-              <linearGradient id="fadeMask" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="white" stopOpacity="1" />
-                <stop offset="70%" stopColor="white" stopOpacity="0.07" />
-                <stop offset="100%" stopColor="white" stopOpacity="0" />
-              </linearGradient>
+                <linearGradient id="fadeMask" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="white" stopOpacity="1" />
+                  <stop offset="70%" stopColor="white" stopOpacity="0.07" />
+                  <stop offset="100%" stopColor="white" stopOpacity="0" />
+                </linearGradient>
 
-              <mask id="areaFadeMask">
-                <rect
-                  x="0"
-                  y="0"
-                  width="100%"
-                  height="100%"
-                  fill="url(#fadeMask)"
-                />
-              </mask>
-            </defs>
+                <mask id="areaFadeMask">
+                  <rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="url(#fadeMask)"
+                  />
+                </mask>
+              </defs>
 
-            <CartesianGrid
-              vertical={false}
-              stroke="var(--border)"
-              opacity={0.5}
-            />
+              <CartesianGrid
+                vertical={false}
+                stroke="var(--border)"
+                opacity={0.5}
+              />
 
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tick={{
-                dy: 7,
-                fontSize: 12,
-              }}
-              tickFormatter={(month) => month.slice(0, 3)}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{
-                dx: -2,
-                fontSize: 12,
-              }}
-              tickFormatter={formatCurrency}
-              width={55}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--popover)",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-lg)",
-                boxShadow: "var(--shadow-lg)",
-                padding: "8px 12px",
-                color: "var(--popover-foreground)",
-              }}
-              itemStyle={{
-                color: "var(--popover-foreground)",
-                fontSize: "13px",
-                fontWeight: "500",
-                padding: "2px 0",
-              }}
-              labelStyle={{
-                color: "var(--muted-foreground)",
-                fontSize: "11px",
-                fontWeight: "500",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                marginBottom: "2px",
-              }}
-              formatter={(value: number) => [formatCurrency(value), "Revenue"]}
-            />
-            <Area
-              type="monotone"
-              dataKey="revenue"
-              stroke={CHART_COLOR}
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#diagonalHatch)"
-              mask="url(#areaFadeMask)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  dy: 7,
+                  fontSize: 12,
+                }}
+                tickFormatter={(month) => month.slice(0, 3)}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  dx: -2,
+                  fontSize: 12,
+                }}
+                tickFormatter={formatCurrency}
+                width={55}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--popover)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-lg)",
+                  boxShadow: "var(--shadow-lg)",
+                  padding: "8px 12px",
+                  color: "var(--popover-foreground)",
+                }}
+                itemStyle={{
+                  color: "var(--popover-foreground)",
+                  fontSize: "13px",
+                  fontWeight: "500",
+                  padding: "2px 0",
+                }}
+                labelStyle={{
+                  color: "var(--muted-foreground)",
+                  fontSize: "11px",
+                  fontWeight: "500",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  marginBottom: "2px",
+                }}
+                formatter={(value: number) => [
+                  formatCurrency(value),
+                  "Revenue",
+                ]}
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke={CHART_COLOR}
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#diagonalHatch)"
+                mask="url(#areaFadeMask)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        ) : (
+          <EmptyState icon={<ChartNoAxesColumn size={44} />} />
+        )}
       </div>
     </Card>
   );

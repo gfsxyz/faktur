@@ -29,7 +29,8 @@ import {
   InvoiceCardsPagination,
 } from "@/components/invoices/invoice-cards";
 import { InvoiceEmptyState } from "@/components/invoices/invoice-empty-state";
-import { FilePlusCorner, FileText } from "lucide-react";
+import { FilePlusCorner, FileText, Shredder } from "lucide-react";
+import EmptyState from "@/components/ui/empty-state";
 
 export default function InvoicesPage() {
   const router = useRouter();
@@ -192,37 +193,22 @@ export default function InvoicesPage() {
                 Manage and track all your invoices
               </p>
             </div>
-            <Button asChild variant={"outline"}>
-              <Link href="/dashboard/invoices/new">
-                <FilePlusCorner />
-                Add Invoice
-              </Link>
-            </Button>
           </div>
         </div>
 
         <Card>
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-base font-medium">
-              No invoices yet
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Get started by creating your first invoice
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-              <FileText className="h-10 w-10 text-muted-foreground/50" />
-            </div>
-            <p className="mt-4 text-sm text-muted-foreground mb-4">
-              Invoices you create will appear here
-            </p>
-            <Button asChild className="h-10">
-              <Link href="/dashboard/invoices/new">
-                <FilePlusCorner />
-                Create First Invoice
-              </Link>
-            </Button>
+          <CardContent className="flex flex-col items-center justify-center py-12 min-h-[70dvh]">
+            <EmptyState
+              icon={<Shredder size={44} />}
+              cta={
+                <Button asChild variant={"outline"}>
+                  <Link href="/dashboard/invoices/new">
+                    <FilePlusCorner />
+                    Add Invoice
+                  </Link>
+                </Button>
+              }
+            />
           </CardContent>
         </Card>
       </div>

@@ -5,8 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
-import { FileText, ChevronRight } from "lucide-react";
+import { ChevronRight, Shredder } from "lucide-react";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
+import EmptyState from "../ui/empty-state";
 
 export function RecentActivity() {
   const { data: activities, isLoading } =
@@ -55,16 +56,12 @@ export function RecentActivity() {
             Latest invoice updates
           </p>
         </div>
-        <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-          <div className="rounded-2xl bg-muted/30 p-4 mb-4">
-            <FileText className="h-8 w-8 text-muted-foreground/40" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground/60">
-            No recent activity
-          </p>
-          <p className="text-xs text-muted-foreground/40 mt-1">
-            Invoice updates will appear here
-          </p>
+
+        <div className="h-80">
+          <EmptyState
+            icon={<Shredder size={44} />}
+            description="No recent activity"
+          />
         </div>
       </Card>
     );

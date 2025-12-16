@@ -209,12 +209,6 @@ export default function ClientsPage() {
                 Manage your client
               </p>
             </div>
-            <Button asChild variant={"outline"}>
-              <Link href="/dashboard/clients/new">
-                <Handshake />
-                Add Client
-              </Link>
-            </Button>
           </div>
         </div>
 
