@@ -3,7 +3,7 @@ import { clients, invoices, invoiceItems, users } from "../lib/db/schema";
 import { eq } from "drizzle-orm";
 
 // Configuration
-const USER_EMAIL = "kataliskstudio@gmail.com";
+const USER_EMAIL = "test@gmail.com";
 const NUM_CLIENTS = 1000;
 const NUM_INVOICES = 15000;
 

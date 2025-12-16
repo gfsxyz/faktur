@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const showBanner = showClientBanner || showInvoiceBanner;
 
   return (
-    <div className="space-y-4 md:space-y-8">
+    <div className="space-y-4 md:space-y-6">
       {/* Header Section */}
       <div className="space-y-2">
         <div>
@@ -26,7 +26,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-sm text-muted-foreground">
-            Welcome back, {session?.user?.name}!
+            Stay on top of your invoices
           </p>
         </div>
       </div>

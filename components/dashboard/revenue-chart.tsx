@@ -12,9 +12,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { STATUS_COLORS } from "@/lib/constants/status-colors";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-const CHART_COLOR = STATUS_COLORS.draft;
+const CHART_COLOR = "var(--primary)";
 
 export function RevenueChart() {
   const [months, setMonths] = useState(6);
@@ -61,38 +67,19 @@ export function RevenueChart() {
             Monthly revenue from paid invoices
           </p>
         </div>
-        <div className="flex gap-1.5">
-          <button
-            onClick={() => setMonths(3)}
-            className={`rounded-md px-3 py-1.5 text-xs lg:text-sm font-medium transition-colors ${
-              months === 3
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            3M
-          </button>
-          <button
-            onClick={() => setMonths(6)}
-            className={`rounded-md px-3 py-1.5 text-xs lg:text-sm font-medium transition-colors ${
-              months === 6
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            6M
-          </button>
-          <button
-            onClick={() => setMonths(12)}
-            className={`rounded-md px-3 py-1.5 text-xs lg:text-sm font-medium transition-colors ${
-              months === 12
-                ? "bg-primary text-primary-foreground"
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            12M
-          </button>
-        </div>
+        <Select
+          value={String(months)}
+          onValueChange={(value) => setMonths(Number(value))}
+        >
+          <SelectTrigger className="w-30 text-xs lg:text-sm" size="sm">
+            <SelectValue placeholder="Range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="3">3 Months</SelectItem>
+            <SelectItem value="6">6 Months</SelectItem>
+            <SelectItem value="12">12 Months</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
@@ -101,24 +88,61 @@ export function RevenueChart() {
             margin={{ top: 10, right: 10, left: 5, bottom: 0 }}
           >
             <defs>
-              <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={CHART_COLOR} stopOpacity={1} />
-                <stop offset="95%" stopColor={CHART_COLOR} stopOpacity={0.5} />
+              <pattern
+                id="diagonalHatch"
+                patternUnits="userSpaceOnUse"
+                width="10"
+                height="10"
+                patternTransform="rotate(-45)"
+              >
+                <line
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="10"
+                  stroke={CHART_COLOR}
+                  strokeWidth="1"
+                  opacity="1"
+                />
+              </pattern>
+
+              <linearGradient id="fadeMask" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="white" stopOpacity="1" />
+                <stop offset="70%" stopColor="white" stopOpacity="0.07" />
+                <stop offset="100%" stopColor="white" stopOpacity="0" />
               </linearGradient>
+
+              <mask id="areaFadeMask">
+                <rect
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="100%"
+                  fill="url(#fadeMask)"
+                />
+              </mask>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+
+            <CartesianGrid
+              vertical={false}
+              stroke="var(--border)"
+              opacity={0.5}
+            />
+
             <XAxis
               dataKey="month"
+              tickLine={false}
+              axisLine={false}
               tick={{
-                fill: "var(--secondary-foreground)",
                 dy: 7,
                 fontSize: 12,
               }}
               tickFormatter={(month) => month.slice(0, 3)}
             />
             <YAxis
+              axisLine={false}
+              tickLine={false}
               tick={{
-                fill: "var(--secondary-foreground)",
                 dx: -2,
                 fontSize: 12,
               }}
@@ -156,7 +180,8 @@ export function RevenueChart() {
               stroke={CHART_COLOR}
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorRevenue)"
+              fill="url(#diagonalHatch)"
+              mask="url(#areaFadeMask)"
             />
           </AreaChart>
         </ResponsiveContainer>
