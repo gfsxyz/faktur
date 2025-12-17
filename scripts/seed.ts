@@ -90,7 +90,7 @@ async function main() {
     userId: user.id,
     name: faker.person.fullName(),
     email: faker.internet.email(),
-    phone: faker.phone.number(),
+    phone: faker.phone.number({ style: "international" }),
     company: faker.company.name(),
     address: faker.location.streetAddress(),
     city: faker.location.city(),
