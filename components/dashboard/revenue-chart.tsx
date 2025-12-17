@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Card } from "@/components/ui/card";
 import {
@@ -22,23 +22,32 @@ import {
 import { ChartNoAxesColumn } from "lucide-react";
 import EmptyState from "../ui/empty-state";
 import { formatCurrencyForChart } from "@/lib/utils/money";
+import { getChartDateRangeText } from "@/lib/utils/chart";
 
 const CHART_COLOR = "var(--primary)";
 
 export function RevenueChart() {
   const [months, setMonths] = useState(6);
-  const { data, isLoading } = trpc.dashboard.getRevenueOverTime.useQuery({
-    months,
-  });
+  const { data, isLoading } = trpc.dashboard.getRevenueOverTime.useQuery(
+    {
+      months,
+    },
+    {
+      placeholderData: (previousData) => previousData,
+    }
+  );
 
-  if (isLoading) {
+  const dateRangeText = useMemo(
+    () => getChartDateRangeText(data, "No revenue data"),
+    [data]
+  );
+
+  if (isLoading && !data) {
     return (
       <Card className="p-6">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Revenue Overview</h3>
-          <p className="text-sm text-muted-foreground">
-            Monthly revenue from paid invoices
-          </p>
+          <p className="text-sm text-muted-foreground">{dateRangeText}</p>
         </div>
         <div className="h-80 animate-pulse bg-muted"></div>
       </Card>
@@ -53,7 +62,7 @@ export function RevenueChart() {
             Revenue Overview
           </h3>
           <p className="text-xs lg:text-sm text-muted-foreground">
-            Monthly revenue from paid invoices
+            {dateRangeText}
           </p>
         </div>
         {data && (

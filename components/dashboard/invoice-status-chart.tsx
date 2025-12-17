@@ -19,6 +19,7 @@ import { useState, memo, useCallback, useMemo } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrencyForChart } from "@/lib/utils/money";
 import { cn } from "@/lib/utils";
+import { getChartDateRangeText } from "@/lib/utils/chart";
 
 const ALL_STATUSES = ["paid", "sent", "overdue", "draft", "cancelled"] as const;
 
@@ -137,10 +138,15 @@ export function InvoiceStatusChart() {
   const [metric, setMetric] = useState<"count" | "amount">("count");
   const [hoveredStatus, setHoveredStatus] = useState<string | null>(null);
   const [hiddenStatuses, setHiddenStatuses] = useState<Set<string>>(new Set());
-  const { data, isLoading } = trpc.dashboard.getStatusOverTime.useQuery({
-    months: 12,
-    metric,
-  });
+  const { data, isLoading } = trpc.dashboard.getStatusOverTime.useQuery(
+    {
+      months: 12,
+      metric,
+    },
+    {
+      placeholderData: (previousData) => previousData,
+    }
+  );
 
   const handleMouseEnter = useCallback((status: string) => {
     setHoveredStatus(status);
@@ -178,20 +184,10 @@ export function InvoiceStatusChart() {
     [data]
   );
 
-  const dateRangeText = useMemo(() => {
-    if (!data || data.length === 0) return "Last 12 months";
-
-    const firstMonth = data[0].month;
-    const lastMonth = data[data.length - 1].month;
-
-    const [firstMonthName, firstYear] = firstMonth.split(" ");
-    const [lastMonthName, lastYear] = lastMonth.split(" ");
-
-    if (firstYear === lastYear) {
-      return `${firstMonthName} - ${lastMonthName} ${lastYear}`;
-    }
-    return `${firstMonth} - ${lastMonth}`;
-  }, [data]);
+  const dateRangeText = useMemo(
+    () => getChartDateRangeText(data, "Last 12 months"),
+    [data]
+  );
 
   if (isLoading) {
     return (
@@ -321,7 +317,9 @@ export function InvoiceStatusChart() {
                   }
                   stroke={STATUS_COLORS[status]}
                   strokeWidth={0.5}
-                  isAnimationActive={false}
+                  isAnimationActive={true}
+                  animationDuration={300}
+                  animationEasing="ease-out"
                   onMouseEnter={() => handleMouseEnter(status)}
                   hide={hiddenStatuses.has(status)}
                   radius={
