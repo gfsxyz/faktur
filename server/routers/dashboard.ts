@@ -421,6 +421,7 @@ export const dashboardRouter = createTRPCRouter({
           createdAt: invoices.createdAt,
           updatedAt: invoices.updatedAt,
           clientName: clients.name,
+          clientCompany: clients.company,
         })
         .from(invoices)
         .leftJoin(clients, eq(invoices.clientId, clients.id))

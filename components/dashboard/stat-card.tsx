@@ -28,7 +28,7 @@ export function StatCard({ title, value, description, trend }: StatCardProps) {
   };
 
   return (
-    <Card className="p-4 lg:px-6 transition-all duration-200 justify-center min-w-min">
+    <Card className="p-4 pb-3 lg:px-6 transition-all duration-200 justify-center min-w-min">
       <div className="space-y-1 lg:space-y-1.5">
         <p className="text-[9px] lg:text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
           {title}
@@ -53,14 +53,18 @@ export function StatCard({ title, value, description, trend }: StatCardProps) {
                     <ArrowUp
                       className="h-3 w-3"
                       style={{
-                        color: trend.isPositive ? POSITIVE_COLOR : NEGATIVE_COLOR,
+                        color: trend.isPositive
+                          ? POSITIVE_COLOR
+                          : NEGATIVE_COLOR,
                       }}
                     />
                   ) : (
                     <ArrowDown
                       className="h-3 w-3"
                       style={{
-                        color: trend.isPositive ? POSITIVE_COLOR : NEGATIVE_COLOR,
+                        color: trend.isPositive
+                          ? POSITIVE_COLOR
+                          : NEGATIVE_COLOR,
                       }}
                     />
                   )}
@@ -76,7 +80,9 @@ export function StatCard({ title, value, description, trend }: StatCardProps) {
                     <span
                       className="hidden sm:inline text-xs font-medium opacity-70"
                       style={{
-                        color: trend.isPositive ? POSITIVE_COLOR : NEGATIVE_COLOR,
+                        color: trend.isPositive
+                          ? POSITIVE_COLOR
+                          : NEGATIVE_COLOR,
                       }}
                     >
                       ({trend.absoluteDelta})
