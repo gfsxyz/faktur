@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { InvoiceData } from "../types";
+import { formatCurrency } from "@/lib/utils/money";
 
 // THEME: Sidebar - Uses a vertical layout with a prominent color column
 const colors = {
@@ -173,8 +174,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 });
-
-const formatCurrency = (amount: number) => `USD ${amount.toFixed(2)}`;
 
 export function ElegantTemplate({ invoice }: { invoice: InvoiceData }) {
   return (

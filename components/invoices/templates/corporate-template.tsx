@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { InvoiceData } from "../types";
+import { formatCurrency } from "@/lib/utils/money";
 
 // THEME: Modern/Azure - Uses a bold primary color for emphasis
 const colors = {
@@ -187,8 +188,6 @@ const styles = StyleSheet.create({
     lineHeight: 1.4,
   },
 });
-
-const formatCurrency = (amount: number) => `USD ${amount.toFixed(2)}`;
 
 export function CorporateTemplate({ invoice }: { invoice: InvoiceData }) {
   return (

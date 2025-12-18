@@ -58,3 +58,47 @@ export function moneySubtract(a: number, b: number): number {
 export function moneyMultiply(a: number, b: number): number {
   return roundMoney(a * b);
 }
+
+/**
+ * Format a monetary value as currency with proper thousands separators
+ * @param amount - The amount to format
+ * @param options - Optional formatting options
+ * @returns Formatted currency string (e.g., "$1,234.56")
+ */
+export function formatCurrency(
+  amount: number,
+  options?: {
+    locale?: string;
+    currency?: string;
+    minimumFractionDigits?: number;
+    maximumFractionDigits?: number;
+  }
+): string {
+  const {
+    locale = "en-US",
+    currency = "USD",
+    minimumFractionDigits = 2,
+    maximumFractionDigits = 2,
+  } = options || {};
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits,
+    maximumFractionDigits,
+  }).format(amount);
+}
+
+/**
+ * Formats a monetary value for chart display
+ * Shows values like $1.5M, $600K, or $150 depending on magnitude
+ */
+export function formatCurrencyForChart(value: number): string {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `$${(value / 1000).toFixed(1)}K`;
+  }
+  return formatCurrency(value, { minimumFractionDigits: 0 });
+}

@@ -32,11 +32,7 @@ export function OnboardingBanner({
         <p className="text-muted dark:text-muted-foreground mb-4 max-w-sm text-sm">
           {description}
         </p>
-        <Button
-          asChild
-          size="lg"
-          className="bg-secondary hover:bg-secondary/90 text-primary"
-        >
+        <Button asChild variant={"outline"} size="lg">
           <Link href={href}>{buttonText}</Link>
         </Button>
       </div>

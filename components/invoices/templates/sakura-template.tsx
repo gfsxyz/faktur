@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { InvoiceData } from "../types";
+import { formatCurrency } from "@/lib/utils/money";
 
 // THEME: Sakura Bloom - Soft blush dominance with dynamic structure
 const colors = {
@@ -173,8 +174,6 @@ const styles = StyleSheet.create({
     lineHeight: 1.4,
   },
 });
-
-const formatCurrency = (amount: number) => `USD ${amount.toFixed(2)}`;
 
 export function SakuraTemplate({ invoice }: { invoice: InvoiceData }) {
   return (

@@ -19,8 +19,9 @@ import {
 import { STATUS_COLORS } from "@/lib/constants/status-colors";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
-import { Cog, FilePlusCorner } from "lucide-react";
+import { Cog, FilePlusCorner, Shredder } from "lucide-react";
 import { roundMoney, moneySubtract } from "@/lib/utils/money";
+import EmptyState from "@/components/ui/empty-state";
 
 const statusColors = {
   draft: "secondary",
@@ -349,9 +350,14 @@ export default function ClientDetailPage({
         </CardHeader>
         <CardContent className="p-0">
           {clientInvoices.length === 0 ? (
-            <p className="text-center py-8 text-sm text-muted-foreground">
-              No invoices for this client yet
-            </p>
+            <div className="h-56">
+              <EmptyState
+                icon={<Shredder size={32} />}
+                description="No invoices for this client yet
+              
+              "
+              />
+            </div>
           ) : (
             <>
               {/* Mobile View - Cards */}

@@ -185,7 +185,7 @@ export default function InvoicePreviewPage({
                   );
                 }
 
-                if (!url) return null;
+                if (!blob) return null;
 
                 return (
                   <>
@@ -225,7 +225,7 @@ export default function InvoicePreviewPage({
                       aria-label="PDF preview"
                     >
                       <Document
-                        file={url}
+                        file={blob}
                         onLoadSuccess={({ numPages }) => setNumPages(numPages)}
                         loading={
                           <div

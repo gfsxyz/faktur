@@ -2,16 +2,18 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
-import { FileText, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronRight, Shredder } from "lucide-react";
 import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
+import EmptyState from "../ui/empty-state";
+import { formatCurrency } from "@/lib/utils/money";
+import { getClientAvatar } from "@/lib/utils/avatar";
 
 export function RecentActivity() {
   const { data: activities, isLoading } =
     trpc.dashboard.getRecentActivity.useQuery({
-      limit: 10,
+      limit: 5,
     });
 
   if (isLoading || !activities) {
@@ -23,9 +25,9 @@ export function RecentActivity() {
             Latest invoice updates
           </p>
         </div>
-        <div className="divide-y divide-border/40 p-3">
+        <div>
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3 py-3 px-2">
+            <div key={i} className="flex items-center gap-3 px-2 py-3">
               <div className="h-10 w-10 animate-pulse rounded-lg bg-muted/50"></div>
               <div className="flex-1 space-y-2">
                 <div className="h-3.5 w-24 animate-pulse rounded bg-muted/50"></div>
@@ -39,13 +41,6 @@ export function RecentActivity() {
     );
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
   if (activities.length === 0) {
     return (
       <Card className="border-muted/40 backdrop-blur-sm">
@@ -55,25 +50,27 @@ export function RecentActivity() {
             Latest invoice updates
           </p>
         </div>
-        <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-          <div className="rounded-2xl bg-muted/30 p-4 mb-4">
-            <FileText className="h-8 w-8 text-muted-foreground/40" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground/60">
-            No recent activity
-          </p>
-          <p className="text-xs text-muted-foreground/40 mt-1">
-            Invoice updates will appear here
-          </p>
+        <div className="h-80">
+          <EmptyState
+            icon={<Shredder size={44} />}
+            description="No recent activity"
+          />
         </div>
       </Card>
     );
   }
 
   return (
-    <Card className="border-muted/40 backdrop-blur-sm px-4">
-      <div className="px-4">
-        <h3 className="font-semibold tracking-tight">Recent Activity</h3>
+    <Card className="border-muted/40 backdrop-blur-sm">
+      <div className="px-5">
+        <Link
+          href="/dashboard/invoices"
+          className="hover:underline underline-offset-2"
+          title="view all"
+          aria-label="view all"
+        >
+          <h3 className="font-semibold tracking-tight">Recent Activity</h3>
+        </Link>
         <p className="text-xs text-muted-foreground/80">
           Latest invoice updates
         </p>
@@ -83,42 +80,47 @@ export function RecentActivity() {
           <Link
             key={activity.id}
             href={`/dashboard/invoices/${activity.id}`}
-            className="group flex items-center gap-3 px-4 py-3 transition-all duration-200 hover:bg-accent/50 active:bg-accent"
+            className="group flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-muted/30"
           >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 mb-0.5">
-                <p className="text-sm font-medium truncate">
-                  {activity.invoiceNumber}
-                </p>
-                <Badge
-                  className="shrink-0 px-2 py-0 text-[10px] font-medium"
-                  style={{
-                    backgroundColor: STATUS_COLORS[activity.status],
-                    color: "white",
-                    border: "none",
-                  }}
-                >
-                  {STATUS_LABELS[activity.status] || activity.status}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground/80 truncate">
-                {activity.clientName || "No client"}
+            {/* Client Avatar */}
+            <div className="relative shrink-0">
+              <Image
+                src={getClientAvatar(activity.clientId || "unknown")}
+                alt={activity.clientCompany || activity.clientName || "Client"}
+                width={40}
+                height={40}
+              />
+              {/* Status Indicator Dot */}
+              <div
+                className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-3 border-background"
+                style={{
+                  backgroundColor: STATUS_COLORS[activity.status],
+                }}
+                title="Status indicator marker"
+                aria-label="Status indicator marker"
+              />
+            </div>
+
+            {/* Client & Invoice Info */}
+            <div className="flex-1 min-w-0 space-y-0.5">
+              <p className="font-semibold text-sm truncate text-foreground">
+                {activity.clientCompany || activity.clientName || "No client"}
               </p>
-              <div className="flex items-center gap-1 mt-1">
-                <p className="text-[10px] text-muted-foreground/60">
-                  {activity.updatedAt
-                    ? formatDistanceToNow(new Date(activity.updatedAt), {
-                        addSuffix: true,
-                      })
-                    : "recently"}
-                </p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="truncate">{activity.invoiceNumber}</span>
+                <span className="text-muted-foreground/40">•</span>
+                <span className="shrink-0">
+                  {STATUS_LABELS[activity.status] || activity.status}
+                </span>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <p className="text-sm font-semibold tabular-nums">
+
+            {/* Amount */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="font-semibold text-sm tabular-nums text-foreground">
                 {formatCurrency(activity.total || 0)}
-              </p>
-              <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-muted-foreground/60" />
+              </span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
             </div>
           </Link>
         ))}

@@ -21,7 +21,7 @@ import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
 import { FileCog, FileDown } from "lucide-react";
-import { moneySubtract } from "@/lib/utils/money";
+import { moneySubtract, formatCurrency } from "@/lib/utils/money";
 
 export default function InvoiceDetailPage({
   params,
@@ -144,7 +144,9 @@ export default function InvoiceDetailPage({
                 Remaining
               </p>
               <p className="text-sm font-mono font-semibold text-primary">
-                ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
+                {formatCurrency(
+                  moneySubtract(invoice.total, invoice.amountPaid)
+                )}
               </p>
             </div>
           </CardContent>
@@ -189,9 +191,11 @@ export default function InvoiceDetailPage({
           <div className="h-6 w-px bg-border/50" />
 
           <div className="flex items-center gap-3">
-            <p className="text-xs font-medium text-muted-foreground">Remaining</p>
+            <p className="text-xs font-medium text-muted-foreground">
+              Remaining
+            </p>
             <p className="text-sm font-mono font-semibold text-primary">
-              ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
+              {formatCurrency(moneySubtract(invoice.total, invoice.amountPaid))}
             </p>
           </div>
         </CardContent>
@@ -267,7 +271,7 @@ export default function InvoiceDetailPage({
                   Total Amount
                 </span>
                 <span className="text-sm font-mono font-medium">
-                  ${invoice.total.toFixed(2)}
+                  {formatCurrency(invoice.total)}
                 </span>
               </div>
               <div className="border-t border-border/30" />
@@ -276,7 +280,7 @@ export default function InvoiceDetailPage({
                   Amount Paid
                 </span>
                 <span className="text-sm font-mono font-medium">
-                  ${invoice.amountPaid.toFixed(2)}
+                  {formatCurrency(invoice.amountPaid)}
                 </span>
               </div>
               <div className="border-t border-border/30" />
@@ -285,7 +289,9 @@ export default function InvoiceDetailPage({
                   Balance Due
                 </span>
                 <span className="text-sm font-mono font-bold text-primary">
-                  ${moneySubtract(invoice.total, invoice.amountPaid).toFixed(2)}
+                  {formatCurrency(
+                    moneySubtract(invoice.total, invoice.amountPaid)
+                  )}
                 </span>
               </div>
             </div>
@@ -315,7 +321,7 @@ export default function InvoiceDetailPage({
                     <div>
                       <span className="text-muted-foreground">Rate:</span>
                       <span className="ml-1 font-mono font-medium">
-                        ${item.rate.toFixed(2)}
+                        {formatCurrency(item.rate)}
                       </span>
                     </div>
                   </div>
@@ -324,7 +330,7 @@ export default function InvoiceDetailPage({
                       Amount
                     </div>
                     <div className="font-mono font-bold text-sm">
-                      ${item.amount.toFixed(2)}
+                      {formatCurrency(item.amount)}
                     </div>
                   </div>
                 </div>
@@ -364,10 +370,10 @@ export default function InvoiceDetailPage({
                       {item.quantity}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-right font-mono text-sm">
-                      ${item.rate.toFixed(2)}
+                      {formatCurrency(item.rate)}
                     </TableCell>
                     <TableCell className="px-6 py-3 text-right font-mono text-sm font-medium">
-                      ${item.amount.toFixed(2)}
+                      {formatCurrency(item.amount)}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -381,7 +387,7 @@ export default function InvoiceDetailPage({
                 Subtotal
               </span>
               <span className="w-24 text-right font-mono text-sm font-medium">
-                ${invoice.subtotal.toFixed(2)}
+                {formatCurrency(invoice.subtotal)}
               </span>
             </div>
 
@@ -391,7 +397,7 @@ export default function InvoiceDetailPage({
                   Discount
                 </span>
                 <span className="w-24 text-right font-mono text-sm font-medium text-green-600">
-                  -${(invoice.discountAmount ?? 0).toFixed(2)}
+                  -{formatCurrency(invoice.discountAmount ?? 0)}
                 </span>
               </div>
             )}
@@ -400,13 +406,13 @@ export default function InvoiceDetailPage({
                 Tax ({invoice.taxRate}%)
               </span>
               <span className="w-24 text-right font-mono text-sm font-medium">
-                ${invoice.taxAmount.toFixed(2)}
+                {formatCurrency(invoice.taxAmount)}
               </span>
             </div>
             <div className="flex items-center justify-end gap-16 px-6 py-2.5 border-t border-border/30 bg-muted/30">
               <span className="text-xs font-semibold">Total</span>
               <span className="w-24 text-right font-mono text-sm font-bold text-primary">
-                ${invoice.total.toFixed(2)}
+                {formatCurrency(invoice.total)}
               </span>
             </div>
           </div>

@@ -105,16 +105,19 @@ export function ClientCombobox({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            "h-10 w-full justify-between font-normal",
+            "h-10 w-full justify-between font-normal min-w-0",
             !value && "text-muted-foreground",
             className
           )}
         >
-          <span className="truncate">{displayValue}</span>
+          <span className="truncate text-left">{displayValue}</span>
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0" align="start">
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+      >
         <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search clients..."
@@ -139,10 +142,10 @@ export function ClientCombobox({
                       onSelect={() => handleSelect(client.id)}
                       className={cn(value === client.id && "bg-accent")}
                     >
-                      <div className="flex flex-col">
-                        <span>{client.name}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="truncate">{client.name}</span>
                         {client.company && (
-                          <span className="text-xs text-muted-foreground">
+                          <span className="truncate text-xs text-muted-foreground">
                             {client.company}
                           </span>
                         )}

@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { InvoiceData } from "../types";
+import { formatCurrency } from "@/lib/utils/money";
 
 // DESIGN TOKENS
 const colors = {
@@ -244,11 +245,6 @@ const getStatusStyle = (status: string) => {
     default:
       return { backgroundColor: colors.secondary };
   }
-};
-
-// Helper to format currency consistently
-const formatCurrency = (amount: number) => {
-  return `USD ${amount.toFixed(2)}`;
 };
 
 export function ClassicTemplate({ invoice }: { invoice: InvoiceData }) {

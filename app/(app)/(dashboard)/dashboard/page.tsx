@@ -1,24 +1,23 @@
 "use client";
 
-import { useSession } from "@/lib/auth/client";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { InvoiceStatusChart } from "@/components/dashboard/invoice-status-chart";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { MostOverdueClients } from "@/components/dashboard/most-overdue-clients";
 import { OnboardingBanner } from "@/components/dashboard/onboarding-banner";
 import { trpc } from "@/lib/trpc/client";
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
   const { data: hasClients } = trpc.clients.hasAny.useQuery();
-  const { data: stats } = trpc.dashboard.getStats.useQuery();
+  const { data: hasInvoices } = trpc.invoices.hasAny.useQuery();
 
   const showClientBanner = hasClients === false;
-  const showInvoiceBanner = hasClients === true && stats?.totalInvoices === 0;
+  const showInvoiceBanner = hasClients === true && hasInvoices === false;
   const showBanner = showClientBanner || showInvoiceBanner;
 
   return (
-    <div className="space-y-4 md:space-y-8">
+    <div className="space-y-4 md:space-y-6">
       {/* Header Section */}
       <div className="space-y-2">
         <div>
@@ -26,7 +25,7 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-sm text-muted-foreground">
-            Welcome back, {session?.user?.name}!
+            Stay on top of your invoices
           </p>
         </div>
       </div>
@@ -62,8 +61,11 @@ export default function DashboardPage() {
         <InvoiceStatusChart />
       </div>
 
-      {/* Recent Activity */}
-      <RecentActivity />
+      {/* Recent Activity & Overdue Clients */}
+      <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+        <RecentActivity />
+        <MostOverdueClients />
+      </div>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { InvoiceData } from "../types";
+import { formatCurrency } from "@/lib/utils/money";
 
 // THEME: Minimalist Black & White
 const styles = StyleSheet.create({
@@ -227,10 +228,10 @@ export function MinimalistTemplate({ invoice }: { invoice: InvoiceData }) {
                 {item.quantity}
               </Text>
               <Text style={[styles.rowText, styles.colRate]}>
-                {item.rate.toFixed(2)}
+                {formatCurrency(item.rate)}
               </Text>
               <Text style={[styles.rowText, styles.colAmount]}>
-                {item.amount.toFixed(2)}
+                {formatCurrency(item.amount)}
               </Text>
             </View>
           ))}
@@ -242,21 +243,21 @@ export function MinimalistTemplate({ invoice }: { invoice: InvoiceData }) {
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Subtotal</Text>
               <Text style={styles.totalValue}>
-                {invoice.subtotal.toFixed(2)}
+                {formatCurrency(invoice.subtotal)}
               </Text>
             </View>
             {invoice.discountAmount > 0 && (
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Discount</Text>
                 <Text style={styles.totalValue}>
-                  -{invoice.discountAmount.toFixed(2)}
+                  -{formatCurrency(invoice.discountAmount)}
                 </Text>
               </View>
             )}
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Tax ({invoice.taxRate}%)</Text>
               <Text style={styles.totalValue}>
-                {invoice.taxAmount.toFixed(2)}
+                {formatCurrency(invoice.taxAmount)}
               </Text>
             </View>
             <View style={[styles.totalRow, styles.grandTotal]}>
@@ -269,7 +270,7 @@ export function MinimalistTemplate({ invoice }: { invoice: InvoiceData }) {
                 Total Due
               </Text>
               <Text style={styles.grandTotalValue}>
-                USD {invoice.total.toFixed(2)}
+                {formatCurrency(invoice.total)}
               </Text>
             </View>
           </View>

@@ -34,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { HandCoins, Loader2 } from "lucide-react";
 import { NumberInput } from "@/components/ui/number-input";
 import { DatePicker } from "@/components/ui/date-picker";
-import { roundMoney, moneyGreaterThanOrEqual } from "@/lib/utils/money";
+import { roundMoney, moneyGreaterThanOrEqual, formatCurrency } from "@/lib/utils/money";
 
 const createPaymentSchema = (maxAmount: number) =>
   z.object({
@@ -45,7 +45,7 @@ const createPaymentSchema = (maxAmount: number) =>
       .refine(
         (val) => moneyGreaterThanOrEqual(maxAmount, val),
         {
-          message: `Payment amount cannot exceed remaining balance ($${roundMoney(maxAmount).toFixed(2)})`,
+          message: `Payment amount cannot exceed remaining balance (${formatCurrency(roundMoney(maxAmount))})`,
         }
       ),
   paymentDate: z
@@ -193,8 +193,8 @@ export function RecordPaymentDialog({
             Record Payment
           </DialogTitle>
           <DialogDescription className="text-xs">
-            Record a payment received for this invoice. Remaining balance: ${" "}
-            {roundedRemainingBalance.toFixed(2)}
+            Record a payment received for this invoice. Remaining balance:{" "}
+            {formatCurrency(roundedRemainingBalance)}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

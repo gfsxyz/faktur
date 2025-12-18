@@ -55,6 +55,7 @@ import {
   moneyAdd,
   moneySubtract,
   moneyMultiply,
+  formatCurrency,
 } from "@/lib/utils/money";
 
 const invoiceItemSchema = z.object({
@@ -418,12 +419,12 @@ export function InvoiceForm({
                   </div>
                 )}
 
-                <div className="grid gap-1 sm:grid-cols-2 sm:gap-6 pt-4">
+                <div className="grid gap-1 pt-4 sm:grid-cols-2 sm:gap-6">
                   <FormField
                     control={form.control}
                     name="clientId"
                     render={({ field }) => (
-                      <FormItem className="space-y-1">
+                      <FormItem className="space-y-1 min-w-0">
                         <FormLabel className="text-sm font-medium">
                           Client
                         </FormLabel>
@@ -444,7 +445,7 @@ export function InvoiceForm({
                     control={form.control}
                     name="status"
                     render={({ field }) => (
-                      <FormItem className="space-y-1">
+                      <FormItem className="space-y-1 min-w-0">
                         <FormLabel className="text-sm font-medium">
                           Status
                         </FormLabel>
@@ -454,7 +455,7 @@ export function InvoiceForm({
                           disabled={!isClientSelected}
                         >
                           <FormControl>
-                            <SelectTrigger className="h-10">
+                            <SelectTrigger className="h-10 w-full">
                               <SelectValue />
                             </SelectTrigger>
                           </FormControl>
@@ -586,7 +587,7 @@ export function InvoiceForm({
                     )}
                   >
                     <div className="grid gap-1 sm:gap-4 md:grid-cols-12">
-                      <div className="md:col-span-5">
+                      <div className="md:col-span-4">
                         <FormField
                           control={form.control}
                           name={`items.${index}.description`}
@@ -673,7 +674,7 @@ export function InvoiceForm({
                         />
                       </div>
 
-                      <div className="md:col-span-2">
+                      <div className="md:col-span-3">
                         <FormField
                           control={form.control}
                           name={`items.${index}.amount`}
@@ -684,12 +685,11 @@ export function InvoiceForm({
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  type="number"
-                                  step="0.01"
+                                  type="text"
                                   disabled
                                   className="h-9 bg-muted/30"
                                   {...field}
-                                  value={field.value.toFixed(2)}
+                                  value={formatCurrency(field.value)}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -935,7 +935,7 @@ export function InvoiceForm({
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Subtotal</span>
                       <span className="font-mono text-foreground">
-                        ${subtotal.toFixed(2)}
+                        {formatCurrency(subtotal)}
                       </span>
                     </div>
 
@@ -943,7 +943,7 @@ export function InvoiceForm({
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Discount</span>
                         <span className="font-mono text-green-600">
-                          -${discountAmount.toFixed(2)}
+                          -{formatCurrency(discountAmount)}
                         </span>
                       </div>
                     )}
@@ -953,7 +953,7 @@ export function InvoiceForm({
                         Tax ({form.watch("taxRate") || 0}%)
                       </span>
                       <span className="font-mono text-foreground">
-                        ${taxAmount.toFixed(2)}
+                        {formatCurrency(taxAmount)}
                       </span>
                     </div>
 
@@ -962,7 +962,7 @@ export function InvoiceForm({
                     <div className="flex items-center justify-between pt-1">
                       <span className="text-base font-semibold">Total</span>
                       <span className="text-xl font-bold font-mono text-primary">
-                        ${total.toFixed(2)}
+                        {formatCurrency(total)}
                       </span>
                     </div>
                   </div>

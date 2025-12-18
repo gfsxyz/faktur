@@ -20,7 +20,7 @@ import {
   useDeleteConfirmation,
 } from "@/components/ui/delete-confirmation-dialog";
 import { toast } from "sonner";
-import { roundMoney } from "@/lib/utils/money";
+import { roundMoney, formatCurrency } from "@/lib/utils/money";
 
 interface PaymentHistoryProps {
   invoiceId: string;
@@ -113,7 +113,7 @@ export function PaymentHistory({
           <div className="text-xs">
             <span className="text-muted-foreground">Total Paid: </span>
             <span className="font-mono font-semibold text-primary">
-              ${totalPaid.toFixed(2)}
+              {formatCurrency(totalPaid)}
             </span>
           </div>
         </div>
@@ -132,7 +132,7 @@ export function PaymentHistory({
               <div className="pr-8 space-y-2">
                 <div className="flex items-baseline justify-between">
                   <div className="text-lg font-bold font-mono text-primary">
-                    ${payment.amount.toFixed(2)}
+                    {formatCurrency(payment.amount)}
                   </div>
                   <Badge variant="secondary" className="text-xs">
                     {PAYMENT_METHOD_LABELS[payment.paymentMethod] ||
@@ -218,7 +218,7 @@ export function PaymentHistory({
                     {format(new Date(payment.paymentDate), "MMM dd, yyyy")}
                   </TableCell>
                   <TableCell className="px-4 py-3 font-mono text-sm font-medium text-primary">
-                    ${payment.amount.toFixed(2)}
+                    {formatCurrency(payment.amount)}
                   </TableCell>
                   <TableCell className="px-4 py-3">
                     <Badge variant="secondary" className="text-xs">
