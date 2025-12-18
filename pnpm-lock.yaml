@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@dicebear/core':
+        specifier: ^9.2.4
+        version: 9.2.4
+      '@dicebear/glass':
+        specifier: ^9.2.4
+        version: 9.2.4(@dicebear/core@9.2.4)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0(react@19.2.3))
@@ -282,6 +288,16 @@ packages:
 
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
+
+  '@dicebear/core@9.2.4':
+    resolution: {integrity: sha512-hz6zArEcUwkZzGOSJkWICrvqnEZY7BKeiq9rqKzVJIc1tRVv0MkR0FGvIxSvXiK9TTIgKwu656xCWAGAl6oh+w==}
+    engines: {node: '>=18.0.0'}
+
+  '@dicebear/glass@9.2.4':
+    resolution: {integrity: sha512-5lxbJode1t99eoIIgW0iwZMoZU4jNMJv/6vbsgYUhAslYFX5zP0jVRscksFuo89TTtS7YKqRqZAL3eNhz4bTDw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@dicebear/core': ^9.0.0
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -4248,6 +4264,14 @@ snapshots:
   '@better-fetch/fetch@1.1.18': {}
 
   '@date-fns/tz@1.4.1': {}
+
+  '@dicebear/core@9.2.4':
+    dependencies:
+      '@types/json-schema': 7.0.15
+
+  '@dicebear/glass@9.2.4(@dicebear/core@9.2.4)':
+    dependencies:
+      '@dicebear/core': 9.2.4
 
   '@drizzle-team/brocli@0.10.2': {}
 

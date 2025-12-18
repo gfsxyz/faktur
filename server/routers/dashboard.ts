@@ -417,9 +417,8 @@ export const dashboardRouter = createTRPCRouter({
           invoiceNumber: invoices.invoiceNumber,
           status: invoices.status,
           total: invoices.total,
-          issueDate: invoices.issueDate,
-          createdAt: invoices.createdAt,
           updatedAt: invoices.updatedAt,
+          clientId: invoices.clientId,
           clientName: clients.name,
           clientCompany: clients.company,
         })
@@ -430,5 +429,99 @@ export const dashboardRouter = createTRPCRouter({
         .limit(input.limit);
 
       return recentInvoices;
+    }),
+
+  // Get most overdue clients
+  getMostOverdueClients: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(10).default(5),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+
+      // Get all overdue invoices with client info
+      const overdueInvoices = await db
+        .select({
+          clientId: invoices.clientId,
+          clientName: clients.name,
+          clientCompany: clients.company,
+          total: invoices.total,
+          amountPaid: invoices.amountPaid,
+          dueDate: invoices.dueDate,
+        })
+        .from(invoices)
+        .leftJoin(clients, eq(invoices.clientId, clients.id))
+        .where(
+          and(
+            eq(invoices.userId, ctx.userId),
+            eq(invoices.status, "overdue")
+          )
+        );
+
+      if (!overdueInvoices.length) return [];
+
+      // Group by client and calculate metrics
+      const clientMap = new Map<
+        string,
+        {
+          clientId: string;
+          clientName: string;
+          clientCompany: string | null;
+          totalOverdueAmount: number;
+          oldestOverdueDays: number;
+          overdueInvoicesCount: number;
+        }
+      >();
+
+      overdueInvoices.forEach((invoice) => {
+        if (!invoice.clientId) return;
+
+        const clientKey = invoice.clientId;
+        const overdueAmount = moneySubtract(
+          invoice.total || 0,
+          invoice.amountPaid || 0
+        );
+        const daysOverdue = invoice.dueDate
+          ? Math.floor(
+              (now.getTime() - new Date(invoice.dueDate).getTime()) /
+                (1000 * 60 * 60 * 24)
+            )
+          : 0;
+
+        if (!clientMap.has(clientKey)) {
+          clientMap.set(clientKey, {
+            clientId: invoice.clientId,
+            clientName: invoice.clientName || "Unknown",
+            clientCompany: invoice.clientCompany,
+            totalOverdueAmount: 0,
+            oldestOverdueDays: 0,
+            overdueInvoicesCount: 0,
+          });
+        }
+
+        const clientData = clientMap.get(clientKey)!;
+        clientData.totalOverdueAmount = moneyAdd(
+          clientData.totalOverdueAmount,
+          overdueAmount
+        );
+        clientData.oldestOverdueDays = Math.max(
+          clientData.oldestOverdueDays,
+          daysOverdue
+        );
+        clientData.overdueInvoicesCount += 1;
+      });
+
+      // Convert to array and sort by total overdue amount (descending)
+      const result = Array.from(clientMap.values())
+        .sort((a, b) => b.totalOverdueAmount - a.totalOverdueAmount)
+        .slice(0, input.limit)
+        .map((client) => ({
+          ...client,
+          totalOverdueAmount: roundMoney(client.totalOverdueAmount),
+        }));
+
+      return result;
     }),
 });
