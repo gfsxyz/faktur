@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { FakturLogo } from "@/components/ui/faktur-logo";
 import { Button } from "@/components/ui/button";
 import * as motion from "motion/react-client";
@@ -27,6 +28,25 @@ const itemVariants = {
     transition: {
       duration: 0.6,
       ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+};
+
+const imageVariants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    filter: "blur(12px)",
+    skewX: 2,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    skewX: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.8,
+      delay: 0.8,
     },
   },
 };
@@ -251,83 +271,32 @@ export default function Home() {
               </motion.div>
             </motion.div>
             <motion.div
-              variants={itemVariants}
+              variants={imageVariants}
               className="relative max-w-6xl mx-auto mt-12 md:mt-16"
+              style={{ perspective: 1000, transformStyle: "preserve-3d" }}
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                <div className="md:col-span-2 md:row-span-2 border border-primary/30 bg-card/70 backdrop-blur-sm p-6 md:p-8 shadow-xl overflow-hidden relative group hover:border-primary/50 transition-colors">
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="h-3 w-24 bg-primary/60" />
-                      <div className="h-8 w-8 bg-primary/20 flex items-center justify-center">
-                        <div className="h-4 w-4 bg-primary/60" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div
-                          key={i}
-                          className="flex items-center gap-3 p-3 bg-muted/50 border border-border/60"
-                        >
-                          <div className="h-10 w-10 bg-primary/40" />
-                          <div className="flex-1 space-y-2">
-                            <div className="h-2 w-3/4 bg-foreground/40" />
-                            <div className="h-2 w-1/2 bg-foreground/25" />
-                          </div>
-                          <div className="h-6 w-16 bg-primary/50" />
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 pt-6 border-t border-border/60 flex justify-between items-center">
-                      <div className="h-3 w-20 bg-foreground/40" />
-                      <div className="h-8 w-24 bg-primary" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border border-primary/30 bg-card/70 backdrop-blur-sm p-6 shadow-xl relative group hover:border-primary/50 transition-colors overflow-hidden hidden md:block">
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    <div className="h-3 w-16 bg-primary/60 mb-4" />
-                    <div className="h-10 w-20 bg-primary/80 mb-3" />
-                    <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                        <div
-                          key={i}
-                          className="flex-1 bg-primary/40"
-                          style={{ height: `${20 + i * 8}px` }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border border-primary/30 bg-card/70 backdrop-blur-sm p-6 shadow-xl relative group hover:border-primary/50 transition-colors overflow-hidden hidden md:block">
-                  <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    <div className="h-3 w-20 bg-primary/60 mb-4" />
-                    <div className="space-y-3">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <div className="h-8 w-8 bg-primary/40" />
-                          <div className="flex-1 space-y-1.5">
-                            <div className="h-2 w-full bg-foreground/40" />
-                            <div className="h-1.5 w-3/4 bg-foreground/25" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+              <div className="p-2 rounded-lg relative overflow-hidden bg-linear-to-tl from-primary/50 via-primary/50 to-primary/20">
+                <div
+                  className="absolute inset-0 opacity-10"
+                  style={{
+                    background:
+                      "repeating-linear-gradient(45deg, transparent, transparent 8px, var(--primary) 8px, var(--primary) 9px)",
+                  }}
+                />
+                <Image
+                  src="/preview.jpg"
+                  alt="Faktur Dashboard Preview"
+                  width={1200}
+                  height={800}
+                  priority
+                  className="shadow-2xl relative z-10"
+                />
               </div>
             </motion.div>
           </div>
         </motion.div>
 
-        <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70" />
+        {/* <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70" /> */}
       </div>
     </header>
   );

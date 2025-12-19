@@ -1,254 +1,156 @@
-# Faktur - Modern Invoice Management System
+# Faktur
 
-A modern, full-stack invoice management application built with Next.js 16, featuring a beautiful UI powered by shadcn/ui and Tailwind CSS.
+**Modern Invoice Management Made Simple**
 
-## 🚀 Tech Stack
+A streamlined invoice management system for businesses of all sizes. Create, manage, and track invoices effortlessly with a beautiful, intuitive interface.
 
-### Frontend
+<img src="public/og-image.jpg" alt="Faktur Dashboard Preview" width="100%">
 
-- **Framework:** Next.js 16.0.3 (App Router)
-- **UI Library:** React 19.2.0
-- **Styling:** Tailwind CSS v4
-- **Component Library:** shadcn/ui (New York style)
-- **Icons:** Lucide React
-- **Type Safety:** TypeScript (strict mode)
+## What is Faktur?
 
-### Backend & Database
+Faktur is a full-stack invoice management application that helps you:
 
-- **Database:** SQLite (file-based, ideal for small projects)
-- **ORM:** Drizzle ORM (lightweight and type-safe)
-- **API Layer:** tRPC (end-to-end type-safe APIs)
-- **Authentication:** Better Auth (modern auth for Next.js)
+- ✨ Create and manage professional invoices
+- 📊 Track payments and outstanding balances
+- 👥 Manage clients and their billing information
+- 📈 Visualize revenue with analytics dashboard
+- 📄 Generate PDF invoices with custom branding
+- 💼 Store your business profile and bank details
 
-### Development Tools
+Built with modern web technologies for a fast, reliable, and beautiful experience.
 
-- **Package Manager:** pnpm
-- **Code Quality:** TypeScript, ESLint
-- **Version Control:** Git
+## Tech Stack
 
-## 📋 Features Roadmap
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **PostgreSQL** - Robust database
+- **Drizzle ORM** - Type-safe database queries
+- **tRPC** - End-to-end type-safe APIs
+- **Better Auth** - Modern authentication
+- **Tailwind CSS v4** - Utility-first styling
+- **shadcn/ui** - Beautiful UI components
 
-### Phase 1: Foundation (Week 1-2)
-
-- [x] Project setup with Next.js 16 + Tailwind + shadcn/ui
-- [x] Global theming system with dark mode support
-- [x] Database setup (SQLite + Drizzle ORM)
-- [x] tRPC integration for type-safe API
-- [x] Authentication system (Better Auth)
-- [x] Install required shadcn/ui components (button, input, label, card, form)
-- [x] Create authentication pages (login/signup)
-- [x] Dashboard layout with sidebar navigation
-- [x] Additional UI components (dropdown-menu, separator, badge, avatar)
-- [x] Route structure for dashboard sections
-
-### Phase 2: Core Features (Week 3-4)
-
-- [x] **Invoice Management**
-
-  - [x] Create, edit, delete invoices
-  - [x] Auto-generated invoice numbers
-  - [x] Line items with quantities, rates, and totals
-  - [x] Tax calculations (VAT/GST/Sales Tax)
-  - [x] Discounts (percentage or fixed amount)
-  - [x] Invoice status tracking (Draft, Sent, Paid, Overdue, Cancelled)
-  - [x] Issue date and due date management
-  - [x] Invoice list with filtering and actions
-  - [x] Invoice detail/view page
-  - [x] tRPC API integration
-
-- [x] **Client Management**
-
-  - [x] Client CRUD tRPC routers
-  - [x] Client list page with table
-  - [x] Client create/edit form
-  - [x] Client detail page with invoice history
-  - [x] Client billing addresses (full address fields)
-  - [x] Quick client selection (in invoice form)
-  - [x] Client invoice history and statistics
-
-- [x] **Business Profile**
-  - [x] Company information management
-  - [x] Logo upload (stored as base64)
-  - [x] Business address and tax ID
-  - [x] Bank account details
-  - [x] Integration with invoice PDFs
-
-### Phase 3: Enhanced Features (Week 5-6)
-
-- [x] **Dashboard & Analytics**
-
-  - [x] Revenue overview (monthly, yearly)
-  - [x] Outstanding invoices tracking
-  - [x] Paid vs unpaid visualizations
-  - [x] Recent activity feed
-  - [x] Charts and trends (using recharts)
-
-- [x] **PDF Generation**
-
-  - [x] Professional invoice templates
-  - [x] Download invoices as PDF
-  - [x] Business profile integration in PDFs
-  - [x] Multiple template designs
-
-- [x] **Payment Tracking**
-  - [x] Mark invoices as paid (full or partial)
-  - [x] Payment date and method recording
-  - [x] Payment history display
-  - [x] Automatic invoice status updates
-
-### Phase 4: Advanced Features (Future)
-
-- [ ] Email notifications (using Resend)
-- [ ] Localization (multiple languages)
-
-## 🏗️ Project Structure
-
-```
-faktur/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Authentication routes
-│   ├── (dashboard)/       # Protected dashboard routes
-│   ├── api/               # API routes (tRPC)
-│   ├── globals.css        # Global styles & theme
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── invoices/         # Invoice-related components
-│   ├── clients/          # Client management components
-│   └── dashboard/        # Dashboard components
-├── lib/                  # Utility functions
-│   ├── db/              # Database schema & client
-│   ├── trpc/            # tRPC setup
-│   └── utils.ts         # Helper functions
-├── server/              # Server-side code
-│   ├── routers/        # tRPC routers
-│   └── auth.ts         # Better Auth configuration
-├── public/             # Static assets
-└── drizzle/           # Database migrations
-```
-
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
-- pnpm package manager
+Before you begin, make sure you have:
+
+- **Node.js 18+** - [Download here](https://nodejs.org/)
+- **pnpm** - Fast, disk space efficient package manager
+- **PostgreSQL** - Database server
+
+### Install pnpm
+
+If you don't have pnpm installed:
+
+```bash
+npm install -g pnpm
+```
+
+Or using other methods: https://pnpm.io/installation
+
+### Setup PostgreSQL
+
+1. **Install PostgreSQL:**
+
+   - macOS: `brew install postgresql@15`
+   - Ubuntu: `sudo apt install postgresql`
+   - Windows: Download from [postgresql.org](https://www.postgresql.org/download/)
+
+2. **Start PostgreSQL:**
+
+   ```bash
+   # macOS
+   brew services start postgresql@15
+
+   # Ubuntu
+   sudo systemctl start postgresql
+   ```
+
+3. **Create database:**
+   ```bash
+   psql postgres
+   CREATE DATABASE faktur_dev;
+   \q
+   ```
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
+
+   ```bash
+   git clone <repository-url>
+   cd faktur
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables:**
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+4. **Configure your `.env.local`:**
+
+   ```env
+   # Update with your PostgreSQL credentials
+   DATABASE_URL=postgresql://postgres@localhost:5432/faktur_dev
+
+   # Generate a secure secret
+   BETTER_AUTH_SECRET=your-secret-key-here
+   BETTER_AUTH_URL=http://localhost:3000
+
+   # Optional: OAuth providers
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
+
+5. **Push database schema:**
+
+   ```bash
+   pnpm db:push
+   ```
+
+6. **Start development server:**
+
+   ```bash
+   pnpm dev
+   ```
+
+7. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Available Commands
 
 ```bash
-git clone <repository-url>
-cd faktur
+# Development
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+
+# Database
+pnpm db:push      # Push schema changes to database
+pnpm db:studio    # Open Drizzle Studio (database GUI)
+pnpm db:seed      # Seed database with sample data (development)
+pnpm db:reset     # Reset database (WARNING: deletes all invoice, profile and clients data data)
 ```
 
-2. Install dependencies:
+## Production Deployment
 
-```bash
-pnpm install
-```
-
-3. Set up environment variables:
-
-```bash
-cp .env.example .env.local
-```
-
-4. Run database migrations:
-
-```bash
-pnpm db:push
-```
-
-5. Start the development server:
-
-```bash
-pnpm dev
-```
-
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## 📦 Key Dependencies
-
-```json
-{
-  "dependencies": {
-    "next": "16.0.3",
-    "react": "19.2.0",
-    "tailwindcss": "^4.0.0",
-    "drizzle-orm": "Database ORM",
-    "better-auth": "Authentication",
-    "@trpc/server": "tRPC server",
-    "@trpc/client": "tRPC client",
-    "@trpc/react-query": "tRPC React integration",
-    "@tanstack/react-query": "Data fetching",
-    "react-hook-form": "Form handling",
-    "zod": "Schema validation",
-    "@react-pdf/renderer": "PDF generation",
-    "recharts": "Charts & analytics",
-    "date-fns": "Date utilities",
-    "lucide-react": "Icons"
-  }
-}
-```
-
-## 📝 Development Workflow
-
-### Database Commands
-
-```bash
-pnpm db:push         # Push schema changes
-pnpm db:studio       # Open Drizzle Studio
-pnpm db:generate     # Generate migrations
-```
-
-### Development
-
-```bash
-pnpm dev             # Start dev server
-pnpm build           # Build for production
-pnpm start           # Start production server
-pnpm lint            # Run ESLint
-```
-
-## 🔐 Authentication
-
-This project uses **Better Auth** for authentication, providing:
-
-- Session management
-- Social auth providers
-- Email/password authentication
-- Secure token handling
-- Type-safe auth utilities
-
-## 🗄️ Database Schema
-
-### Core Models
-
-- **Users:** Authentication and user profiles
-- **Invoices:** Invoice records with status tracking
-- **InvoiceItems:** Line items for each invoice
-- **Clients:** Client/customer information
-- **BusinessProfile:** Company information and settings
-- **Payments:** Payment records linked to invoices
-
-## 🤝 Contributing
-
-This is a personal project, but suggestions and feedback are welcome!
-
-## 📄 License
-
-MIT License - feel free to use this project for learning or as a template.
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org) - The React framework
-- [shadcn/ui](https://ui.shadcn.com) - Beautiful component library
-- [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS
-- [Drizzle ORM](https://orm.drizzle.team) - TypeScript ORM
-- [tRPC](https://trpc.io) - End-to-end type safety
-- [Better Auth](https://better-auth.com) - Modern authentication
+1. Set `NEXT_PUBLIC_APP_URL` to your production URL
+2. Update `DATABASE_URL` with production PostgreSQL credentials
+3. Generate a secure `BETTER_AUTH_SECRET`
+4. Run `pnpm build` and deploy
 
 ---
+
+## License
+
+MIT License - Free to use for personal and commercial projects.
