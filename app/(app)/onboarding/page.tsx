@@ -8,7 +8,6 @@ import Image from "next/image";
 import { trpc } from "@/lib/trpc/client";
 import { Stepper } from "@/components/ui/stepper";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { processImageForUpload } from "@/lib/image-utils";
 import { useSession } from "@/lib/auth/client";
@@ -31,6 +30,7 @@ export default function OnboardingPage() {
   });
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoError, setLogoError] = useState<string | null>(null);
 
   const { data: onboardingStatus, isLoading: isLoadingOnboarding } =
     trpc.user.getOnboardingStatus.useQuery(undefined, {
@@ -95,24 +95,20 @@ export default function OnboardingPage() {
 
   const handleLogoUpload = async (file: File) => {
     setUploadingLogo(true);
+    setLogoError(null);
     try {
       const base64Image = await processImageForUpload(file);
       setLogoPreview(base64Image);
       setOnboardingData((prev) => ({ ...prev, logo: base64Image }));
-      toast.success("Logo uploaded successfully");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to upload logo";
+      setLogoError(errorMessage);
       toast.error(errorMessage);
       setLogoPreview(null);
     } finally {
       setUploadingLogo(false);
     }
-  };
-
-  const handleDeleteLogo = () => {
-    setLogoPreview(null);
-    setOnboardingData((prev) => ({ ...prev, logo: undefined }));
   };
 
   const handleConfirm = async () => {
@@ -277,8 +273,8 @@ export default function OnboardingPage() {
                 <Step2Logo
                   logoPreview={logoPreview}
                   onUpload={handleLogoUpload}
-                  onDelete={handleDeleteLogo}
                   uploading={uploadingLogo}
+                  error={logoError}
                 />
               )}
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -233,11 +233,11 @@ type BusinessProfileFormData = z.infer<typeof businessProfileSchema>;
 export function BusinessProfileForm() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoError, setLogoError] = useState<string | null>(null);
 
   const { data: profile, isLoading } = trpc.businessProfile.get.useQuery();
   const upsertMutation = trpc.businessProfile.upsert.useMutation();
   const uploadLogoMutation = trpc.businessProfile.uploadLogo.useMutation();
-  const deleteLogoMutation = trpc.businessProfile.deleteLogo.useMutation();
   const utils = trpc.useUtils();
 
   const form = useForm<BusinessProfileFormData>({
@@ -301,34 +301,23 @@ export function BusinessProfileForm() {
 
   const handleLogoUpload = async (file: File) => {
     setUploadingLogo(true);
+    setLogoError(null);
 
     try {
-      // Process and validate image (handles WebP conversion automatically)
       const base64Image = await processImageForUpload(file);
       setLogoPreview(base64Image);
 
-      // Upload to server
       await uploadLogoMutation.mutateAsync({ logo: base64Image });
       await utils.businessProfile.get.invalidate();
       toast.success("Logo uploaded successfully");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to upload logo";
+      setLogoError(errorMessage);
       toast.error(errorMessage);
       setLogoPreview(null);
     } finally {
       setUploadingLogo(false);
-    }
-  };
-
-  const handleDeleteLogo = async () => {
-    try {
-      await deleteLogoMutation.mutateAsync();
-      await utils.businessProfile.get.invalidate();
-      setLogoPreview(null);
-      toast.success("Logo deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete logo");
     }
   };
 
@@ -362,10 +351,8 @@ export function BusinessProfileForm() {
                 <LogoUpload
                   preview={logoPreview}
                   onUpload={handleLogoUpload}
-                  onDelete={handleDeleteLogo}
                   uploading={uploadingLogo}
-                  className="h-44 w-44 sm:w-64 sm:h-64"
-                  previewClassName="h-44 w-44 sm:w-64 sm:h-64"
+                  error={logoError}
                 />
               </div>
             </div>
