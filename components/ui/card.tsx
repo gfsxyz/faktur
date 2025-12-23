@@ -11,7 +11,7 @@ interface CardProps extends React.ComponentProps<"div"> {
 function Card({
   className,
   showCorners = true,
-  cornerSize = "sm",
+  cornerSize = "md",
   children,
   ...props
 }: CardProps) {
@@ -24,7 +24,9 @@ function Card({
       )}
       {...props}
     >
-      {showCorners && <CornerIcons size={cornerSize} />}
+      {showCorners && (
+        <CornerIcons size={cornerSize} className="text-foreground/10" />
+      )}
       {children}
     </div>
   );
