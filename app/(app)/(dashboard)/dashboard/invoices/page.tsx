@@ -5,13 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
 import { useDebounce } from "@/lib/hooks/use-debounce";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   DeleteConfirmationDialog,
@@ -50,6 +44,24 @@ export default function InvoicesPage() {
       ? undefined
       : (statusParam as "draft" | "sent" | "paid" | "overdue" | "cancelled") ||
         undefined;
+  const amountRangeParam = searchParams.get("amountRange");
+  const amountRange =
+    amountRangeParam === "all"
+      ? undefined
+      : (amountRangeParam as
+          | "under100"
+          | "100to1k"
+          | "1kto5k"
+          | "5kto10k"
+          | "10kto100k"
+          | "100kto1m"
+          | "over1m") || undefined;
+  const sortByParam = searchParams.get("sortBy");
+  const sortBy =
+    (sortByParam as "createdAt" | "issueDate" | "dueDate" | "total") ||
+    undefined;
+  const sortOrderParam = searchParams.get("sortOrder");
+  const sortOrder = (sortOrderParam as "asc" | "desc") || undefined;
 
   // Search state with debouncing
   const [searchInput, setSearchInput] = useState(
@@ -79,6 +91,9 @@ export default function InvoicesPage() {
       days,
       status,
       search,
+      amountRange,
+      sortBy,
+      sortOrder,
     },
     {
       placeholderData: (previousData) => previousData,
@@ -140,6 +155,27 @@ export default function InvoicesPage() {
     router.push(`?${params.toString()}`);
   };
 
+  const handleAmountRangeChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("amountRange", value);
+    params.set("page", "1"); // Reset to page 1 when changing amount range
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleSortByChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sortBy", value);
+    params.set("page", "1"); // Reset to page 1 when changing sort
+    router.push(`?${params.toString()}`);
+  };
+
+  const handleSortOrderChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("sortOrder", value);
+    params.set("page", "1"); // Reset to page 1 when changing sort order
+    router.push(`?${params.toString()}`);
+  };
+
   const handleSearchChange = (value: string) => {
     setSearchInput(value);
   };
@@ -161,6 +197,9 @@ export default function InvoicesPage() {
     params.set("limit", "10");
     params.set("days", "90");
     params.set("status", "all");
+    params.set("amountRange", "all");
+    params.set("sortBy", "createdAt");
+    params.set("sortOrder", "desc");
     params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
@@ -243,10 +282,16 @@ export default function InvoicesPage() {
           limit={limit}
           days={days}
           status={status}
+          amountRange={amountRange}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
           search={searchInput}
           onLimitChange={handleLimitChange}
           onDaysChange={handleDaysChange}
           onStatusChange={handleStatusChange}
+          onAmountRangeChange={handleAmountRangeChange}
+          onSortByChange={handleSortByChange}
+          onSortOrderChange={handleSortOrderChange}
           onSearchChange={handleSearchChange}
           onSearchSubmit={handleSearchSubmit}
           onReset={handleFilterReset}
@@ -274,10 +319,16 @@ export default function InvoicesPage() {
             limit={limit}
             days={days}
             status={status}
+            amountRange={amountRange}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
             search={searchInput}
             onLimitChange={handleLimitChange}
             onDaysChange={handleDaysChange}
             onStatusChange={handleStatusChange}
+            onAmountRangeChange={handleAmountRangeChange}
+            onSortByChange={handleSortByChange}
+            onSortOrderChange={handleSortOrderChange}
             onSearchChange={handleSearchChange}
             onSearchSubmit={handleSearchSubmit}
             onReset={handleFilterReset}
@@ -326,8 +377,3 @@ export default function InvoicesPage() {
     </div>
   );
 }
-
-// TODO: Future improvements
-// - Add sorting by date/amount
-// - Add bulk operations
-// - Fix invoice payment records iteration decimal errors

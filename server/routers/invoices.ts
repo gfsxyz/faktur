@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { invoices, invoiceItems, clients } from "@/lib/db/schema";
-import { eq, and, desc, sql, gte, ilike, or } from "drizzle-orm";
+import { eq, and, desc, asc, sql, gte, lte, ilike, or } from "drizzle-orm";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 import { roundMoney, moneyAdd, moneySubtract, moneyMultiply } from "@/lib/utils/money";
 
@@ -122,6 +122,21 @@ export const invoicesRouter = createTRPCRouter({
             .optional(),
           search: z.string().optional(),
           clientId: z.string().optional(),
+          amountRange: z
+            .enum([
+              "under100",
+              "100to1k",
+              "1kto5k",
+              "5kto10k",
+              "10kto100k",
+              "100kto1m",
+              "over1m",
+            ])
+            .optional(),
+          sortBy: z
+            .enum(["createdAt", "issueDate", "dueDate", "total"])
+            .optional(),
+          sortOrder: z.enum(["asc", "desc"]).optional(),
         })
         .optional()
     )
@@ -132,6 +147,9 @@ export const invoicesRouter = createTRPCRouter({
       const status = input?.status;
       const searchRaw = input?.search;
       const clientId = input?.clientId;
+      const amountRange = input?.amountRange;
+      const sortBy = input?.sortBy ?? "createdAt";
+      const sortOrder = input?.sortOrder ?? "desc";
       const offset = (page - 1) * limit;
 
       // Build where conditions
@@ -152,6 +170,28 @@ export const invoicesRouter = createTRPCRouter({
       // Add status filter if provided
       if (status) {
         conditions.push(eq(invoices.status, status));
+      }
+
+      // Add amount range filter if provided
+      if (amountRange) {
+        const rangeMap: Record<string, { min?: number; max?: number }> = {
+          under100: { max: 100 },
+          "100to1k": { min: 100, max: 1000 },
+          "1kto5k": { min: 1000, max: 5000 },
+          "5kto10k": { min: 5000, max: 10000 },
+          "10kto100k": { min: 10000, max: 100000 },
+          "100kto1m": { min: 100000, max: 1000000 },
+          over1m: { min: 1000000 },
+        };
+        const range = rangeMap[amountRange];
+        if (range) {
+          if (range.min !== undefined) {
+            conditions.push(gte(invoices.total, range.min));
+          }
+          if (range.max !== undefined) {
+            conditions.push(lte(invoices.total, range.max));
+          }
+        }
       }
 
       // Add search filter if provided (sanitized)
@@ -177,6 +217,17 @@ export const invoicesRouter = createTRPCRouter({
 
       const total = countResult[0]?.count ?? 0;
 
+      // Build sort order
+      const sortColumnMap = {
+        createdAt: invoices.createdAt,
+        issueDate: invoices.issueDate,
+        dueDate: invoices.dueDate,
+        total: invoices.total,
+      } as const;
+      const sortColumn = sortColumnMap[sortBy];
+      const orderByClause =
+        sortOrder === "asc" ? asc(sortColumn) : desc(sortColumn);
+
       // Get paginated invoices
       const invoicesList = await db
         .select({
@@ -195,7 +246,7 @@ export const invoicesRouter = createTRPCRouter({
         .from(invoices)
         .leftJoin(clients, eq(invoices.clientId, clients.id))
         .where(and(...conditions))
-        .orderBy(desc(invoices.createdAt))
+        .orderBy(orderByClause)
         .limit(limit)
         .offset(offset);
 
