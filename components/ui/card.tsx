@@ -2,15 +2,18 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { CornerIcons } from "./corner-icons";
+import { SquarePatterns } from "../square-patterns";
 
 interface CardProps extends React.ComponentProps<"div"> {
   showCorners?: boolean;
+  withPatterns?: boolean;
   cornerSize?: "sm" | "md" | "lg";
 }
 
 function Card({
   className,
   showCorners = true,
+  withPatterns = false,
   cornerSize = "md",
   children,
   ...props
@@ -27,6 +30,9 @@ function Card({
       {showCorners && (
         <CornerIcons size={cornerSize} className="text-foreground/10" />
       )}
+
+      {withPatterns && <SquarePatterns />}
+
       {children}
     </div>
   );
