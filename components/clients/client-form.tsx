@@ -27,7 +27,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Trash2 } from "lucide-react";
 
 const clientFormSchema = z.object({
   name: z
@@ -151,9 +151,16 @@ type ClientFormValues = z.infer<typeof clientFormSchema>;
 interface ClientFormProps {
   clientId?: string;
   defaultValues?: Partial<ClientFormValues>;
+  onDelete?: () => void;
+  isDeleting?: boolean;
 }
 
-export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
+export function ClientForm({
+  clientId,
+  defaultValues,
+  onDelete,
+  isDeleting,
+}: ClientFormProps) {
   const router = useRouter();
   const utils = trpc.useUtils();
 
@@ -163,11 +170,11 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
   );
 
   const createMutation = trpc.clients.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Invalidate clients list and hasAny to refresh the list view
       utils.clients.list.invalidate();
       utils.clients.hasAny.invalidate();
-      router.push("/dashboard/clients");
+      router.push(`/dashboard/clients/${data.id}`);
     },
   });
 
@@ -179,7 +186,7 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
       }
       utils.clients.list.invalidate();
       utils.invoices.list.invalidate();
-      router.push("/dashboard/clients");
+      router.push(`/dashboard/clients/${clientId}`);
     },
   });
 
@@ -459,26 +466,42 @@ export function ClientForm({ clientId, defaultValues }: ClientFormProps) {
           </Collapsible>
         </Card>
 
-        <div className="flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-10"
-            onClick={() => router.push("/dashboard/clients")}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="h-10"
-            disabled={createMutation.isPending || updateMutation.isPending}
-          >
-            {createMutation.isPending || updateMutation.isPending
-              ? "Saving..."
-              : clientId
-              ? "Update Client"
-              : "Create Client"}
-          </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+          {clientId && onDelete ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="h-10 order-last sm:order-first text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={onDelete}
+              disabled={isDeleting}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {isDeleting ? "Deleting..." : "Delete Client"}
+            </Button>
+          ) : (
+            <div className="hidden sm:block" />
+          )}
+          <div className="contents sm:flex sm:gap-3">
+            <Button
+              type="submit"
+              className="h-10"
+              disabled={createMutation.isPending || updateMutation.isPending}
+            >
+              {createMutation.isPending || updateMutation.isPending
+                ? "Saving..."
+                : clientId
+                ? "Update Client"
+                : "Create Client"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="h-10"
+              onClick={() => router.push("/dashboard/clients")}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

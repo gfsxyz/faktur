@@ -7,7 +7,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -18,13 +17,9 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -35,38 +30,82 @@ interface InvoiceFiltersProps {
   limit: number;
   days: number | undefined;
   status: string | undefined;
+  amountRange: string | undefined;
+  sortBy: string | undefined;
+  sortOrder: string | undefined;
   search: string | undefined;
   onLimitChange: (value: string) => void;
   onDaysChange: (value: string) => void;
   onStatusChange: (value: string) => void;
+  onAmountRangeChange: (value: string) => void;
+  onSortByChange: (value: string) => void;
+  onSortOrderChange: (value: string) => void;
   onSearchChange: (value: string) => void;
   onSearchSubmit?: () => void;
   onReset?: () => void;
 }
 
+const AMOUNT_RANGES = [
+  { value: "under100", label: "Under $100" },
+  { value: "100to1k", label: "$100 - $1K" },
+  { value: "1kto5k", label: "$1K - $5K" },
+  { value: "5kto10k", label: "$5K - $10K" },
+  { value: "10kto100k", label: "$10K - $100K" },
+  { value: "100kto1m", label: "$100K - $1M" },
+  { value: "over1m", label: "Over $1M" },
+] as const;
+
 const STATUSES = ["draft", "sent", "paid", "overdue", "cancelled"] as const;
+
+const SORT_BY_OPTIONS = [
+  { value: "createdAt", label: "Date created" },
+  { value: "issueDate", label: "Issue date" },
+  { value: "dueDate", label: "Due date" },
+  { value: "total", label: "Amount" },
+] as const;
+
+const SORT_ORDER_OPTIONS = [
+  { value: "desc", label: "Descending" },
+  { value: "asc", label: "Ascending" },
+] as const;
 
 function FilterContent({
   limit,
   days,
   status,
+  amountRange,
+  sortBy,
+  sortOrder,
   onLimitChange,
   onDaysChange,
   onStatusChange,
+  onAmountRangeChange,
+  onSortByChange,
+  onSortOrderChange,
   onReset,
 }: Pick<
   InvoiceFiltersProps,
   | "limit"
   | "days"
   | "status"
+  | "amountRange"
+  | "sortBy"
+  | "sortOrder"
   | "onLimitChange"
   | "onDaysChange"
   | "onStatusChange"
+  | "onAmountRangeChange"
+  | "onSortByChange"
+  | "onSortOrderChange"
   | "onReset"
 >) {
-
   const hasNonDefaultValues =
-    limit !== 10 || days !== 90 || (status && status !== "all");
+    limit !== 10 ||
+    days !== 90 ||
+    (status && status !== "all") ||
+    (amountRange && amountRange !== "all") ||
+    (sortBy && sortBy !== "createdAt") ||
+    (sortOrder && sortOrder !== "desc");
 
   return (
     <div className="space-y-6">
@@ -81,14 +120,16 @@ function FilterContent({
       {/* Filters */}
       <div className="space-y-4">
         {/* Items per page */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Items per page
+          </label>
           <Select value={limit.toString()} onValueChange={onLimitChange}>
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Items per page</SelectLabel>
                 <SelectItem value="10">10 items</SelectItem>
                 <SelectItem value="20">20 items</SelectItem>
                 <SelectItem value="50">50 items</SelectItem>
@@ -99,14 +140,19 @@ function FilterContent({
         </div>
 
         {/* Date range */}
-        <div className="space-y-2">
-          <Select value={days?.toString() || "all"} onValueChange={onDaysChange}>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Date range
+          </label>
+          <Select
+            value={days?.toString() || "all"}
+            onValueChange={onDaysChange}
+          >
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Date range</SelectLabel>
                 <SelectItem value="all">All time</SelectItem>
                 <SelectItem value="1">Today</SelectItem>
                 <SelectItem value="7">Last 7 days</SelectItem>
@@ -119,14 +165,16 @@ function FilterContent({
         </div>
 
         {/* Status */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Status
+          </label>
           <Select value={status || "all"} onValueChange={onStatusChange}>
             <SelectTrigger className="w-full h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Status</SelectLabel>
                 <SelectItem value="all">All</SelectItem>
                 {STATUSES.map((statusValue) => (
                   <SelectItem key={statusValue} value={statusValue}>
@@ -145,13 +193,80 @@ function FilterContent({
             </SelectContent>
           </Select>
         </div>
+
+        {/* Amount Range */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Amount range
+          </label>
+          <Select
+            value={amountRange || "all"}
+            onValueChange={onAmountRangeChange}
+          >
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">All amounts</SelectItem>
+                {AMOUNT_RANGES.map((range) => (
+                  <SelectItem key={range.value} value={range.value}>
+                    {range.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Sort By */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Sort by
+          </label>
+          <Select value={sortBy || "createdAt"} onValueChange={onSortByChange}>
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {SORT_BY_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Sort Order */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Order
+          </label>
+          <Select value={sortOrder || "desc"} onValueChange={onSortOrderChange}>
+            <SelectTrigger className="w-full h-9 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {SORT_ORDER_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Footer - Reset button */}
       {hasNonDefaultValues && onReset && (
-        <div className="border-t pt-4">
+        <div className="">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={onReset}
             className="w-full h-8 text-xs"
@@ -168,16 +283,21 @@ export function InvoiceFilters({
   limit,
   days,
   status,
+  amountRange,
+  sortBy,
+  sortOrder,
   search,
   onLimitChange,
   onDaysChange,
   onStatusChange,
+  onAmountRangeChange,
+  onSortByChange,
+  onSortOrderChange,
   onSearchChange,
   onSearchSubmit,
   onReset,
 }: InvoiceFiltersProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const handleClearSearch = () => {
     onSearchChange("");
@@ -190,11 +310,14 @@ export function InvoiceFilters({
     }
   };
 
-  // Count active filters (excluding search)
+  // Count active filters (excluding search and default sort)
   const activeFilterCount = [
     limit !== 10,
     days !== 90,
     status && status !== "all",
+    amountRange && amountRange !== "all",
+    sortBy && sortBy !== "createdAt",
+    sortOrder && sortOrder !== "desc",
   ].filter(Boolean).length;
 
   return (
@@ -224,50 +347,13 @@ export function InvoiceFilters({
         )}
       </InputGroup>
 
-      {/* Desktop - Popover */}
-      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="hidden md:flex shrink-0 relative"
-            aria-label="Open filters"
-            title="Filter invoices"
-          >
-            <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-            {activeFilterCount > 0 && (
-              <span
-                className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-medium"
-                aria-label={`${activeFilterCount} active filter${activeFilterCount > 1 ? 's' : ''}`}
-              >
-                {activeFilterCount}
-              </span>
-            )}
-            <span className="sr-only">Open filters</span>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="end" className="w-[320px] p-0">
-          <div className="p-5">
-            <FilterContent
-              limit={limit}
-              days={days}
-              status={status}
-              onLimitChange={onLimitChange}
-              onDaysChange={onDaysChange}
-              onStatusChange={onStatusChange}
-              onReset={onReset}
-            />
-          </div>
-        </PopoverContent>
-      </Popover>
-
-      {/* Mobile - Sheet */}
+      {/* Filter Sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetTrigger asChild>
           <Button
             variant="outline"
             size="icon"
-            className="md:hidden shrink-0 relative"
+            className="shrink-0 relative"
             aria-label="Open filters"
             title="Filter invoices"
           >
@@ -275,7 +361,9 @@ export function InvoiceFilters({
             {activeFilterCount > 0 && (
               <span
                 className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-medium"
-                aria-label={`${activeFilterCount} active filter${activeFilterCount > 1 ? 's' : ''}`}
+                aria-label={`${activeFilterCount} active filter${
+                  activeFilterCount > 1 ? "s" : ""
+                }`}
               >
                 {activeFilterCount}
               </span>
@@ -285,14 +373,23 @@ export function InvoiceFilters({
         </SheetTrigger>
         <SheetContent side="right" className="w-[340px] sm:w-[400px]">
           <SheetTitle className="sr-only">Filter Invoices</SheetTitle>
+          <SheetDescription className="sr-only">
+            Filter and sort invoice list
+          </SheetDescription>
           <div className="h-full overflow-y-auto px-6 py-6">
             <FilterContent
               limit={limit}
               days={days}
               status={status}
+              amountRange={amountRange}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
               onLimitChange={onLimitChange}
               onDaysChange={onDaysChange}
               onStatusChange={onStatusChange}
+              onAmountRangeChange={onAmountRangeChange}
+              onSortByChange={onSortByChange}
+              onSortOrderChange={onSortOrderChange}
               onReset={onReset}
             />
           </div>

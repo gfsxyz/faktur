@@ -91,7 +91,7 @@ export default function InvoiceDetailPage({
 
       {/* Mobile View - Cards */}
       <div className="lg:hidden grid grid-cols-2 gap-3">
-        <Card className="py-3">
+        <Card className="py-3" withPatterns>
           <CardContent>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">
@@ -111,7 +111,7 @@ export default function InvoiceDetailPage({
           </CardContent>
         </Card>
 
-        <Card className="py-3">
+        <Card className="py-3" withPatterns>
           <CardContent>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">
@@ -124,7 +124,7 @@ export default function InvoiceDetailPage({
           </CardContent>
         </Card>
 
-        <Card className="py-3">
+        <Card className="py-3" withPatterns>
           <CardContent>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">
@@ -137,7 +137,7 @@ export default function InvoiceDetailPage({
           </CardContent>
         </Card>
 
-        <Card className="py-3">
+        <Card className="py-3" withPatterns>
           <CardContent>
             <div>
               <p className="text-xs font-medium text-muted-foreground mb-2">
@@ -154,7 +154,7 @@ export default function InvoiceDetailPage({
       </div>
 
       {/* Desktop View */}
-      <Card className="py-4 hidden lg:flex">
+      <Card className="py-4 hidden lg:flex" withPatterns>
         <CardContent className="flex items-center gap-6 rounded-lg">
           <div className="flex items-center gap-3">
             <p className="text-xs font-medium text-muted-foreground">Status</p>
@@ -206,7 +206,10 @@ export default function InvoiceDetailPage({
           href={`/dashboard/clients/${invoice.client?.id}`}
           className="cursor-pointer"
         >
-          <Card className="gap-1 h-full hover:bg-muted/30 transition-colors">
+          <Card
+            className="gap-1 h-full hover:bg-muted/30 transition-colors"
+            withPatterns
+          >
             <CardHeader className="space-y-1 pb-3">
               <CardTitle className="text-sm font-semibold">
                 Client Information
@@ -258,7 +261,7 @@ export default function InvoiceDetailPage({
           </Card>
         </Link>
 
-        <Card className="gap-1">
+        <Card className="gap-1" withPatterns>
           <CardHeader className="space-y-1 pb-3">
             <CardTitle className="text-sm font-semibold">
               Payment Summary

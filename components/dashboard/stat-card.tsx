@@ -28,7 +28,10 @@ export function StatCard({ title, value, description, trend }: StatCardProps) {
   };
 
   return (
-    <Card className="p-4 pb-3 lg:px-6 transition-all duration-200 justify-center min-w-min">
+    <Card
+      className="p-4 pb-3 lg:px-6 transition-all duration-200 justify-center min-w-min"
+      withPatterns
+    >
       <div className="space-y-1 lg:space-y-1.5">
         <p className="text-[9px] lg:text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
           {title}

@@ -16,28 +16,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { STATUS_COLORS } from "@/lib/constants/status-colors";
+import { STATUS_COLORS, STATUS_LABELS } from "@/lib/constants/status-colors";
 import { NotFound } from "@/components/ui/not-found";
 import LoadingLogo from "@/components/loading-logo";
 import { Cog, FilePlusCorner, Shredder } from "lucide-react";
 import { roundMoney, moneySubtract } from "@/lib/utils/money";
 import EmptyState from "@/components/ui/empty-state";
-
-const statusColors = {
-  draft: "secondary",
-  sent: "default",
-  paid: "default",
-  overdue: "destructive",
-  cancelled: "secondary",
-} as const;
-
-const statusLabels = {
-  draft: "Draft",
-  sent: "Sent",
-  paid: "Paid",
-  overdue: "Overdue",
-  cancelled: "Cancelled",
-};
 
 export default function ClientDetailPage({
   params,
@@ -223,7 +207,7 @@ export default function ClientDetailPage({
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="gap-1">
+        <Card className="gap-1" withPatterns>
           <CardHeader className="space-y-1 pb-3">
             <CardTitle className="text-sm font-semibold">
               Contact Information
@@ -274,7 +258,7 @@ export default function ClientDetailPage({
           </CardContent>
         </Card>
 
-        <Card className="gap-1">
+        <Card className="gap-1" withPatterns>
           <CardHeader className="space-y-1 pb-3">
             <CardTitle className="text-sm font-semibold">Address</CardTitle>
           </CardHeader>
@@ -326,7 +310,7 @@ export default function ClientDetailPage({
       </div>
 
       {client.notes && (
-        <Card className="gap-0">
+        <Card className="gap-0" withPatterns>
           <CardHeader className="space-y-1">
             <CardTitle className="text-sm font-semibold">Notes</CardTitle>
           </CardHeader>
@@ -377,8 +361,15 @@ export default function ClientDetailPage({
                           {invoice.invoiceNumber}
                         </p>
                       </div>
-                      <Badge variant={statusColors[invoice.status]}>
-                        {statusLabels[invoice.status]}
+                      <Badge
+                        className="text-xs font-medium"
+                        style={{
+                          backgroundColor: STATUS_COLORS[invoice.status],
+                          color: "white",
+                          border: "none",
+                        }}
+                      >
+                        {STATUS_LABELS[invoice.status]}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -463,8 +454,15 @@ export default function ClientDetailPage({
                           })}
                         </TableCell>
                         <TableCell className="px-6 py-3 text-right">
-                          <Badge variant={statusColors[invoice.status]}>
-                            {statusLabels[invoice.status]}
+                          <Badge
+                            className="text-xs font-medium"
+                            style={{
+                              backgroundColor: STATUS_COLORS[invoice.status],
+                              color: "white",
+                              border: "none",
+                            }}
+                          >
+                            {STATUS_LABELS[invoice.status]}
                           </Badge>
                         </TableCell>
                       </TableRow>

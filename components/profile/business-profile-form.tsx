@@ -19,6 +19,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -451,6 +452,20 @@ export function BusinessProfileForm() {
               />
             </div>
           </CardContent>
+          <CardFooter>
+            <Button
+              size={"sm"}
+              type="submit"
+              className="ml-auto min-w-20"
+              disabled={upsertMutation.isPending}
+            >
+              {upsertMutation.isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </CardFooter>
         </Card>
 
         {/* Address */}
@@ -536,6 +551,20 @@ export function BusinessProfileForm() {
               />
             </div>
           </CardContent>
+          <CardFooter>
+            <Button
+              size={"sm"}
+              type="submit"
+              className="ml-auto min-w-20"
+              disabled={upsertMutation.isPending}
+            >
+              {upsertMutation.isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </CardFooter>
         </Card>
 
         {/* Tax Information */}
@@ -578,6 +607,20 @@ export function BusinessProfileForm() {
               />
             </div>
           </CardContent>
+          <CardFooter>
+            <Button
+              size={"sm"}
+              type="submit"
+              className="ml-auto min-w-20"
+              disabled={upsertMutation.isPending}
+            >
+              {upsertMutation.isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </CardFooter>
         </Card>
 
         {/* Bank Information */}
@@ -666,20 +709,21 @@ export function BusinessProfileForm() {
               />
             </div>
           </CardContent>
+          <CardFooter>
+            <Button
+              size={"sm"}
+              type="submit"
+              className="ml-auto min-w-20"
+              disabled={upsertMutation.isPending}
+            >
+              {upsertMutation.isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </CardFooter>
         </Card>
-
-        <div className="flex justify-end mb-12">
-          <Button
-            type="submit"
-            className="h-10 font-medium"
-            disabled={upsertMutation.isPending}
-          >
-            {upsertMutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Save Business Profile
-          </Button>
-        </div>
       </form>
     </Form>
   );

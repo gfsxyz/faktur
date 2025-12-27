@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, Moon, Sun, User } from "lucide-react";
+import { Building2, LogOut, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FakturLogo } from "@/components/ui/faktur-logo";
 import { NavAccent } from "@/components/ui/nav-accent";
@@ -119,7 +119,7 @@ export function Sidebar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="text-left pl-2 w-full h-12">
-              <Avatar>
+              <Avatar className="rounded-none ring-2 ring-primary/20">
                 <AvatarImage
                   src={businessProfile?.logo || undefined}
                   alt={businessProfile?.companyName || "user avatar"}
@@ -153,8 +153,8 @@ export function Sidebar() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <Building2 className="mr-2 h-4 w-4" />
+              <span>Business Profile</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={toggleTheme}>
               <div className="relative mr-2 h-4 w-4">

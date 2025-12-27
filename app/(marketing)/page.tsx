@@ -144,7 +144,11 @@ export default function Home() {
       <div className="relative px-6 pb-8 max-w-7xl mx-auto min-h-screen flex flex-col">
         <nav className="flex items-center justify-between gap-4">
           <div className="flex h-16 items-center">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Link
+              href="/"
+              className="flex items-center gap-2 font-semibold"
+              aria-label="Faktur"
+            >
               <FakturLogo
                 width={34}
                 height={34}
@@ -285,6 +289,8 @@ export default function Home() {
                   width={1200}
                   height={800}
                   priority
+                  fetchPriority="high"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1200px"
                   className="shadow-2xl relative z-10"
                 />
               </div>

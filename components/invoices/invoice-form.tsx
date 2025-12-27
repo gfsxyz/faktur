@@ -34,14 +34,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Trash2,
-  Calendar,
-  DollarSign,
-  Info,
-  AlertCircle,
-  ChevronDown,
-} from "lucide-react";
+import { Trash2, Calendar, AlertCircle, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import {
   Collapsible,
@@ -173,12 +166,16 @@ interface InvoiceFormProps {
   invoiceId?: string;
   invoiceNumber?: string;
   defaultValues?: Partial<InvoiceFormValues>;
+  onDelete?: () => void;
+  isDeleting?: boolean;
 }
 
 export function InvoiceForm({
   invoiceId,
   invoiceNumber,
   defaultValues,
+  onDelete,
+  isDeleting,
 }: InvoiceFormProps) {
   const router = useRouter();
   const utils = trpc.useUtils();
@@ -206,11 +203,11 @@ export function InvoiceForm({
     });
 
   const createMutation = trpc.invoices.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Invalidate invoices list and hasAny to refresh the list view
       utils.invoices.list.invalidate();
       utils.invoices.hasAny.invalidate();
-      router.push("/dashboard/invoices");
+      router.push(`/dashboard/invoices/${data.id}`);
     },
   });
 
@@ -221,7 +218,7 @@ export function InvoiceForm({
         utils.invoices.getById.invalidate({ id: invoiceId });
       }
       utils.invoices.list.invalidate();
-      router.push("/dashboard/invoices");
+      router.push(`/dashboard/invoices/${invoiceId}`);
     },
   });
 
@@ -996,6 +993,18 @@ export function InvoiceForm({
                 >
                   Cancel
                 </Button>
+                {invoiceId && onDelete && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-10 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {isDeleting ? "Deleting..." : "Delete Invoice"}
+                  </Button>
+                )}
               </div>
             </div>
           </div>

@@ -1,9 +1,15 @@
 "use client";
 
 import { use } from "react";
+import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
 import { InvoiceForm } from "@/components/invoices/invoice-form";
 import { NotFound } from "@/components/ui/not-found";
+import {
+  DeleteConfirmationDialog,
+  useDeleteConfirmation,
+} from "@/components/ui/delete-confirmation-dialog";
+import { toast } from "sonner";
 import LoadingLogo from "@/components/loading-logo";
 
 export default function EditInvoicePage({
@@ -12,7 +18,28 @@ export default function EditInvoicePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const router = useRouter();
+  const utils = trpc.useUtils();
+  const deleteConfirmation = useDeleteConfirmation();
   const { data: invoice, isLoading } = trpc.invoices.getById.useQuery({ id });
+
+  const deleteMutation = trpc.invoices.delete.useMutation({
+    onSuccess: () => {
+      utils.invoices.list.invalidate();
+      utils.invoices.hasAny.invalidate();
+      toast.success("Invoice deleted successfully");
+      router.push("/dashboard/invoices");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to delete invoice");
+    },
+  });
+
+  const handleDelete = () => {
+    deleteConfirmation.confirm(async () => {
+      await deleteMutation.mutateAsync({ id });
+    });
+  };
 
   if (isLoading) {
     return (
@@ -53,6 +80,16 @@ export default function EditInvoicePage({
         invoiceId={id}
         invoiceNumber={invoice.invoiceNumber}
         defaultValues={defaultValues}
+        onDelete={handleDelete}
+        isDeleting={deleteMutation.isPending}
+      />
+
+      <DeleteConfirmationDialog
+        open={deleteConfirmation.isOpen}
+        onOpenChange={deleteConfirmation.handleCancel}
+        onConfirm={deleteConfirmation.handleConfirm}
+        title="Delete Invoice"
+        description="Are you sure you want to delete this invoice? This action cannot be undone."
       />
     </div>
   );
