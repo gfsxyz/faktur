@@ -30,8 +30,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Users, MoreHorizontal, Handshake, Cog, Shredder } from "lucide-react";
 import {
-  DeleteConfirmationDialog,
-  useDeleteConfirmation,
+  EmailConfirmDeleteDialog,
+  useEmailConfirmDelete,
 } from "@/components/ui/delete-confirmation-dialog";
 import { toast } from "sonner";
 import { ClientFilters } from "@/components/clients/client-filters";
@@ -51,7 +51,7 @@ export default function ClientsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const utils = trpc.useUtils();
-  const deleteConfirmation = useDeleteConfirmation();
+  const deleteConfirmation = useEmailConfirmDelete();
 
   // Get filter values from search params with defaults
   const limit = parseInt(searchParams.get("limit") || "10");
@@ -105,8 +105,8 @@ export default function ClientsPage() {
     },
   });
 
-  const handleDelete = async (id: string) => {
-    deleteConfirmation.confirm(async () => {
+  const handleDelete = (client: { id: string; name: string; email: string }) => {
+    deleteConfirmation.confirm(client, async (id) => {
       try {
         await deleteMutation.mutateAsync({ id });
 
@@ -337,7 +337,7 @@ export default function ClientsPage() {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => handleDelete(client.id)}
+                            onClick={() => handleDelete({ id: client.id, name: client.name, email: client.email })}
                             className="text-destructive"
                           >
                             <Shredder className="text-destructive" />
@@ -498,7 +498,7 @@ export default function ClientsPage() {
                     variant="ghost"
                     size="sm"
                     className="h-8 text-xs text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(client.id)}
+                    onClick={() => handleDelete({ id: client.id, name: client.name, email: client.email })}
                   >
                     Delete
                   </Button>
@@ -565,13 +565,15 @@ export default function ClientsPage() {
         </div>
       )}
 
-      <DeleteConfirmationDialog
-        open={deleteConfirmation.isOpen}
-        onOpenChange={deleteConfirmation.handleCancel}
-        onConfirm={deleteConfirmation.handleConfirm}
-        title="Delete Client"
-        description="Are you sure you want to delete this client? This action cannot be undone."
-      />
+      {deleteConfirmation.client && (
+        <EmailConfirmDeleteDialog
+          open={deleteConfirmation.isOpen}
+          onOpenChange={deleteConfirmation.handleCancel}
+          onConfirm={deleteConfirmation.handleConfirm}
+          clientName={deleteConfirmation.client.name}
+          clientEmail={deleteConfirmation.client.email}
+        />
+      )}
     </div>
   );
 }

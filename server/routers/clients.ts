@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { clients, invoices } from "@/lib/db/schema";
 import { eq, and, desc, sql, ilike, or, isNull } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 
 const createClientSchema = z.object({
@@ -288,29 +287,24 @@ export const clientsRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Check if client has any related non-archived invoices
-      const relatedInvoices = await db
-        .select()
-        .from(invoices)
+      const now = new Date();
+
+      // Soft delete all related invoices
+      await db
+        .update(invoices)
+        .set({ archivedAt: now })
         .where(
           and(
             eq(invoices.clientId, input.id),
             eq(invoices.userId, ctx.userId),
             isNull(invoices.archivedAt)
           )
-        )
-        .limit(1);
+        );
 
-      if (relatedInvoices.length > 0) {
-        throw new TRPCError({
-          code: "PRECONDITION_FAILED",
-          message: "Cannot delete client with existing invoices.",
-        });
-      }
-
+      // Soft delete the client
       await db
         .update(clients)
-        .set({ archivedAt: new Date() })
+        .set({ archivedAt: now })
         .where(and(eq(clients.id, input.id), eq(clients.userId, ctx.userId)));
 
       return { success: true };

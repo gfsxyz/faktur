@@ -6,8 +6,8 @@ import { trpc } from "@/lib/trpc/client";
 import { ClientForm } from "@/components/clients/client-form";
 import { NotFound } from "@/components/ui/not-found";
 import {
-  DeleteConfirmationDialog,
-  useDeleteConfirmation,
+  EmailConfirmDeleteDialog,
+  useEmailConfirmDelete,
 } from "@/components/ui/delete-confirmation-dialog";
 import { toast } from "sonner";
 import LoadingLogo from "@/components/loading-logo";
@@ -20,7 +20,7 @@ export default function EditClientPage({
   const { id } = use(params);
   const router = useRouter();
   const utils = trpc.useUtils();
-  const deleteConfirmation = useDeleteConfirmation();
+  const deleteConfirmation = useEmailConfirmDelete();
   const { data: client, isLoading } = trpc.clients.getById.useQuery({ id });
 
   const deleteMutation = trpc.clients.delete.useMutation({
@@ -36,9 +36,13 @@ export default function EditClientPage({
   });
 
   const handleDelete = () => {
-    deleteConfirmation.confirm(async () => {
-      await deleteMutation.mutateAsync({ id });
-    });
+    if (!client) return;
+    deleteConfirmation.confirm(
+      { id: client.id, name: client.name, email: client.email },
+      async () => {
+        await deleteMutation.mutateAsync({ id });
+      }
+    );
   };
 
   if (isLoading) {
@@ -91,13 +95,15 @@ export default function EditClientPage({
         isDeleting={deleteMutation.isPending}
       />
 
-      <DeleteConfirmationDialog
-        open={deleteConfirmation.isOpen}
-        onOpenChange={deleteConfirmation.handleCancel}
-        onConfirm={deleteConfirmation.handleConfirm}
-        title="Delete Client"
-        description="Are you sure you want to delete this client? This will also delete all associated invoices. This action cannot be undone."
-      />
+      {deleteConfirmation.client && (
+        <EmailConfirmDeleteDialog
+          open={deleteConfirmation.isOpen}
+          onOpenChange={deleteConfirmation.handleCancel}
+          onConfirm={deleteConfirmation.handleConfirm}
+          clientName={deleteConfirmation.client.name}
+          clientEmail={deleteConfirmation.client.email}
+        />
+      )}
     </div>
   );
 }
