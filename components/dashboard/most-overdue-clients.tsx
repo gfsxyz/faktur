@@ -70,7 +70,14 @@ export function MostOverdueClients() {
   return (
     <Card>
       <div className="px-5">
-        <h3 className="font-semibold tracking-tight">Most Overdue Clients</h3>
+        <Link
+          href="/dashboard/clients?sortBy=overdueAmount&sortOrder=desc"
+          className="hover:underline underline-offset-2"
+          title="view all"
+          aria-label="view all"
+        >
+          <h3 className="font-semibold tracking-tight">Most Overdue Clients</h3>
+        </Link>
         <p className="text-xs text-muted-foreground/80">
           Clients with outstanding payments
         </p>

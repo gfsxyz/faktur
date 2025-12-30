@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { clients, invoices } from "@/lib/db/schema";
-import { eq, and, desc, sql, ilike, or, isNull } from "drizzle-orm";
+import { eq, and, desc, asc, sql, ilike, or, isNull } from "drizzle-orm";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 
 const createClientSchema = z.object({
@@ -173,6 +173,8 @@ export const clientsRouter = createTRPCRouter({
           limit: z.number().min(1).max(100).default(10),
           page: z.number().min(1).default(1),
           search: z.string().optional(),
+          sortBy: z.enum(["createdAt", "overdueAmount"]).optional(),
+          sortOrder: z.enum(["asc", "desc"]).optional(),
         })
         .optional()
     )
@@ -180,6 +182,8 @@ export const clientsRouter = createTRPCRouter({
       const limit = input?.limit ?? 10;
       const page = input?.page ?? 1;
       const searchRaw = input?.search;
+      const sortBy = input?.sortBy ?? "createdAt";
+      const sortOrder = input?.sortOrder ?? "desc";
       const offset = (page - 1) * limit;
 
       // Build where conditions
@@ -208,12 +212,50 @@ export const clientsRouter = createTRPCRouter({
 
       const total = countResult[0]?.count ?? 0;
 
-      // Get paginated clients
+      // Get paginated clients with overdue amounts
       const clientsList = await db
-        .select()
+        .select({
+          id: clients.id,
+          userId: clients.userId,
+          name: clients.name,
+          email: clients.email,
+          phone: clients.phone,
+          company: clients.company,
+          address: clients.address,
+          city: clients.city,
+          state: clients.state,
+          country: clients.country,
+          postalCode: clients.postalCode,
+          taxId: clients.taxId,
+          notes: clients.notes,
+          archivedAt: clients.archivedAt,
+          createdAt: clients.createdAt,
+          updatedAt: clients.updatedAt,
+          overdueAmount: sql<number>`COALESCE((
+            SELECT SUM(i.total - i."amountPaid")
+            FROM invoice i
+            WHERE i."clientId" = client.id
+              AND i.status = 'overdue'
+              AND i."archivedAt" IS NULL
+          ), 0)`.as("overdueAmount"),
+          lastInvoiceAt: sql<Date>`(
+            SELECT MAX(i."createdAt")
+            FROM invoice i
+            WHERE i."clientId" = client.id
+              AND i."archivedAt" IS NULL
+          )`.as("lastInvoiceAt"),
+        })
         .from(clients)
         .where(and(...conditions))
-        .orderBy(desc(clients.createdAt))
+        .orderBy(
+          sortBy === "overdueAmount"
+            ? sortOrder === "asc"
+              ? sql`"overdueAmount" ASC`
+              : sql`"overdueAmount" DESC`
+            : sortOrder === "asc"
+              ? sql`"lastInvoiceAt" ASC NULLS LAST`
+              : sql`"lastInvoiceAt" DESC NULLS LAST`
+        )
         .limit(limit)
         .offset(offset);
 
