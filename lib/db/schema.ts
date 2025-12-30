@@ -141,6 +141,7 @@ export const clients = pgTable("client", {
   postalCode: text("postalCode"),
   taxId: text("taxId"),
   notes: text("notes"),
+  archivedAt: timestamp("archivedAt"),
   createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),
@@ -181,6 +182,7 @@ export const invoices = pgTable("invoice", {
   amountPaid: real("amountPaid").notNull().default(0),
   notes: text("notes"),
   terms: text("terms"),
+  archivedAt: timestamp("archivedAt"),
   createdAt: timestamp("createdAt")
     .notNull()
     .$defaultFn(() => new Date()),

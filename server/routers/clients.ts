@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { clients, invoices } from "@/lib/db/schema";
-import { eq, and, desc, sql, ilike, or } from "drizzle-orm";
+import { eq, and, desc, sql, ilike, or, isNull } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 
@@ -120,7 +120,7 @@ export const clientsRouter = createTRPCRouter({
     const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(clients)
-      .where(eq(clients.userId, ctx.userId));
+      .where(and(eq(clients.userId, ctx.userId), isNull(clients.archivedAt)));
 
     return (result[0]?.count ?? 0) > 0;
   }),
@@ -153,6 +153,7 @@ export const clientsRouter = createTRPCRouter({
         .where(
           and(
             eq(clients.userId, ctx.userId),
+            isNull(clients.archivedAt),
             or(
               ilike(clients.name, pattern),
               ilike(clients.company, pattern)
@@ -183,7 +184,7 @@ export const clientsRouter = createTRPCRouter({
       const offset = (page - 1) * limit;
 
       // Build where conditions
-      const conditions = [eq(clients.userId, ctx.userId)];
+      const conditions = [eq(clients.userId, ctx.userId), isNull(clients.archivedAt)];
 
       // Add search filter if provided (sanitized)
       if (searchRaw) {
@@ -233,7 +234,7 @@ export const clientsRouter = createTRPCRouter({
       const [client] = await db
         .select()
         .from(clients)
-        .where(and(eq(clients.id, input.id), eq(clients.userId, ctx.userId)))
+        .where(and(eq(clients.id, input.id), eq(clients.userId, ctx.userId), isNull(clients.archivedAt)))
         .limit(1);
 
       if (!client) {
@@ -283,16 +284,20 @@ export const clientsRouter = createTRPCRouter({
       return client;
     }),
 
-  // Delete a client
+  // Delete a client (soft delete)
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Check if client has any related invoices
+      // Check if client has any related non-archived invoices
       const relatedInvoices = await db
         .select()
         .from(invoices)
         .where(
-          and(eq(invoices.clientId, input.id), eq(invoices.userId, ctx.userId))
+          and(
+            eq(invoices.clientId, input.id),
+            eq(invoices.userId, ctx.userId),
+            isNull(invoices.archivedAt)
+          )
         )
         .limit(1);
 
@@ -304,7 +309,8 @@ export const clientsRouter = createTRPCRouter({
       }
 
       await db
-        .delete(clients)
+        .update(clients)
+        .set({ archivedAt: new Date() })
         .where(and(eq(clients.id, input.id), eq(clients.userId, ctx.userId)));
 
       return { success: true };
