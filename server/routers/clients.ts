@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { clients, invoices } from "@/lib/db/schema";
-import { eq, and, desc, asc, sql, ilike, or, isNull } from "drizzle-orm";
+import { eq, and, desc, sql, ilike, or, isNull } from "drizzle-orm";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 
 const createClientSchema = z.object({
@@ -173,7 +173,7 @@ export const clientsRouter = createTRPCRouter({
           limit: z.number().min(1).max(100).default(10),
           page: z.number().min(1).default(1),
           search: z.string().optional(),
-          sortBy: z.enum(["createdAt", "overdueAmount"]).optional(),
+          sortBy: z.enum(["recentActivity", "overdueAmount"]).optional(),
           sortOrder: z.enum(["asc", "desc"]).optional(),
         })
         .optional()
@@ -182,7 +182,7 @@ export const clientsRouter = createTRPCRouter({
       const limit = input?.limit ?? 10;
       const page = input?.page ?? 1;
       const searchRaw = input?.search;
-      const sortBy = input?.sortBy ?? "createdAt";
+      const sortBy = input?.sortBy ?? "recentActivity";
       const sortOrder = input?.sortOrder ?? "desc";
       const offset = (page - 1) * limit;
 
@@ -244,6 +244,15 @@ export const clientsRouter = createTRPCRouter({
             WHERE i."clientId" = client.id
               AND i."archivedAt" IS NULL
           )`.as("lastInvoiceAt"),
+          recentActivityAt: sql<Date>`GREATEST(
+            client."createdAt",
+            COALESCE((
+              SELECT MAX(i."createdAt")
+              FROM invoice i
+              WHERE i."clientId" = client.id
+                AND i."archivedAt" IS NULL
+            ), client."createdAt")
+          )`.as("recentActivityAt"),
         })
         .from(clients)
         .where(and(...conditions))
@@ -253,8 +262,8 @@ export const clientsRouter = createTRPCRouter({
               ? sql`"overdueAmount" ASC`
               : sql`"overdueAmount" DESC`
             : sortOrder === "asc"
-              ? sql`"lastInvoiceAt" ASC NULLS LAST`
-              : sql`"lastInvoiceAt" DESC NULLS LAST`
+              ? sql`"recentActivityAt" ASC`
+              : sql`"recentActivityAt" DESC`
         )
         .limit(limit)
         .offset(offset);

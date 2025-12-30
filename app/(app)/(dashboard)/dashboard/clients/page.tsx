@@ -66,7 +66,7 @@ export default function ClientsPage() {
   const limit = parseInt(searchParams.get("limit") || "10");
   const page = parseInt(searchParams.get("page") || "1");
   const sortBy = searchParams.get("sortBy") as
-    | "createdAt"
+    | "recentActivity"
     | "overdueAmount"
     | null;
   const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" | null;
