@@ -28,7 +28,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Handshake, Cog, Shredder, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  MoreHorizontal,
+  Handshake,
+  Cog,
+  Shredder,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/utils/money";
 import {
   EmailConfirmDeleteDialog,
@@ -57,7 +65,10 @@ export default function ClientsPage() {
   // Get filter values from search params with defaults
   const limit = parseInt(searchParams.get("limit") || "10");
   const page = parseInt(searchParams.get("page") || "1");
-  const sortBy = searchParams.get("sortBy") as "createdAt" | "overdueAmount" | null;
+  const sortBy = searchParams.get("sortBy") as
+    | "createdAt"
+    | "overdueAmount"
+    | null;
   const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" | null;
 
   // Search state with debouncing
@@ -95,8 +106,6 @@ export default function ClientsPage() {
   );
 
   const clients = data?.clients;
-
-  console.log(clients);
   const totalPages = data?.totalPages ?? 0;
   const total = data?.total ?? 0;
 
