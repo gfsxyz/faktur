@@ -1,5 +1,5 @@
 {
-  "id": "6b85706f-dd32-494c-b094-934326762ef9",
+  "id": "76ba1b55-bc91-47d7-afaf-76dd115b3a54",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -344,6 +344,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "archivedAt": {
+          "name": "archivedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -573,6 +579,12 @@
         "terms": {
           "name": "terms",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "archivedAt": {
+          "name": "archivedAt",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -820,6 +832,12 @@
         "image": {
           "name": "image",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "onboardingCompletedAt": {
+          "name": "onboardingCompletedAt",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },

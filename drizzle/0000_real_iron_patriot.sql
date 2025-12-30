@@ -52,6 +52,7 @@ CREATE TABLE "client" (
 	"postalCode" text,
 	"taxId" text,
 	"notes" text,
+	"archivedAt" timestamp,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp NOT NULL
 );
@@ -86,6 +87,7 @@ CREATE TABLE "invoice" (
 	"amountPaid" real DEFAULT 0 NOT NULL,
 	"notes" text,
 	"terms" text,
+	"archivedAt" timestamp,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp NOT NULL
 );
@@ -120,6 +122,7 @@ CREATE TABLE "user" (
 	"email" text NOT NULL,
 	"emailVerified" boolean DEFAULT false NOT NULL,
 	"image" text,
+	"onboardingCompletedAt" timestamp,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email")

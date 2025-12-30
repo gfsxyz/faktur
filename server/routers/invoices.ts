@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { db } from "@/lib/db";
 import { invoices, invoiceItems, clients } from "@/lib/db/schema";
-import { eq, and, desc, asc, sql, gte, lte, ilike, or } from "drizzle-orm";
+import { eq, and, desc, asc, sql, gte, lte, ilike, or, isNull } from "drizzle-orm";
 import { sanitizeSearchInput, createILikePattern } from "@/lib/sanitize";
 import { roundMoney, moneyAdd, moneySubtract, moneyMultiply } from "@/lib/utils/money";
 
@@ -104,7 +104,7 @@ export const invoicesRouter = createTRPCRouter({
     const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(invoices)
-      .where(eq(invoices.userId, ctx.userId));
+      .where(and(eq(invoices.userId, ctx.userId), isNull(invoices.archivedAt)));
 
     return (result[0]?.count ?? 0) > 0;
   }),
@@ -153,7 +153,7 @@ export const invoicesRouter = createTRPCRouter({
       const offset = (page - 1) * limit;
 
       // Build where conditions
-      const conditions = [eq(invoices.userId, ctx.userId)];
+      const conditions = [eq(invoices.userId, ctx.userId), isNull(invoices.archivedAt)];
 
       // Add client filter if provided
       if (clientId) {
@@ -271,7 +271,7 @@ export const invoicesRouter = createTRPCRouter({
         })
         .from(invoices)
         .leftJoin(clients, eq(invoices.clientId, clients.id))
-        .where(and(eq(invoices.id, input.id), eq(invoices.userId, ctx.userId)))
+        .where(and(eq(invoices.id, input.id), eq(invoices.userId, ctx.userId), isNull(invoices.archivedAt)))
         .limit(1);
 
       if (!invoice) {
@@ -496,13 +496,13 @@ export const invoicesRouter = createTRPCRouter({
       return invoice;
     }),
 
-  // Delete an invoice
+  // Delete an invoice (soft delete)
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      // Items will be cascade deleted
       await db
-        .delete(invoices)
+        .update(invoices)
+        .set({ archivedAt: new Date() })
         .where(and(eq(invoices.id, input.id), eq(invoices.userId, ctx.userId)));
 
       return { success: true };

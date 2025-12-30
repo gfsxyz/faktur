@@ -28,10 +28,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Users, MoreHorizontal, Handshake, Cog, Shredder } from "lucide-react";
 import {
-  DeleteConfirmationDialog,
-  useDeleteConfirmation,
+  MoreHorizontal,
+  Handshake,
+  Cog,
+  Shredder,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import { formatCurrency } from "@/lib/utils/money";
+import {
+  EmailConfirmDeleteDialog,
+  useEmailConfirmDelete,
 } from "@/components/ui/delete-confirmation-dialog";
 import { toast } from "sonner";
 import { ClientFilters } from "@/components/clients/client-filters";
@@ -51,11 +60,16 @@ export default function ClientsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const utils = trpc.useUtils();
-  const deleteConfirmation = useDeleteConfirmation();
+  const deleteConfirmation = useEmailConfirmDelete();
 
   // Get filter values from search params with defaults
   const limit = parseInt(searchParams.get("limit") || "10");
   const page = parseInt(searchParams.get("page") || "1");
+  const sortBy = searchParams.get("sortBy") as
+    | "recentActivity"
+    | "overdueAmount"
+    | null;
+  const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" | null;
 
   // Search state with debouncing
   const [searchInput, setSearchInput] = useState(
@@ -83,6 +97,8 @@ export default function ClientsPage() {
       limit,
       page,
       search,
+      sortBy: sortBy || undefined,
+      sortOrder: sortOrder || undefined,
     },
     {
       placeholderData: (previousData) => previousData,
@@ -105,8 +121,12 @@ export default function ClientsPage() {
     },
   });
 
-  const handleDelete = async (id: string) => {
-    deleteConfirmation.confirm(async () => {
+  const handleDelete = (client: {
+    id: string;
+    name: string;
+    email: string;
+  }) => {
+    deleteConfirmation.confirm(client, async (id) => {
       try {
         await deleteMutation.mutateAsync({ id });
 
@@ -149,6 +169,27 @@ export default function ClientsPage() {
     } else {
       params.delete("search");
     }
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  const handleOverdueSortToggle = () => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Cycle through: default -> asc -> desc -> default
+    if (sortBy !== "overdueAmount") {
+      // Not sorting by overdue, start with asc
+      params.set("sortBy", "overdueAmount");
+      params.set("sortOrder", "asc");
+    } else if (sortOrder === "asc") {
+      // Currently asc, switch to desc
+      params.set("sortOrder", "desc");
+    } else {
+      // Currently desc, reset to default
+      params.delete("sortBy");
+      params.delete("sortOrder");
+    }
+
+    params.set("page", "1");
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
@@ -290,7 +331,23 @@ export default function ClientsPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Company</TableHead>
                   <TableHead>Phone</TableHead>
-                  <TableHead>Location</TableHead>
+                  <TableHead>
+                    <button
+                      onClick={handleOverdueSortToggle}
+                      className="flex items-center gap-1 hover:text-foreground transition-colors"
+                    >
+                      Overdue
+                      {sortBy === "overdueAmount" ? (
+                        sortOrder === "asc" ? (
+                          <ArrowUp className="h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="h-4 w-4" />
+                        )
+                      ) : (
+                        <ArrowUpDown className="h-4 w-4 opacity-50" />
+                      )}
+                    </button>
+                  </TableHead>
                   <TableHead className="w-[70px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -316,9 +373,13 @@ export default function ClientsPage() {
                       {client.phone || "-"}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {[client.city, client.country]
-                        .filter(Boolean)
-                        .join(", ") || "-"}
+                      {client.overdueAmount > 0 ? (
+                        <span className="text-destructive font-medium">
+                          {formatCurrency(client.overdueAmount)}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
@@ -337,7 +398,13 @@ export default function ClientsPage() {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
-                            onClick={() => handleDelete(client.id)}
+                            onClick={() =>
+                              handleDelete({
+                                id: client.id,
+                                name: client.name,
+                                email: client.email,
+                              })
+                            }
                             className="text-destructive"
                           >
                             <Shredder className="text-destructive" />
@@ -467,16 +534,13 @@ export default function ClientsPage() {
                         </span>
                       </div>
                     )}
-                    {[client.city, client.country].filter(Boolean).length >
-                      0 && (
+                    {client.overdueAmount > 0 && (
                       <div className="flex items-start gap-2">
                         <span className="text-xs text-muted-foreground min-w-[70px]">
-                          Location
+                          Overdue
                         </span>
-                        <span className="text-sm font-medium flex-1">
-                          {[client.city, client.country]
-                            .filter(Boolean)
-                            .join(", ")}
+                        <span className="text-sm font-medium flex-1 text-destructive">
+                          {formatCurrency(client.overdueAmount)}
                         </span>
                       </div>
                     )}
@@ -498,7 +562,13 @@ export default function ClientsPage() {
                     variant="ghost"
                     size="sm"
                     className="h-8 text-xs text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(client.id)}
+                    onClick={() =>
+                      handleDelete({
+                        id: client.id,
+                        name: client.name,
+                        email: client.email,
+                      })
+                    }
                   >
                     Delete
                   </Button>
@@ -565,13 +635,15 @@ export default function ClientsPage() {
         </div>
       )}
 
-      <DeleteConfirmationDialog
-        open={deleteConfirmation.isOpen}
-        onOpenChange={deleteConfirmation.handleCancel}
-        onConfirm={deleteConfirmation.handleConfirm}
-        title="Delete Client"
-        description="Are you sure you want to delete this client? This action cannot be undone."
-      />
+      {deleteConfirmation.client && (
+        <EmailConfirmDeleteDialog
+          open={deleteConfirmation.isOpen}
+          onOpenChange={deleteConfirmation.handleCancel}
+          onConfirm={deleteConfirmation.handleConfirm}
+          clientName={deleteConfirmation.client.name}
+          clientEmail={deleteConfirmation.client.email}
+        />
+      )}
     </div>
   );
 }
