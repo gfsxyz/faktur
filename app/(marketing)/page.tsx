@@ -141,162 +141,180 @@ export default function Home() {
         />
       </div>
 
-      <div className="relative px-6 pb-8 max-w-7xl mx-auto min-h-screen flex flex-col">
-        <nav className="flex items-center justify-between gap-4">
-          <div className="flex h-16 items-center">
-            <Link
-              href="/"
-              className="flex items-center gap-2 font-semibold"
-              aria-label="Faktur"
-            >
-              <FakturLogo
-                width={34}
-                height={34}
-                className="transition-all duration-500 ease-in-out"
-              />
-            </Link>
-          </div>
+      <div className="relative pb-8 max-w-7xl mx-auto min-h-screen flex flex-col">
+        {/* Side border lines */}
+        <div className="absolute left-0 top-0 bottom-0 w-px bg-primary/20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-px bg-primary/20 pointer-events-none" />
 
-          <div className="flex items-center justify-around gap-2 grow">
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden sm:block" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden sm:block" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden md:block" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden md:block" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden md:block" />
-            <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-30 border-primary/70 hidden lg:block" />
-          </div>
-
-          <Button
-            className="bg-linear-to-br from-primary via-primary to-primary/90 hover:brightness-110 transition-all duration-200"
-            asChild
-          >
-            <Link href={"/dashboard"}>Get Started</Link>
-          </Button>
-        </nav>
-
-        {/* Hero Section */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex-1 flex items-center justify-center py-12 md:py-20"
-        >
-          <div className="max-w-5xl mx-auto text-center space-y-8 px-4">
-            {/* Badge */}
-            <motion.div variants={itemVariants}>
-              <div className="inline-flex items-center gap-2 px-4 py-2 border border-primary/20 bg-primary/5 backdrop-blur-sm">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm font-medium text-primary">
-                  Insyallah free forever
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Main Heading */}
-            <motion.div variants={itemVariants}>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-                Invoice Management
-                <span className="mt-2.5 block">
-                  Made&nbsp;
-                  <DecoratedText className="text-[#39312b] shadow" delay={0.5}>
-                    Simple
-                  </DecoratedText>
-                </span>
-              </h1>
-            </motion.div>
-
-            {/* Description */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
-            >
-              Create, manage, and track invoices effortlessly. A streamlined
-              solution designed for businesses of all sizes.
-            </motion.p>
-
-            {/* CTA Button */}
-            <motion.div variants={itemVariants} className="pt-4">
-              <motion.div
-                className="relative inline-block"
-                whileHover={{
-                  opacity: [1, 0.3, 1, 0.4, 1],
-                }}
-                whileTap={{ y: 0 }}
-                transition={{
-                  opacity: {
-                    duration: 0.7,
-                    times: [0, 0.2, 0.5, 0.7, 1],
-                    ease: "easeInOut",
-                  },
-                }}
+        {/* Content wrapper */}
+        <div className="relative px-6 flex flex-col flex-1">
+          <nav className="flex items-center justify-between gap-4">
+            <div className="flex h-16 items-center">
+              <Link
+                href="/"
+                className="flex items-center gap-2 font-semibold"
+                aria-label="Faktur"
               >
-                {/* corner ornaments */}
-                <motion.div
-                  className="absolute -inset-[5px] pointer-events-none opacity-40"
-                  animate={{ opacity: [1, 0.3, 1, 0.3, 1] }}
-                  transition={{
-                    duration: 0.5,
-                    repeat: Infinity,
-                    repeatDelay: 2,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/50" />
-                  <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/50" />
-                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/50" />
-                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/50" />
-                </motion.div>
+                <FakturLogo
+                  width={34}
+                  height={34}
+                  className="transition-all duration-500 ease-in-out"
+                />
+              </Link>
+            </div>
 
-                <Button
-                  size="lg"
-                  className="relative bg-primary hover:bg-primary/90 text-base h-12 px-10 group overflow-hidden border border-primary/30 shadow-xl shadow-primary/20"
-                  asChild
-                >
-                  <Link href={"/dashboard"}>
-                    <span className="relative z-10 flex items-center gap-1 font-semibold tracking-wide">
-                      <span
-                        style={{
-                          textShadow:
-                            "0 1px 3px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.2)",
-                          filter:
-                            "drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3))",
-                        }}
-                      >
-                        Start for free
-                      </span>
-                    </span>
-                  </Link>
-                </Button>
-              </motion.div>
-            </motion.div>
-            <motion.div
-              variants={imageVariants}
-              className="relative max-w-6xl mx-auto mt-12 md:mt-16"
-              style={{ perspective: 1400, transformStyle: "preserve-3d" }}
+            <div className="flex items-center justify-around gap-2 grow">
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden sm:block" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden sm:block" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden md:block" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden md:block" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden md:block" />
+              <div className="h-9 w-full border bg-[repeating-linear-gradient(45deg,transparent,transparent_8px,var(--primary)_8px,var(--primary)_9px)] opacity-10 border-primary/70 hidden lg:block" />
+            </div>
+
+            <Button
+              className="bg-linear-to-br from-primary via-primary to-primary/90 hover:brightness-110 transition-all duration-200"
+              asChild
             >
-              <div className="p-2 rounded-lg relative overflow-hidden bg-linear-to-tl from-primary/50 via-primary/50 to-primary/20">
-                <div
-                  className="absolute inset-0 opacity-10"
-                  style={{
-                    background:
-                      "repeating-linear-gradient(45deg, transparent, transparent 8px, var(--primary) 8px, var(--primary) 9px)",
+              <Link href={"/dashboard"}>Get Started</Link>
+            </Button>
+          </nav>
+
+          {/* Hero Section */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex-1 flex items-center justify-center py-12 md:py-20"
+          >
+            <div className="max-w-5xl mx-auto text-center space-y-8 px-4">
+              {/* Badge */}
+              <motion.div variants={itemVariants}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 border border-primary/20 bg-primary/5 backdrop-blur-sm">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-sm font-medium text-primary">
+                    Insyallah free forever
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Main Heading */}
+              <motion.div variants={itemVariants}>
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+                  Invoice Management
+                  <span className="mt-2.5 block">
+                    Made&nbsp;
+                    <DecoratedText
+                      className="text-[#39312b] shadow"
+                      delay={0.5}
+                    >
+                      Simple
+                    </DecoratedText>
+                  </span>
+                </h1>
+              </motion.div>
+
+              {/* Description */}
+              <motion.p
+                variants={itemVariants}
+                className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              >
+                Create, manage, and track invoices effortlessly. A streamlined
+                solution designed for businesses of all sizes.
+              </motion.p>
+
+              {/* CTA Button */}
+              <motion.div variants={itemVariants} className="pt-4">
+                <motion.div
+                  className="relative inline-block"
+                  whileHover={{
+                    opacity: [1, 0.3, 1, 0.4, 1],
                   }}
-                />
-                <Image
-                  src="/preview.jpg"
-                  alt="Faktur Dashboard Preview"
-                  width={1200}
-                  height={800}
-                  priority
-                  fetchPriority="high"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1200px"
-                  className="shadow-2xl relative z-10"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
+                  whileTap={{ y: 0 }}
+                  transition={{
+                    opacity: {
+                      duration: 0.7,
+                      times: [0, 0.2, 0.5, 0.7, 1],
+                      ease: "easeInOut",
+                    },
+                  }}
+                >
+                  {/* corner ornaments */}
+                  <motion.div
+                    className="absolute -inset-[5px] pointer-events-none opacity-40"
+                    animate={{ opacity: [1, 0.3, 1, 0.3, 1] }}
+                    transition={{
+                      duration: 0.5,
+                      repeat: Infinity,
+                      repeatDelay: 2,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/50" />
+                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/50" />
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/50" />
+                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/50" />
+                  </motion.div>
+
+                  <Button
+                    size="lg"
+                    className="relative bg-primary hover:bg-primary/90 text-base h-12 px-10 group overflow-hidden border border-primary/30 shadow-xl shadow-primary/20"
+                    asChild
+                  >
+                    <Link href={"/dashboard"}>
+                      <span className="relative z-10 flex items-center gap-1 font-semibold tracking-wide">
+                        <span
+                          style={{
+                            textShadow:
+                              "0 1px 3px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 255, 255, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.2)",
+                            filter:
+                              "drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3))",
+                          }}
+                        >
+                          Start for free
+                        </span>
+                      </span>
+                    </Link>
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+          <section className="relative min-h-[50vh] -mx-6 border-y border-primary/20">
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
+              style={{ backgroundImage: "url('/lp-bg.png')" }}
+            />
+            <div className="relative py-20 px-6">
+              <motion.div
+                variants={imageVariants}
+                className="relative max-w-6xl mx-auto mt-12 md:mt-16"
+                style={{ perspective: 1400, transformStyle: "preserve-3d" }}
+              >
+                <div className="p-2 rounded-lg relative overflow-hidden bg-linear-to-tl from-primary/20 via-primary/20 to-primary/10">
+                  <div
+                    className="absolute inset-0 opacity-10"
+                    style={{
+                      background:
+                        "repeating-linear-gradient(45deg, transparent, transparent 8px, var(--primary) 8px, var(--primary) 9px)",
+                    }}
+                  />
+                  <Image
+                    src="/preview.jpg"
+                    alt="Faktur Dashboard Preview"
+                    width={1200}
+                    height={800}
+                    priority
+                    fetchPriority="high"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1200px"
+                    className="shadow-2xl relative z-10"
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        </div>
       </div>
     </header>
   );
