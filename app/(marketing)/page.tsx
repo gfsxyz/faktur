@@ -105,6 +105,11 @@ const structuredData = {
   ],
 };
 
+const structuredDataJson = JSON.stringify(structuredData).replace(
+  /</g,
+  "\\u003c"
+);
+
 function SectionLabel({
   children,
 }: Readonly<{
@@ -123,7 +128,7 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: structuredDataJson }}
       />
 
       <main className="relative overflow-hidden bg-linear-to-b from-background via-background to-primary/10">
