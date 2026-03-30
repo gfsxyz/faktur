@@ -15,7 +15,9 @@ Faktur is a full-stack invoice management application that helps you:
 - 👥 Manage clients and their billing information
 - 📈 Visualize revenue with analytics dashboard
 - 📄 Generate PDF invoices with custom branding
+- 🎨 Choose from multiple invoice templates
 - 💼 Store your business profile and bank details
+- 📱 Install the app with PWA support
 
 Built with modern web technologies for a fast, reliable, and beautiful experience.
 
@@ -80,7 +82,7 @@ Or using other methods: https://pnpm.io/installation
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/your-username/faktur.git
    cd faktur
    ```
 
@@ -99,6 +101,9 @@ Or using other methods: https://pnpm.io/installation
 4. **Configure your `.env.local`:**
 
    ```env
+   # Public app URL
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+
    # Update with your PostgreSQL credentials
    DATABASE_URL=postgresql://postgres@localhost:5432/faktur_dev
 
@@ -109,6 +114,8 @@ Or using other methods: https://pnpm.io/installation
    # Optional: OAuth providers
    GOOGLE_CLIENT_ID=your-google-client-id
    GOOGLE_CLIENT_SECRET=your-google-client-secret
+   GITHUB_CLIENT_ID=your-github-client-id
+   GITHUB_CLIENT_SECRET=your-github-client-secret
    ```
 
 5. **Push database schema:**
@@ -131,23 +138,27 @@ Or using other methods: https://pnpm.io/installation
 ```bash
 # Development
 pnpm dev          # Start development server
-pnpm build        # Build for production
+pnpm build        # Build for production (uses Next.js webpack mode)
 pnpm start        # Start production server
 pnpm lint         # Run ESLint
 
 # Database
 pnpm db:push      # Push schema changes to database
+pnpm db:generate  # Generate migrations from schema changes
+pnpm db:migrate   # Apply generated migrations
 pnpm db:studio    # Open Drizzle Studio (database GUI)
 pnpm db:seed      # Seed database with sample data (development)
-pnpm db:reset     # Reset database (WARNING: deletes all invoice, profile and clients data data)
+pnpm db:reset     # Reset database (WARNING: deletes invoice, profile, and client data)
 ```
 
 ## Production Deployment
 
 1. Set `NEXT_PUBLIC_APP_URL` to your production URL
-2. Update `DATABASE_URL` with production PostgreSQL credentials
-3. Generate a secure `BETTER_AUTH_SECRET`
-4. Run `pnpm build` and deploy
+2. Set `BETTER_AUTH_URL` to your production URL
+3. Update `DATABASE_URL` with production PostgreSQL credentials
+4. Generate a secure `BETTER_AUTH_SECRET`
+5. Configure any OAuth provider credentials you plan to use
+6. Run `pnpm build` and deploy
 
 ---
 
