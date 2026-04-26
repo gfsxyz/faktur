@@ -20,6 +20,10 @@ export default function RootLayout({
       <body
         className={`font-sans antialiased dark ${fontFamily.className} ${fontFamily.style}`}
       >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-50 bg-[url('/noise.webp')] bg-repeat bg-size-[120px_120px] opacity-[0.035]"
+        />
         {children}
       </body>
     </html>

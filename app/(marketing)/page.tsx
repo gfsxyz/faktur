@@ -107,7 +107,7 @@ const structuredData = {
 
 const structuredDataJson = JSON.stringify(structuredData).replace(
   /</g,
-  "\\u003c"
+  "\\u003c",
 );
 
 function SectionLabel({
@@ -259,10 +259,6 @@ export default function Home() {
                 className="flex flex-1 items-center justify-center py-12 md:py-20"
               >
                 <div className="mx-auto max-w-5xl space-y-8 px-4 text-center pb-14 pt-4">
-                  <motion.div variants={itemVariants}>
-                    <SectionLabel>Open-source invoicing</SectionLabel>
-                  </motion.div>
-
                   <motion.div variants={itemVariants}>
                     <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                       Invoice Management
@@ -465,15 +461,9 @@ export default function Home() {
                       variants={itemVariants}
                       className="max-w-2xl"
                     >
-                      <p className="text-[11px] uppercase tracking-[0.32em] text-primary">
-                        Start now
-                      </p>
                       <h2 className="mt-4 max-w-xl text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
                         Invoice work, without the drag.
                       </h2>
-                      <p className="mt-4 max-w-md text-sm leading-relaxed text-foreground/80 md:text-base">
-                        Create, send, and follow up from one focused workspace.
-                      </p>
                     </motion.div>
 
                     <motion.div
