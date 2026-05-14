@@ -8,9 +8,6 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
-  experimental: {
-    turbopackUseSystemTlsCerts: true,
-  },
   output: "standalone",
 };
 
