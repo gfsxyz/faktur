@@ -4,13 +4,16 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const siteConfig = {
   name: "Faktur",
-  title: "Faktur - Invoice Management Made Simple",
+  title: "Faktur - Open Source Invoice Management",
   description:
-    "Create, manage, and track invoices effortlessly. A streamlined invoice management solution designed for businesses of all sizes. Built with Next.js, featuring PDF generation, payment tracking, and client management.",
+    "Open source invoice management for freelancers, small teams, and developers. Create, send, track, and manage invoices from one calm workspace.",
   url: siteUrl,
+  repositoryUrl: "https://github.com/gfsxyz/faktur",
   ogImage: `${siteUrl}/og-image.jpg`,
   keywords: [
     "invoice management",
+    "open source invoicing",
+    "self hosted invoicing",
     "invoice software",
     "billing system",
     "invoice generator",

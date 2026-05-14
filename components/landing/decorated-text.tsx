@@ -21,7 +21,6 @@ function DecoratedText({
   bordered = true,
   showIcons = true,
   iconClassName,
-  glowEffect = true,
   flicker = true,
   delay = 0, // default to no delay
 }: DecoratedTextProps) {
@@ -32,7 +31,7 @@ function DecoratedText({
       className={cn(
         "group/decorated relative inline-block",
         bordered && "border border-foreground/20",
-        className
+        className,
       )}
       {...(flicker && {
         initial: { opacity: 1 },
@@ -46,7 +45,6 @@ function DecoratedText({
     >
       {/* TEXT */}
       <span className="relative z-10 inline-block leading-none">{content}</span>
-
       {/* CORNER ICONS */}
       {showIcons && <CornerIcons size="md" iconClassName={iconClassName} />}
     </motion.span>
